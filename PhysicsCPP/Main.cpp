@@ -50,6 +50,7 @@ class Ball : public sf::Drawable, public sf::Transformable
     sf::Vector2f velocity;
     sf::CircleShape shape;
 
+    const float gravity = 9.8f * 150;
     float circleRadius = 5.0f;
 
 public:
@@ -59,6 +60,14 @@ public:
         shape.setFillColor(sf::Color::Red);
         shape.setOrigin(sf::Vector2f(circleRadius, circleRadius));
         shape.setPosition(sf::Vector2f(position.x, position.y));
+    }
+
+    void update(float dt) {
+        sf::Vector2f pos = getPosition();
+        pos += velocity * dt;
+
+        setPosition(pos);
+        velocity.y += gravity * dt;
     }
 
     sf::Vector2f getPosition()
@@ -136,6 +145,10 @@ int main()
             if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
                 lockClick = false;
             }
+        }
+
+        for (auto& ball : balls) {
+            ball.update(deltaTime);
         }
 
         window.clear();
