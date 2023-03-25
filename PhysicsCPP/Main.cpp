@@ -57,9 +57,9 @@ public:
     Ball(sf::Vector2f position) : circleRadius(15.0f), velocity(0,0)
     {
         shape = sf::CircleShape(circleRadius);
-        shape.setFillColor(sf::Color::Red);
+        shape.setFillColor(sf::Color::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
         shape.setOrigin(sf::Vector2f(circleRadius, circleRadius));
-        shape.setPosition(sf::Vector2f(position.x, position.y));
+        shape.setPosition(position);
     }
 
     void update(float dt) {
@@ -70,9 +70,12 @@ public:
         velocity.y += gravity * dt;
     }
 
-    sf::Vector2f getPosition()
-    {
-        return shape.getPosition();
+    void bounce(sf::Vector2f normal, float damping = 0.88f) {
+        float dot = velocity.x * normal.x + velocity.y * normal.y;
+        if (dot < 0) {
+            velocity.x -= 2 * dot * normal.x * damping;
+            velocity.y -= 2 * dot * normal.y * damping;
+        }
     }
 
     void setPosition(sf::Vector2f position)
@@ -80,10 +83,16 @@ public:
         shape.setPosition(position);
     }
 
-    float getRadius()
+    sf::Vector2f getPosition() const
+    {
+        return shape.getPosition();
+    }
+
+    float getRadius() const
     {
         return circleRadius;
     }
+
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const {
         states.transform *= getTransform();
@@ -93,6 +102,24 @@ private:
 
 void spawnCircle(std::vector<Ball>& balls, const sf::Vector2f& position) {
     balls.emplace_back(position);
+}
+
+bool resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius) {
+    sf::Vector2f delta = ball.getPosition() - center;
+
+    float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+    float ballRadius = ball.getRadius();
+
+    if (distance + ballRadius >= 200.0f - outerRadius / 2) {
+
+        float overlap = distance + ballRadius - outerRadius;
+        sf::Vector2f normal = delta / distance;
+        ball.bounce(-normal);
+
+        return true;
+    }
+
+    return false;
 }
 
 int main()
@@ -149,14 +176,16 @@ int main()
 
         for (auto& ball : balls) {
             ball.update(deltaTime);
+
+            resolveHollowCircleCollision(ball, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 10.0f);
         }
 
         window.clear();
 
         // Draw all the balls
-        for(const auto& circle : balls)
+        for(const auto& ball : balls)
         {
-            window.draw(circle);
+            window.draw(ball);
         }
 
         displayNumberOfObjects(balls.size());
