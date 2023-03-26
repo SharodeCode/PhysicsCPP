@@ -54,12 +54,12 @@ class Ball : public sf::Drawable, public sf::Transformable
     float circleRadius = 5.0f;
 
 public:
-    Ball(sf::Vector2f position) : circleRadius(15.0f), velocity(0,0)
+    Ball(sf::Vector2f position) : circleRadius(5.0f), velocity(0,0)
     {
         shape = sf::CircleShape(circleRadius);
         shape.setFillColor(sf::Color::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
         shape.setOrigin(sf::Vector2f(circleRadius, circleRadius));
-        shape.setPosition(position);
+        setPosition(position);
     }
 
     void update(float dt) {
@@ -78,20 +78,13 @@ public:
         }
     }
 
-    void setPosition(sf::Vector2f position)
-    {
-        shape.setPosition(position);
-    }
-
-    sf::Vector2f getPosition() const
-    {
-        return shape.getPosition();
-    }
-
     float getRadius() const
     {
         return circleRadius;
     }
+
+    sf::Vector2f getVelocity() const { return velocity; }
+    void setVelocity(const sf::Vector2f& vel) { velocity = vel; }
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -101,25 +94,46 @@ private:
 };
 
 void spawnCircle(std::vector<Ball>& balls, const sf::Vector2f& position) {
-    balls.emplace_back(position);
+    balls.emplace_back(Ball(position));
 }
 
-bool resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius) {
+void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius) {
     sf::Vector2f delta = ball.getPosition() - center;
 
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     float ballRadius = ball.getRadius();
 
-    if (distance + ballRadius >= 200.0f - outerRadius / 2) {
+    if (distance >= 200.0f - outerRadius / 2) {
 
         float overlap = distance + ballRadius - outerRadius;
         sf::Vector2f normal = delta / distance;
+
         ball.bounce(-normal);
-
-        return true;
     }
+}
 
-    return false;
+bool checkBallCollision(const Ball& a, const Ball& b) {
+    sf::Vector2f delta = a.getPosition() - b.getPosition();
+    float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+    return distance <= a.getRadius() + b.getRadius();
+}
+
+void resolveBallCollision(Ball& a, Ball& b) {
+    sf::Vector2f delta = a.getPosition() - b.getPosition();
+    float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+    float overlap = a.getRadius() + b.getRadius() - distance;
+
+    if (overlap > 0) {
+        sf::Vector2f normal = delta / distance;
+        a.move(overlap * normal * 0.5f);
+        b.move(-overlap * normal * 0.5f);
+
+        sf::Vector2f relativeVelocity = a.getVelocity() - b.getVelocity();
+        float impulse = 0.8f * (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y);
+
+        a.setVelocity(a.getVelocity() - impulse * normal);
+        b.setVelocity(b.getVelocity() + impulse * normal);
+    }
 }
 
 int main()
@@ -134,10 +148,9 @@ int main()
     sf::Clock clock = sf::Clock();
 
     float displayFramerateTime = 0.0f;
+    float spawnCircleTime = 0.0f;
 
-    std::vector<Ball> balls = {
-        Ball(sf::Vector2f(375, 185)),
-    };
+    std::vector<Ball> balls;
 
     static bool lockClick = false;
 
@@ -147,10 +160,18 @@ int main()
         float fps = 1.0f / (deltaTime);
 
         displayFramerateTime += deltaTime;
+        spawnCircleTime += deltaTime;
+
         if (displayFramerateTime > 0.5)
         {
             displayFPS(fps);
             displayFramerateTime = 0;
+        }
+
+        if (spawnCircleTime > 0.1)
+        {
+            spawnCircle(balls, sf::Vector2f(375, 185));
+            spawnCircleTime = 0;
         }
 
         sf::Event event;
@@ -176,9 +197,26 @@ int main()
 
         for (auto& ball : balls) {
             ball.update(deltaTime);
-
-            resolveHollowCircleCollision(ball, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 10.0f);
         }
+
+        for (size_t i = 0; i < balls.size(); ++i) {
+            for (size_t j = i + 1; j < balls.size(); ++j) {
+                if (checkBallCollision(balls[i], balls[j])) {
+                    resolveBallCollision(balls[i], balls[j]);
+                }
+            }
+        }
+
+        for (int k = 0; k < 8; k++) {
+            for (auto& ball : balls) {
+                resolveHollowCircleCollision(ball, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 10.0f);
+            }
+
+
+        }
+
+
+
 
         window.clear();
 
