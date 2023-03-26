@@ -67,7 +67,6 @@ public:
         pos += velocity * dt;
 
         setPosition(pos);
-        velocity.y += gravity * dt;
     }
 
     void bounce(sf::Vector2f normal, float damping = 0.88f) {
@@ -76,6 +75,11 @@ public:
             velocity.x -= 2 * dot * normal.x * damping;
             velocity.y -= 2 * dot * normal.y * damping;
         }
+    }
+
+    void accelerate(sf::Vector2f a)
+    {
+        velocity += a;
     }
 
     float getRadius() const
@@ -103,13 +107,14 @@ void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float 
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     float ballRadius = ball.getRadius();
 
-    if (distance >= 200.0f - outerRadius / 2) {
-
-        float overlap = distance + ballRadius - outerRadius;
+    if (distance >= 200.0f - ballRadius) {
         sf::Vector2f normal = delta / distance;
 
-        ball.bounce(-normal);
+        ball.setVelocity(ball.getVelocity() - (0.8f * (ball.getVelocity().x * normal.x + ball.getVelocity().y * normal.y) * normal));
+        ball.setVelocity(ball.getVelocity() * 0.99f);
+        ball.setPosition(frame.getPosition() + normal * (200.0f - ballRadius));
     }
+
 }
 
 bool checkBallCollision(const Ball& a, const Ball& b) {
@@ -141,7 +146,6 @@ int main()
     initialise();
 
     // Set the gravity and bounce damping
-    float gravity = 800.0f;
     float damping = 0.85f;
 
     // Create a clock to control the movement
@@ -196,8 +200,9 @@ int main()
         }
 
         for (auto& ball : balls) {
-            ball.update(deltaTime);
+            ball.accelerate(sf::Vector2f(0.0f, 9.8f));
         }
+
 
         for (size_t i = 0; i < balls.size(); ++i) {
             for (size_t j = i + 1; j < balls.size(); ++j) {
@@ -207,16 +212,11 @@ int main()
             }
         }
 
-        for (int k = 0; k < 8; k++) {
-            for (auto& ball : balls) {
-                resolveHollowCircleCollision(ball, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 10.0f);
-            }
+        for (auto& ball : balls) {
+            resolveHollowCircleCollision(ball, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 10.0f);
 
-
+            ball.update(deltaTime);
         }
-
-
-
 
         window.clear();
 
