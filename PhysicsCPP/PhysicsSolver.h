@@ -17,7 +17,6 @@ public:
     void update(float deltaTime);
     void applyGravity();
     void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
-    bool checkBallCollision(const Ball& a, const Ball& b);
     void resolveBallCollision(Ball& a, Ball& b);
     void checkFrameCollisions(float deltaTime);
     void checkBallCollisions();

@@ -47,24 +47,21 @@ void PhysicsSolver::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f&
     }
 }
 
-bool PhysicsSolver::checkBallCollision(const Ball& a, const Ball& b) {
-    sf::Vector2f delta = a.getPosition() - b.getPosition();
-    float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
-    return distance <= a.getRadius() + b.getRadius();
-}
-
 void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
     sf::Vector2f delta = a.getPosition() - b.getPosition();
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     float overlap = a.getRadius() + b.getRadius() - distance;
 
-    if (overlap > 0) {
-        sf::Vector2f normal = delta / distance;
-        a.move(overlap * normal * 0.5f);
-        b.move(-overlap * normal * 0.5f);
+    float collision_distance = 2.0f * a.getRadius();
 
+    if (distance <= collision_distance) {
+        sf::Vector2f normal = delta / distance;
         sf::Vector2f relativeVelocity = a.getVelocity() - b.getVelocity();
         float impulse = 0.8f * (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y);
+
+
+        a.move(overlap * normal * 0.8f);
+        b.move(-overlap * normal * 0.8f);
 
         a.setVelocity(a.getVelocity() - impulse * normal);
         b.setVelocity(b.getVelocity() + impulse * normal);
@@ -83,9 +80,7 @@ void PhysicsSolver::checkFrameCollisions(float deltaTime) {
 void PhysicsSolver::checkBallCollisions() {
     for (size_t i = 0; i < balls.size(); ++i) {
         for (size_t j = i + 1; j < balls.size(); ++j) {
-            if (checkBallCollision(balls[i], balls[j])) {
-                resolveBallCollision(balls[i], balls[j]);
-            }
+            resolveBallCollision(balls[i], balls[j]);
         }
     }
 }
