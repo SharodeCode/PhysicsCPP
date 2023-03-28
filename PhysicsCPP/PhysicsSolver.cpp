@@ -17,9 +17,13 @@ void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
     balls.emplace_back(Ball(position));
 }
 
-void PhysicsSolver::update(float deltaTime)
+void PhysicsSolver::updateGravity(float deltaTime)
 {
     applyGravity();
+}
+
+void PhysicsSolver::updateCollisions(float deltaTime)
+{
     checkBallCollisions();
     checkFrameCollisions(deltaTime);
 }

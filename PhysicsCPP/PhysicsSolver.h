@@ -14,7 +14,8 @@ public:
     PhysicsSolver();
 
     void spawnCircle(const sf::Vector2f& position);
-    void update(float deltaTime);
+    void updateGravity(float deltaTime);
+    void updateCollisions(float deltaTime);
     void applyGravity();
     void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
     void resolveBallCollision(Ball& a, Ball& b);

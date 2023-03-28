@@ -5,6 +5,9 @@
 const int WINDOW_HEIGHT = 500;
 const int WINDOW_WIDTH = 800;
 
+const int frameRate = 60;
+const int subSteps = 48;
+
 static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 
 static sf::Text textFPS;
@@ -41,7 +44,10 @@ int main()
 {
     initialise();
 
-    window.setFramerateLimit(600);
+    float subStepRate = 1.0f / (frameRate * subSteps);
+    float accumulator = 0.0f;
+
+    window.setFramerateLimit(frameRate);
 
     PhysicsSolver ps = PhysicsSolver();
 
@@ -60,6 +66,8 @@ int main()
     {
         float deltaTime = clock.restart().asSeconds();
         float fps = 1.0f / (deltaTime);
+
+        accumulator += deltaTime;
 
         displayFramerateTime += deltaTime;
         spawnCircleTime += deltaTime;
@@ -97,7 +105,14 @@ int main()
             }
         }
 
-        ps.update(deltaTime);
+        ps.updateGravity(deltaTime);
+
+        while (accumulator >= subStepRate) {
+            ps.updateCollisions(deltaTime);
+
+            accumulator -= subStepRate;
+        }
+        
 
 
         window.clear();
