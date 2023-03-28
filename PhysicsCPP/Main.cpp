@@ -6,7 +6,7 @@ const int WINDOW_HEIGHT = 500;
 const int WINDOW_WIDTH = 800;
 
 const int frameRate = 60;
-const int subSteps = 48;
+const int subSteps = 8;
 
 static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 
@@ -50,6 +50,7 @@ int main()
     window.setFramerateLimit(frameRate);
 
     PhysicsSolver ps = PhysicsSolver();
+    ps.subSteps = subSteps;
 
     // Set the gravity and bounce damping
     float damping = 0.85f;
@@ -105,19 +106,10 @@ int main()
             }
         }
 
-        ps.updateGravity(deltaTime);
-
-        while (accumulator >= subStepRate) {
-            ps.updateCollisions(deltaTime);
-
-            accumulator -= subStepRate;
-        }
-        
-
+        ps.update(subStepRate);
 
         window.clear();
 
-        // Draw all the balls
         for(const auto& ball : ps.getBalls())
         {
             window.draw(ball);

@@ -17,23 +17,29 @@ void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
     balls.emplace_back(Ball(position));
 }
 
-void PhysicsSolver::updateGravity(float deltaTime)
-{
-    applyGravity();
-}
-
-void PhysicsSolver::updateCollisions(float deltaTime)
-{
-    checkBallCollisions();
-    checkFrameCollisions(deltaTime);
-}
-
 void PhysicsSolver::applyGravity() {
     for (auto& ball : balls) {
-        ball.accelerate(sf::Vector2f(0.0f, 9.8f));
+        ball.accelerate(sf::Vector2f(0.0f, ball.getGravity()));
     }
 }
 
+void PhysicsSolver::updateBalls(float dt)
+{
+    for (auto& ball : balls) {
+        ball.update(dt);
+    }
+}
+
+void PhysicsSolver::update(float subStepRate)
+{
+
+    for (int i = 0; i < subSteps; i++) {
+        applyGravity();
+        checkBallCollisions();
+        checkFrameCollisions();
+        updateBalls(subStepRate);
+    }
+}
 
 void PhysicsSolver::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius) {
     sf::Vector2f delta = ball.getPosition() - center;
@@ -52,32 +58,25 @@ void PhysicsSolver::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f&
 }
 
 void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
+    
     sf::Vector2f delta = a.getPosition() - b.getPosition();
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
-    float overlap = a.getRadius() + b.getRadius() - distance;
-
-    float collision_distance = 2.0f * a.getRadius();
-
+    float collision_distance = a.getRadius() + b.getRadius();
+    
     if (distance <= collision_distance) {
         sf::Vector2f normal = delta / distance;
-        sf::Vector2f relativeVelocity = a.getVelocity() - b.getVelocity();
-        float impulse = 0.8f * (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y);
 
+        const float delta = 0.65f * (distance - collision_distance);
 
-        a.move(overlap * normal * 0.8f);
-        b.move(-overlap * normal * 0.8f);
-
-        a.setVelocity(a.getVelocity() - impulse * normal);
-        b.setVelocity(b.getVelocity() + impulse * normal);
+        a.move(- ((normal * delta * b.radius) / (a.radius + b.radius)));
+        b.move((normal * delta * a.radius) / (a.radius + b.radius));
     }
 }
 
-void PhysicsSolver::checkFrameCollisions(float deltaTime) {
+void PhysicsSolver::checkFrameCollisions() {
 
     for (auto& ball : balls) {
-        resolveHollowCircleCollision(ball, sf::Vector2f((400.0f), (250.0f)), 10.0f);
-
-        ball.update(deltaTime);
+        resolveHollowCircleCollision(ball, frame.getPosition(), frame.getRadius());
     }
 }
 

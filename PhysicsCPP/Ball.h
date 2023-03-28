@@ -5,6 +5,9 @@ class Ball : public sf::Drawable, public sf::Transformable
 {
 
 public:
+    sf::Vector2f position_last;
+    float        radius = 5.0f;
+
     Ball(sf::Vector2f position);
 
     void update(float dt);
@@ -14,6 +17,7 @@ public:
     void accelerate(sf::Vector2f a);
 
     float getRadius() const;
+    float getGravity() const;
 
     sf::Vector2f getVelocity() const { return velocity; }
     void setVelocity(const sf::Vector2f& vel) { velocity = vel; }

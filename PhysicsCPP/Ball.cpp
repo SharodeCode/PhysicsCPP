@@ -1,19 +1,25 @@
 #include<SFML/Graphics.hpp>
 #include "Ball.h"
 
-Ball::Ball(sf::Vector2f position) : circleRadius(5.0f), velocity(0, 0)
+Ball::Ball(sf::Vector2f position) : circleRadius(5.0f), velocity(0.0f, 0.0f)
 {
     shape = sf::CircleShape(circleRadius);
     shape.setFillColor(sf::Color::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
     shape.setOrigin(sf::Vector2f(circleRadius, circleRadius));
     setPosition(position);
+    position_last = position;
 }
 
 void Ball::update(float dt) {
-    sf::Vector2f pos = getPosition();
-    pos += velocity * dt;
 
-    setPosition(pos);
+    const sf::Vector2f displacement = getPosition() - position_last;
+
+    position_last = getPosition();
+
+    setPosition(getPosition() + displacement + velocity * (dt * dt));
+
+    velocity = {};
+
 }
 
 void Ball::bounce(sf::Vector2f normal, float damping) {
@@ -32,6 +38,11 @@ void Ball::accelerate(sf::Vector2f a)
 float Ball::getRadius() const
 {
     return circleRadius;
+}
+
+float Ball::getGravity() const
+{
+    return gravity;
 }
 
 void Ball::draw(sf::RenderTarget& target, sf::RenderStates states) const {
