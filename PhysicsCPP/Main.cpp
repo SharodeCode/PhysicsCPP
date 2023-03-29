@@ -2,7 +2,7 @@
 #include "Ball.h"
 #include "PhysicsSolver.h"
 
-const int WINDOW_HEIGHT = 500;
+const int WINDOW_HEIGHT = 800;
 const int WINDOW_WIDTH = 800;
 
 const int frameRate = 60;

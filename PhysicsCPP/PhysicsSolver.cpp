@@ -1,16 +1,15 @@
 #include "PhysicsSolver.h"
 
-
 PhysicsSolver::PhysicsSolver() {
 
     // Create the frame (hollow circle)
-    float frameRadius = 200.0f;
+    float frameRadius = 250.0f;
     frame = sf::CircleShape(frameRadius, 100);
     frame.setOutlineThickness(10.0f);
     frame.setFillColor(sf::Color::Transparent);
     frame.setOutlineColor(sf::Color::White);
     frame.setOrigin(sf::Vector2(frameRadius, frameRadius));
-    frame.setPosition(sf::Vector2f(400.0f, 250.0f));
+    frame.setPosition(sf::Vector2f(400.0f, 400.0f));
 }
 
 void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
@@ -35,7 +34,8 @@ void PhysicsSolver::update(float subStepRate)
 
     for (int i = 0; i < subSteps; i++) {
         applyGravity();
-        checkBallCollisions();
+        //checkBallCollisionsBruteForce();
+        checkBallCollisionsCollisionGrid();
         checkFrameCollisions();
         updateBalls(subStepRate);
     }
@@ -80,13 +80,56 @@ void PhysicsSolver::checkFrameCollisions() {
     }
 }
 
-void PhysicsSolver::checkBallCollisions() {
+void PhysicsSolver::checkBallCollisionsBruteForce() {
     for (size_t i = 0; i < balls.size(); ++i) {
         for (size_t j = i + 1; j < balls.size(); ++j) {
             resolveBallCollision(balls[i], balls[j]);
         }
     }
 }
+
+void PhysicsSolver::checkBallCollisionsCollisionGrid() {
+
+    float CELL_SIZE = 40.0f;
+
+    // Create the grid
+    int gridWidth = static_cast<int>(std::ceil(800.0f / CELL_SIZE));
+    int gridHeight = static_cast<int>(std::ceil(800.0f / CELL_SIZE));
+
+    std::vector<std::vector<std::vector<Ball*>>> grid(gridWidth, std::vector<std::vector<Ball*>>(gridHeight));
+
+    // Assign balls to grid cells
+    for (auto& ball : balls) {
+        int x = static_cast<int>(ball.getPosition().x / CELL_SIZE);
+        int y = static_cast<int>(ball.getPosition().y / CELL_SIZE);
+
+        grid[x][y].push_back(&ball);
+    }
+
+    // Check for collisions within the same cell and neighboring cells
+    for (int x = 0; x < gridWidth; ++x) {
+        for (int y = 0; y < gridHeight; ++y) {
+            for (int i = -1; i <= 1; ++i) {
+                for (int j = -1; j <= 1; ++j) {
+                    int nx = x + i;
+                    int ny = y + j;
+
+                    if (nx >= 0 && nx < gridWidth && ny >= 0 && ny < gridHeight) {
+                        for (auto& ballA : grid[x][y]) {
+                            for (auto& ballB : grid[nx][ny]) {
+                                if (ballA != ballB) {
+
+                                    resolveBallCollision(*ballA, *ballB);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 const std::vector<Ball>& PhysicsSolver::getBalls() const
 {

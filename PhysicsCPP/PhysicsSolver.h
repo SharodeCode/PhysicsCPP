@@ -19,7 +19,8 @@ public:
     void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
     void resolveBallCollision(Ball& a, Ball& b);
     void checkFrameCollisions();
-    void checkBallCollisions();
+    void checkBallCollisionsBruteForce();
+    void checkBallCollisionsCollisionGrid();
     const std::vector<Ball>& getBalls() const;
     const sf::CircleShape& getFrame() const;
     void updateBalls(float dt);

@@ -1,7 +1,7 @@
 #include<SFML/Graphics.hpp>
 #include "Ball.h"
 
-Ball::Ball(sf::Vector2f position) : circleRadius(5.0f), velocity(0.0f, 0.0f)
+Ball::Ball(sf::Vector2f position) : circleRadius(8.0f), velocity(0.0f, 0.0f)
 {
     shape = sf::CircleShape(circleRadius);
     shape.setFillColor(sf::Color::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
