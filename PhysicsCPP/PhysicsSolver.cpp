@@ -1,4 +1,5 @@
 #include "PhysicsSolver.h"
+#include <future>
 
 PhysicsSolver::PhysicsSolver() {
 
@@ -31,12 +32,20 @@ void PhysicsSolver::updateBalls(float dt)
 
 void PhysicsSolver::update(float subStepRate)
 {
+    std::vector<std::future<void>> futures;
 
     for (int i = 0; i < subSteps; i++) {
+        futures.clear();
+
         applyGravity();
-        //checkBallCollisionsBruteForce();
-        checkBallCollisionsCollisionGrid();
-        checkFrameCollisions();
+
+        futures.push_back(std::async(std::launch::async, &PhysicsSolver::checkBallCollisionsCollisionGrid, this));
+        futures.push_back(std::async(std::launch::async, &PhysicsSolver::checkFrameCollisions, this));
+
+        for (auto& future : futures) {
+            future.wait();
+        }
+
         updateBalls(subStepRate);
     }
 }
