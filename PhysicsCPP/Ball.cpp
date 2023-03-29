@@ -19,7 +19,6 @@ void Ball::update(float dt) {
     setPosition(getPosition() + displacement + velocity * (dt * dt));
 
     velocity = {};
-
 }
 
 void Ball::bounce(sf::Vector2f normal, float damping) {
@@ -42,7 +41,7 @@ float Ball::getRadius() const
 
 float Ball::getGravity() const
 {
-    return gravity;
+    return GRAVITY;
 }
 
 void Ball::draw(sf::RenderTarget& target, sf::RenderStates states) const {

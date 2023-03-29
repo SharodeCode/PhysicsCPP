@@ -26,7 +26,7 @@ private:
     sf::Vector2f velocity;
     sf::CircleShape shape;
 
-    const float gravity = 9.8f * 150;
+    const float GRAVITY = 9.8f * 150;
     float circleRadius = 5.0f;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;

@@ -1,64 +1,35 @@
 #include <SFML/Graphics.hpp>
 #include "Ball.h"
 #include "PhysicsSolver.h"
+#include "UI.h"
 
-const int WINDOW_HEIGHT = 800;
-const int WINDOW_WIDTH = 800;
-
-const int frameRate = 60;
-const int subSteps = 8;
+constexpr int WINDOW_HEIGHT = 800;
+constexpr int WINDOW_WIDTH = 800;
+constexpr int FRAME_RATE = 60;
+constexpr int SUB_STEPS = 8;
 
 static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 
-static sf::Text textFPS;
-static sf::Text textNumberOfObjects;
-static sf::Font font;
-
-static void displayFPS(float fps)
-{
-    textFPS.setString("FPS: " + std::to_string(fps));
-}
-
-static void displayNumberOfObjects(int numberOfObjects)
-{
-    textNumberOfObjects.setString("Number of objects: " + std::to_string(numberOfObjects));
-}
 
 static void initialise() {
 
-    // Initialise font and text
-    font.loadFromFile("Roboto.ttf");
-    textFPS.setFont(font);
-    textFPS.setCharacterSize(10);
-    textFPS.setFillColor(sf::Color::White);
-    textFPS.setStyle(sf::Text::Regular);
-
-    textNumberOfObjects.setFont(font);
-    textNumberOfObjects.setCharacterSize(10);
-    textNumberOfObjects.setFillColor(sf::Color::White);
-    textNumberOfObjects.setStyle(sf::Text::Regular);
-    textNumberOfObjects.setPosition(sf::Vector2f(0, textFPS.getLocalBounds().height + 12));
+    window.setFramerateLimit(FRAME_RATE);
 }
 
 int main()
 {
     initialise();
 
-    float subStepRate = 1.0f / (frameRate * subSteps);
-    float accumulator = 0.0f;
-
-    window.setFramerateLimit(frameRate);
-
     PhysicsSolver ps = PhysicsSolver();
-    ps.subSteps = subSteps;
-
-    // Set the gravity and bounce damping
-    float damping = 0.85f;
+    ps.subSteps = SUB_STEPS;
 
     // Create a clock to control the movement
     sf::Clock clock = sf::Clock();
 
-    float displayFramerateTime = 0.0f;
+    UI ui = UI(&window, &ps);
+
+    float subStepRate = 1.0f / (FRAME_RATE * SUB_STEPS);
+    float accumulator = 0.0f;
     float spawnCircleTime = 0.0f;
 
     static bool lockClick = false;
@@ -66,18 +37,9 @@ int main()
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds();
-        float fps = 1.0f / (deltaTime);
 
-        accumulator += deltaTime;
-
-        displayFramerateTime += deltaTime;
         spawnCircleTime += deltaTime;
-
-        if (displayFramerateTime > 0.5)
-        {
-            displayFPS(fps);
-            displayFramerateTime = 0;
-        }
+        accumulator += deltaTime;
 
         if (spawnCircleTime > 0.1)
         {
@@ -115,11 +77,10 @@ int main()
             window.draw(ball);
         }
 
-        displayNumberOfObjects(ps.getBalls().size());
+        ui.updateSimulationDetails(deltaTime);
 
         window.draw(ps.getFrame());
-        window.draw(textFPS);
-        window.draw(textNumberOfObjects);
+
         window.display();
     }
 
