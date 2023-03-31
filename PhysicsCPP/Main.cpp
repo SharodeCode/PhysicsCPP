@@ -41,7 +41,7 @@ int main()
         spawnCircleTime += deltaTime;
         accumulator += deltaTime;
 
-        if (spawnCircleTime > 0.1)
+        if (spawnCircleTime > 0.2)
         {
             ps.spawnCircle(sf::Vector2f(375, 185));
             spawnCircleTime = 0;

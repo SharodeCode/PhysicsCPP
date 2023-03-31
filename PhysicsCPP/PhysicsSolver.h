@@ -4,6 +4,7 @@
 #include <vector>
 #include "Ball.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 constexpr float damping = 0.99f;
 
@@ -21,6 +22,7 @@ public:
     void checkFrameCollisions();
     void checkBallCollisionsBruteForce();
     void checkBallCollisionsCollisionGrid();
+    void processGridRange(std::vector<Ball>& balls, const std::vector<std::vector<std::vector<Ball*>>>& grid, int startX, int startY, int endX, int endY);
     const std::vector<Ball>& getBalls() const;
     const sf::CircleShape& getFrame() const;
     void updateBalls(float dt);
@@ -30,5 +32,7 @@ private:
 
 	sf::CircleShape frame;
 	std::vector<Ball> balls;
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
 };
 

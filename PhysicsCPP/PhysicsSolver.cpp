@@ -11,6 +11,12 @@ PhysicsSolver::PhysicsSolver() {
     frame.setOutlineColor(sf::Color::White);
     frame.setOrigin(sf::Vector2(frameRadius, frameRadius));
     frame.setPosition(sf::Vector2f(400.0f, 400.0f));
+
+
+    if (!buffer.loadFromFile("bouncyBall.wav")) {
+    }
+
+    sound.setBuffer(buffer);
 }
 
 void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
@@ -27,6 +33,7 @@ void PhysicsSolver::updateBalls(float dt)
 {
     for (auto& ball : balls) {
         ball.update(dt);
+        
     }
 }
 
@@ -71,14 +78,23 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
     sf::Vector2f delta = a.getPosition() - b.getPosition();
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     float collision_distance = a.getRadius() + b.getRadius();
+
     
     if (distance <= collision_distance) {
         sf::Vector2f normal = delta / distance;
+        sf::Vector2f relative_velocity = (a.getPosition() - a.position_last) - (b.getPosition() - b.position_last);
+        float impulse = 2.0f * (relative_velocity.x * normal.x + relative_velocity.y * normal.y);
+
+        if (impulse < -0.8f || impulse > 0.8f) {
+
+            sound.play();
+        }
 
         const float delta = 0.65f * (distance - collision_distance);
 
         a.move(- ((normal * delta * b.radius) / (a.radius + b.radius)));
         b.move((normal * delta * a.radius) / (a.radius + b.radius));
+
     }
 }
 
