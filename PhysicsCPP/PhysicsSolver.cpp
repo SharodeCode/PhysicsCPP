@@ -1,7 +1,8 @@
 #include "PhysicsSolver.h"
 #include <future>
+#include "ParticleSystem.h"
 
-PhysicsSolver::PhysicsSolver() {
+PhysicsSolver::PhysicsSolver(ParticleSystem* sparkss){
 
     // Create the frame (hollow circle)
     float frameRadius = 250.0f;
@@ -15,6 +16,8 @@ PhysicsSolver::PhysicsSolver() {
 
     if (!buffer.loadFromFile("bouncyBall.wav")) {
     }
+
+    sparks = sparkss;
 
     sound.setBuffer(buffer);
 }
@@ -85,9 +88,17 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
         sf::Vector2f relative_velocity = (a.getPosition() - a.position_last) - (b.getPosition() - b.position_last);
         float impulse = 2.0f * (relative_velocity.x * normal.x + relative_velocity.y * normal.y);
 
-        if (impulse < -0.8f || impulse > 0.8f) {
+
+        if (impulse < -3.5f || impulse > 3.5f) {
 
             sound.play();
+
+            // Calculate the collision point
+            sf::Vector2f collisionPoint = a.getPosition() + normal * (a.getRadius() - collision_distance);
+
+            // Set the particle system emitter to the collision point and add sparks
+            sparks->setEmitter(collisionPoint);
+            sparks->addParticles(10);
         }
 
         const float delta = 0.65f * (distance - collision_distance);

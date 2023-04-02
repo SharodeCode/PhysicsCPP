@@ -5,6 +5,7 @@
 #include "Ball.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "ParticleSystem.h"
 
 constexpr float damping = 0.99f;
 
@@ -13,7 +14,7 @@ class PhysicsSolver
 public:
     int subSteps;
 
-    PhysicsSolver();
+    PhysicsSolver(ParticleSystem* sparkss);
 
     void spawnCircle(const sf::Vector2f& position);
     void applyGravity();
@@ -34,5 +35,6 @@ private:
 	std::vector<Ball> balls;
     sf::SoundBuffer buffer;
     sf::Sound sound;
+    ParticleSystem* sparks;
 };
 
