@@ -77,7 +77,7 @@ int main()
             window.draw(ball);
         }
 
-        ui.updateSimulationDetails(deltaTime);
+        ui.updateUI(deltaTime);
 
         window.draw(ps.getFrame());
 
