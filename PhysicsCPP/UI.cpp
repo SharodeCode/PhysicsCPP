@@ -29,9 +29,9 @@ void UI::InitialiseButtons() {
     const float buttonHeight = 50.f;
     const float buttonGap = 10.f;
 
-    buttons.emplace_back(Button((m_RenderWindow->getSize().x - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", font));
-    buttons.emplace_back(Button((m_RenderWindow->getSize().x - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", font));
-    buttons.emplace_back(Button((m_RenderWindow->getSize().x - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Cilck to Spawn", font));
+    buttons.emplace_back(Button(Button::buttonType::mute, (m_RenderWindow->getSize().x - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", font));
+    buttons.emplace_back(Button(Button::buttonType::ballSpawner, (m_RenderWindow->getSize().x - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", font));
+    buttons.emplace_back(Button(Button::buttonType::clickToSpawn, (m_RenderWindow->getSize().x - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Cilck to Spawn", font));
 }
 
 void UI::updateUI(float deltaTime) {
@@ -43,6 +43,7 @@ void UI::updateUI(float deltaTime) {
 
             if (button.isMouseOver(*m_RenderWindow)) {
                 int a = 0;
+
             }
         }
 
