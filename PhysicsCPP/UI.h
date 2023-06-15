@@ -11,7 +11,8 @@ public:
 	void displayFPS(float fps);
 	void displayNumberOfObjects(int numberOfObjects);
 	void InitialiseButtons();
-
+	bool isButtonClicked();
+	void buttonClicked();
 
 private:
 	sf::RenderWindow *m_RenderWindow;

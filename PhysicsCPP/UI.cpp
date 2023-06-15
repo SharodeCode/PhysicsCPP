@@ -35,20 +35,6 @@ void UI::InitialiseButtons() {
 }
 
 void UI::updateUI(float deltaTime) {
-
-    // Update buttons
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-
-        for (auto& button : buttons) {
-
-            if (button.isMouseOver(*m_RenderWindow)) {
-                int a = 0;
-
-            }
-        }
-
-
-    }
     
     for (auto& button : buttons) {
 
@@ -87,3 +73,36 @@ void UI::displayNumberOfObjects(int numberOfObjects)
     textNumberOfObjects.setString("Number of objects: " + std::to_string(numberOfObjects));
 }
 
+void UI::buttonClicked() {
+    // Update buttons
+    for (auto& button : buttons) {
+
+        if (button.isMouseOver(*m_RenderWindow)) {
+
+            switch (button.m_btnType) {
+            case Button::buttonType::mute:
+                button.toggleActive();
+                physicsSolver->toggleAudioActive();
+                break;
+            case Button::buttonType::ballSpawner:
+                button.toggleActive();
+                break;
+            case Button::buttonType::clickToSpawn:
+                button.toggleActive();
+                break;
+            }
+
+        }
+    }
+}
+
+bool UI::isButtonClicked() {
+    for (auto& button : buttons) {
+
+        if (button.isMouseOver(*m_RenderWindow)) {
+            return true;
+        }
+    }
+
+    return false;
+}

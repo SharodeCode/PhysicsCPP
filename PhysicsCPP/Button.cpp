@@ -5,7 +5,7 @@ Button::Button(buttonType btnType, float x, float y, float width, float height, 
     
     button.setPosition(sf::Vector2f(x, y));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(sf::Color::Blue);
+    button.setFillColor(colourInactive);
 
     text.setFont(font);
     text.setString(buttonText);
@@ -36,9 +36,18 @@ bool Button::isMouseOver(sf::RenderWindow& window) {
 
 void Button::update(sf::RenderWindow& window) {
     if (isMouseOver(window)) {
-        button.setFillColor(sf::Color::Red);
+        button.setFillColor(colourHover);
+    }
+    else if(active) {
+        button.setFillColor(colourActive);
     }
     else {
-        button.setFillColor(sf::Color::Blue);
+        button.setFillColor(colourInactive);
     }
+}
+
+void Button::toggleActive() {
+
+    active = !active;
+
 }

@@ -9,7 +9,7 @@ constexpr int FRAME_RATE = 60;
 constexpr int SUB_STEPS = 8;
 
 static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-
+bool shootBalls = true;
 
 static void initialise() {
 
@@ -52,21 +52,27 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-        }
 
-        if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
-                lockClick = true;
-                sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
-                ps.spawnCircle(mousePosition);
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
+                if (shootBalls) {
+                    lockClick = true;
+                    sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
+                    ps.spawnCircle(mousePosition);
+                }
+
+                if (ui.isButtonClicked()) {
+                    ui.buttonClicked();
+                }
+            }
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
+                    lockClick = false;
+                }
             }
         }
 
-        if (event.type == sf::Event::MouseButtonReleased) {
-            if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
-                lockClick = false;
-            }
-        }
+
 
         ps.update(subStepRate);
 

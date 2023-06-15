@@ -85,10 +85,11 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
         sf::Vector2f relative_velocity = (a.getPosition() - a.position_last) - (b.getPosition() - b.position_last);
         float impulse = 2.0f * (relative_velocity.x * normal.x + relative_velocity.y * normal.y);
 
-        if (impulse < -0.8f || impulse > 0.8f) {
+        if (audioActive && (impulse < -0.8f || impulse > 0.8f)) {
 
             sound.play();
         }
+
 
         const float delta = 0.65f * (distance - collision_distance);
 
@@ -164,4 +165,8 @@ const std::vector<Ball>& PhysicsSolver::getBalls() const
 const sf::CircleShape& PhysicsSolver::getFrame() const
 {
     return frame;
+}
+
+void PhysicsSolver::toggleAudioActive() {
+    audioActive = !audioActive;
 }

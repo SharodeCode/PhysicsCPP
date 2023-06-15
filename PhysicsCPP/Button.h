@@ -20,5 +20,15 @@ public:
     void drawTo(sf::RenderWindow& window);
     bool isMouseOver(sf::RenderWindow& window);
     void update(sf::RenderWindow& window);
+
+    void toggleActive();
+
+private:
+    sf::Color colourActive = sf::Color::Red;
+    sf::Color colourInactive = sf::Color::Blue;
+    sf::Color colourHover = sf::Color::Green;
+
+    bool active = false;
+
 };
 
