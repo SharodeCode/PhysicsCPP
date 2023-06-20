@@ -73,7 +73,9 @@ void UI::displayNumberOfObjects(int numberOfObjects)
     textNumberOfObjects.setString("Number of objects: " + std::to_string(numberOfObjects));
 }
 
-void UI::buttonClicked() {
+Button::buttonType UI::buttonClicked() {
+    Button::buttonType result = Button::buttonType::mute;
+
     // Update buttons
     for (auto& button : buttons) {
 
@@ -83,17 +85,21 @@ void UI::buttonClicked() {
             case Button::buttonType::mute:
                 button.toggleActive();
                 physicsSolver->toggleAudioActive();
+                result = Button::buttonType::mute;
                 break;
             case Button::buttonType::ballSpawner:
                 button.toggleActive();
+                result = Button::buttonType::ballSpawner;
                 break;
             case Button::buttonType::clickToSpawn:
                 button.toggleActive();
+                result = Button::buttonType::clickToSpawn;
                 break;
             }
 
         }
     }
+    return result;
 }
 
 bool UI::isButtonClicked() {

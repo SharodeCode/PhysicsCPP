@@ -139,6 +139,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PhysicsSolver.cpp" />
+    <ClCompile Include="Portal.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,10 +154,14 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="PhysicsSolver.h" />
+    <ClInclude Include="Portal.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="bouncyBall.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="images\portal.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

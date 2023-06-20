@@ -12,7 +12,7 @@ public:
 	void displayNumberOfObjects(int numberOfObjects);
 	void InitialiseButtons();
 	bool isButtonClicked();
-	void buttonClicked();
+	Button::buttonType buttonClicked();
 
 private:
 	sf::RenderWindow *m_RenderWindow;

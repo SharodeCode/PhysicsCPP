@@ -2,6 +2,7 @@
 #include "Ball.h"
 #include "PhysicsSolver.h"
 #include "UI.h"
+#include "Portal.h"
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -34,18 +35,26 @@ int main()
 
     static bool lockClick = false;
 
+    sf::Texture texture;
+    if (!texture.loadFromFile("./images/portal.png"))
+    {
+        // error...
+    }
+
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+
+    Portal test(&ps, &sprite);
+
+    Button::buttonType currentButton = Button::buttonType::mute;
+
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds();
 
-        spawnCircleTime += deltaTime;
         accumulator += deltaTime;
 
-        if (spawnCircleTime > 0.2)
-        {
-            ps.spawnCircle(sf::Vector2f(375, 185));
-            spawnCircleTime = 0;
-        }
+        test.update(deltaTime);
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -54,14 +63,17 @@ int main()
                 window.close();
 
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
-                if (shootBalls) {
+                if (currentButton == Button::buttonType::clickToSpawn) {
                     lockClick = true;
                     sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
                     ps.spawnCircle(mousePosition);
                 }
+                else if (currentButton == Button::buttonType::ballSpawner) {
+                    test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+                }
 
                 if (ui.isButtonClicked()) {
-                    ui.buttonClicked();
+                    currentButton = ui.buttonClicked();
                 }
             }
 
@@ -78,6 +90,9 @@ int main()
 
         window.clear();
 
+        test.drawPortals(&window);
+        window.draw(sprite);
+
         for(const auto& ball : ps.getBalls())
         {
             window.draw(ball);
@@ -86,6 +101,8 @@ int main()
         ui.updateUI(deltaTime);
 
         window.draw(ps.getFrame());
+
+
 
         window.display();
     }
