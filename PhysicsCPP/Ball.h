@@ -6,7 +6,7 @@ class Ball : public sf::Drawable, public sf::Transformable
 
 public:
     sf::Vector2f position_last;
-    float        radius = 5.0f;
+    float        radius = 2.0f;
 
     Ball(sf::Vector2f position);
 
@@ -27,7 +27,6 @@ private:
     sf::CircleShape shape;
 
     const float GRAVITY = 9.8f * 150;
-    float circleRadius = 5.0f;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
