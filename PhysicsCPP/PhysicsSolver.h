@@ -27,6 +27,7 @@ public:
     const sf::CircleShape& getFrame() const;
     void updateBalls(float dt);
     void update(float subStepRate);
+    void toggleAudioActive();
 
 private:
 
@@ -34,5 +35,6 @@ private:
 	std::vector<Ball> balls;
     sf::SoundBuffer buffer;
     sf::Sound sound;
+    bool audioActive = false;
 };
 

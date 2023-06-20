@@ -2,6 +2,7 @@
 #include "Ball.h"
 #include "PhysicsSolver.h"
 #include "UI.h"
+#include "Portal.h"
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -9,7 +10,7 @@ constexpr int FRAME_RATE = 60;
 constexpr int SUB_STEPS = 8;
 
 static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-
+bool shootBalls = true;
 
 static void initialise() {
 
@@ -34,52 +35,74 @@ int main()
 
     static bool lockClick = false;
 
+    sf::Texture texture;
+    if (!texture.loadFromFile("./images/portal.png"))
+    {
+        // error...
+    }
+
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+
+    Portal test(&ps, &sprite);
+
+    Button::buttonType currentButton = Button::buttonType::mute;
+
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds();
 
-        spawnCircleTime += deltaTime;
         accumulator += deltaTime;
 
-        if (spawnCircleTime > 0.2)
-        {
-            ps.spawnCircle(sf::Vector2f(375, 185));
-            spawnCircleTime = 0;
-        }
+        test.update(deltaTime);
 
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-        }
 
-        if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
-                lockClick = true;
-                sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
-                ps.spawnCircle(mousePosition);
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
+                if (currentButton == Button::buttonType::clickToSpawn) {
+                    lockClick = true;
+                    sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
+                    ps.spawnCircle(mousePosition);
+                }
+                else if (currentButton == Button::buttonType::ballSpawner) {
+                    test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+                }
+
+                if (ui.isButtonClicked()) {
+                    currentButton = ui.buttonClicked();
+                }
+            }
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
+                    lockClick = false;
+                }
             }
         }
 
-        if (event.type == sf::Event::MouseButtonReleased) {
-            if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
-                lockClick = false;
-            }
-        }
+
 
         ps.update(subStepRate);
 
         window.clear();
+
+        test.drawPortals(&window);
+        window.draw(sprite);
 
         for(const auto& ball : ps.getBalls())
         {
             window.draw(ball);
         }
 
-        ui.updateSimulationDetails(deltaTime);
+        ui.updateUI(deltaTime);
 
         window.draw(ps.getFrame());
+
+
 
         window.display();
     }
