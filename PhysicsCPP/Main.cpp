@@ -3,6 +3,7 @@
 #include "PhysicsSolver.h"
 #include "UI.h"
 #include "Portal.h"
+#include "ParticleSystem.h"
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -21,7 +22,10 @@ int main()
 {
     initialise();
 
-    PhysicsSolver ps = PhysicsSolver();
+    // Instantiate the particle system with an initial particle count of 100
+    ParticleSystem sparks(100);
+
+    PhysicsSolver ps = PhysicsSolver(&sparks);
     ps.subSteps = SUB_STEPS;
 
     // Create a clock to control the movement
@@ -50,10 +54,12 @@ int main()
 
     while (window.isOpen())
     {
-        float deltaTime = clock.restart().asSeconds();
+        sf::Time elapsed = clock.restart();
+        float deltaTime = elapsed.asSeconds();
 
         accumulator += deltaTime;
 
+        sparks.update(elapsed);
         test.update(deltaTime);
 
         sf::Event event;
@@ -102,7 +108,7 @@ int main()
 
         window.draw(ps.getFrame());
 
-
+        window.draw(sparks);
 
         window.display();
     }
