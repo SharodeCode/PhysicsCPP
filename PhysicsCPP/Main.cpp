@@ -1,9 +1,9 @@
 #include <SFML/Graphics.hpp>
-#include "Ball.h"
-#include "PhysicsSolver.h"
-#include "UI.h"
-#include "Portal.h"
-#include "ParticleSystem.h"
+#include "Objects/Ball.h"
+#include "PhysicsEngine/PhysicsSolver.h"
+#include "UI/UI.h"
+#include "Objects/Portal.h"
+#include "Effects/ParticleSystem.h"
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -40,7 +40,7 @@ int main()
     static bool lockClick = false;
 
     sf::Texture texture;
-    if (!texture.loadFromFile("./images/portal.png"))
+    if (!texture.loadFromFile("./Media/Images/portal.png"))
     {
         // error...
     }
@@ -69,8 +69,10 @@ int main()
                 window.close();
 
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
+                
+                lockClick = true;
+                
                 if (currentButton == Button::buttonType::clickToSpawn) {
-                    lockClick = true;
                     sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
                     ps.spawnCircle(mousePosition);
                 }

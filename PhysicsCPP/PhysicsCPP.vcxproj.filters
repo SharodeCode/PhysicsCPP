@@ -18,52 +18,52 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ball.cpp">
+    <ClCompile Include="UI\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsSolver.cpp">
+    <ClCompile Include="UI\UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp">
+    <ClCompile Include="PhysicsEngine\PhysicsSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="Effects\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Portal.cpp">
+    <ClCompile Include="Objects\Ball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleSystem.cpp">
+    <ClCompile Include="Objects\Portal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Roboto.ttf">
+    <Font Include="Media\Fonts\Roboto.ttf">
       <Filter>Resource Files</Filter>
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ball.h">
+    <ClInclude Include="UI\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsSolver.h">
+    <ClInclude Include="UI\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UI.h">
+    <ClInclude Include="PhysicsEngine\PhysicsSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleSystem.h">
+    <ClInclude Include="Effects\ParticleSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="Objects\Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Portal.h">
+    <ClInclude Include="Objects\Portal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="bouncyBall.wav">
+    <Media Include="Media\Audio\bouncyBall.wav">
       <Filter>Resource Files</Filter>
     </Media>
   </ItemGroup>

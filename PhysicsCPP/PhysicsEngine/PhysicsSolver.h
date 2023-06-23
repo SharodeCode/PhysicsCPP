@@ -1,11 +1,9 @@
-
-
 #pragma once
 #include <vector>
-#include "Ball.h"
+#include "Objects/Ball.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "ParticleSystem.h"
+#include "Effects/ParticleSystem.h"
 
 constexpr float damping = 0.99f;
 

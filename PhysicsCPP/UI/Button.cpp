@@ -1,4 +1,4 @@
-#include "Button.h"
+#include "UI/Button.h"
 
 Button::Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, sf::Font& font) {
     m_btnType = btnType;

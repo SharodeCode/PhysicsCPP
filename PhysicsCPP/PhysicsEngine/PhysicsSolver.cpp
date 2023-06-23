@@ -1,6 +1,6 @@
-#include "PhysicsSolver.h"
+#include "PhysicsEngine/PhysicsSolver.h"
 #include <future>
-#include "ParticleSystem.h"
+#include "Effects/ParticleSystem.h"
 
 PhysicsSolver::PhysicsSolver(ParticleSystem* sparkss){
 
@@ -14,7 +14,7 @@ PhysicsSolver::PhysicsSolver(ParticleSystem* sparkss){
     frame.setPosition(sf::Vector2f(400.0f, 400.0f));
 
 
-    if (!buffer.loadFromFile("bouncyBall.wav")) {
+    if (!buffer.loadFromFile("./Media/Audio/bouncyBall.wav")) {
     }
 
     sparks = sparkss;
@@ -91,7 +91,10 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
 
         if (impulse < -3.5f || impulse > 3.5f) {
 
-            sound.play();
+            if (audioActive) {
+                sound.play();
+            }
+            
 
             // Calculate the collision point
             sf::Vector2f collisionPoint = a.getPosition() + normal * (a.getRadius() - collision_distance);

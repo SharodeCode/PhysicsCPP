@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "PhysicsSolver.h"
+#include "PhysicsEngine/PhysicsSolver.h"
 
 class Portal
 {
