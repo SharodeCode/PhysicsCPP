@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "UI/Button.h"
 #include "PhysicsEngine/PhysicsSolver.h"
+#include <UI/UIPanel.h>
 
 UI::UI(sf::RenderWindow* RenderWindow, PhysicsSolver* ps)
 {
@@ -25,21 +26,25 @@ UI::UI(sf::RenderWindow* RenderWindow, PhysicsSolver* ps)
 }
 
 void UI::InitialiseButtons() {
+    std::shared_ptr<UIPanel> panel = std::make_shared<UIPanel>();
+
+    m_UIPanel = panel;
 
     const float buttonWidth = 200.f;
     const float buttonHeight = 50.f;
     const float buttonGap = 10.f;
 
-    buttons.emplace_back(Button(Button::buttonType::mute, (m_RenderWindow->getSize().x - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", font));
-    buttons.emplace_back(Button(Button::buttonType::ballSpawner, (m_RenderWindow->getSize().x - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", font));
-    buttons.emplace_back(Button(Button::buttonType::clickToSpawn, (m_RenderWindow->getSize().x - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Cilck to Spawn", font));
+    panel->addElement(std::make_shared<Button>(Button::buttonType::mute, (m_RenderWindow->getSize().x - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", font, *m_UIPanel));
+    panel->addElement(std::make_shared<Button>(Button::buttonType::ballSpawner, (m_RenderWindow->getSize().x - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", font, *m_UIPanel));
+    panel->addElement(std::make_shared<Button>(Button::buttonType::clickToSpawn, (m_RenderWindow->getSize().x - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Click to Spawn", font, *m_UIPanel));
+
+    elements.push_back(panel);
 }
 
 void UI::updateUI(float deltaTime) {
     
-    for (auto& button : buttons) {
-
-        button.update(*m_RenderWindow);
+    for (auto& button : elements) {
+        button->update(sf::Mouse::getPosition(*m_RenderWindow));
     }
     
 
@@ -58,9 +63,9 @@ void UI::updateUI(float deltaTime) {
     m_RenderWindow->draw(textFPS);
     m_RenderWindow->draw(textNumberOfObjects);
 
-    for (auto& button : buttons) {
+    for (auto& button : elements) {
 
-        button.drawTo(*m_RenderWindow);
+        button->draw(*m_RenderWindow);
     }
 }
 
@@ -74,39 +79,10 @@ void UI::displayNumberOfObjects(int numberOfObjects)
     textNumberOfObjects.setString("Number of objects: " + std::to_string(numberOfObjects));
 }
 
-Button::buttonType UI::buttonClicked() {
-    Button::buttonType result = Button::buttonType::mute;
-
-    // Update buttons
-    for (auto& button : buttons) {
-
-        if (button.isMouseOver(*m_RenderWindow)) {
-
-            switch (button.m_btnType) {
-            case Button::buttonType::mute:
-                button.toggleActive();
-                physicsSolver->toggleAudioActive();
-                result = Button::buttonType::mute;
-                break;
-            case Button::buttonType::ballSpawner:
-                button.toggleActive();
-                result = Button::buttonType::ballSpawner;
-                break;
-            case Button::buttonType::clickToSpawn:
-                button.toggleActive();
-                result = Button::buttonType::clickToSpawn;
-                break;
-            }
-
-        }
-    }
-    return result;
-}
-
-bool UI::isButtonClicked() {
-    for (auto& button : buttons) {
-
-        if (button.isMouseOver(*m_RenderWindow)) {
+bool UI::handleEvent(const sf::Event& event) {
+    for (auto& element : elements) {
+        if (element->handleEvent(event, sf::Mouse::getPosition(* m_RenderWindow))) {
+            // Stop handling if an element handled the event
             return true;
         }
     }

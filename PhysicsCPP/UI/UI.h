@@ -11,8 +11,9 @@ public:
 	void displayFPS(float fps);
 	void displayNumberOfObjects(int numberOfObjects);
 	void InitialiseButtons();
-	bool isButtonClicked();
-	Button::buttonType buttonClicked();
+	bool handleEvent(const sf::Event& event);
+
+	std::shared_ptr<UIPanel> m_UIPanel;
 
 private:
 	sf::RenderWindow *m_RenderWindow;
@@ -22,7 +23,8 @@ private:
 	sf::Font font;
 	float displayFramerateTime = 0.0f;
 
-	std::vector<Button> buttons;
+	std::vector<std::shared_ptr<UIElement>> elements;
+
 
 };
 

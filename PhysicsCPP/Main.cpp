@@ -68,26 +68,30 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
-                
-                lockClick = true;
-                
-                if (currentButton == Button::buttonType::clickToSpawn) {
-                    sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
-                    ps.spawnCircle(mousePosition);
-                }
-                else if (currentButton == Button::buttonType::ballSpawner) {
-                    test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+
+                bool UIClicked = ui.handleEvent(event);
+
+                if (Button* activeButton = dynamic_cast<Button*>(ui.m_UIPanel->getActiveElement())) {
+                    // activeElement is a Button, and activeButton points to it.
+                    // Now you can use any methods specific to Button.
+                    currentButton = activeButton->m_btnType; // Assume getType() is a public method in Button.
                 }
 
-                if (ui.isButtonClicked()) {
-                    currentButton = ui.buttonClicked();
+                if (!UIClicked) {
+                    if (currentButton == Button::buttonType::clickToSpawn) {
+                        sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
+                        ps.spawnCircle(mousePosition);
+                    }
+                    else if (currentButton == Button::buttonType::ballSpawner) {
+                        test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+                    }
                 }
-            }
 
-            if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
-                    lockClick = false;
+                if (event.type == sf::Event::MouseButtonReleased) {
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        lockClick = false;
+                    }
                 }
             }
         }

@@ -136,10 +136,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Effects\ParticleSystem.cpp" />
+    <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Objects\Ball.cpp" />
     <ClCompile Include="Objects\Portal.cpp" />
     <ClCompile Include="PhysicsEngine\PhysicsSolver.cpp" />
+    <ClCompile Include="UI\UIPanel.cpp" />
     <ClCompile Include="UI\Button.cpp" />
     <ClCompile Include="UI\UI.cpp" />
   </ItemGroup>
@@ -153,11 +155,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects\ParticleSystem.h" />
+    <ClInclude Include="EventManager.h" />
     <ClInclude Include="Objects\Ball.h" />
     <ClInclude Include="Objects\Portal.h" />
     <ClInclude Include="PhysicsEngine\PhysicsSolver.h" />
+    <ClInclude Include="UI\UIPanel.h" />
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="UI\UI.h" />
+    <ClInclude Include="UI\UIElement.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Media\Audio\bouncyBall.wav" />
