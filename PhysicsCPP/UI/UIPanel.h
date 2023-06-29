@@ -11,54 +11,26 @@ class UIPanel : public UIElement {
 
 
 public:
-    UIPanel(float padding = 10.0f) : padding(padding), activeElement(nullptr) {}
+    UIPanel(float padding = 10.0f);
 
-    void addElement(const std::shared_ptr<UIElement>& element) {
-        if (!elements.empty()) {
-            auto& lastElement = elements.back();
-            sf::Vector2f pos = lastElement->getPosition();
-            pos.y += lastElement->getSize().y + padding;
-            element->setPosition(pos);
-        }
-        elements.push_back(element);
-    }
+    void addElement(const std::shared_ptr<UIElement>& element);
 
-    void draw(sf::RenderWindow& window) override {
-        for (auto& element : elements) {
-            element->draw(window);
-        }
-    }
+    void draw(sf::RenderWindow& window) override;
 
-    void update(sf::Vector2i mousePosition) {
-        // update child elements
-        for (auto& element : elements) {
-            element->update(mousePosition);
-        }
-    }
+    void update(sf::Vector2i mousePosition);
 
-    bool handleEvent(const sf::Event& event, sf::Vector2i mousePosition) override {
-        for (auto& element : elements) {
-            if (element->handleEvent(event, mousePosition)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool handleEvent(const sf::Event& event, sf::Vector2i mousePosition) override;
 
-    void setActiveElement(UIElement& element) {
-        activeElement = &element;
-    }
+    void setActiveElement(UIElement& element);
 
-    UIElement* getActiveElement() {
-        return activeElement;
-    }
+    UIElement* getActiveElement();
 
     //TODO: Modify this so that it doesnt implement the functions?
-    sf::Vector2f getPosition() const override { return sf::Vector2f(4.f, 3.f); }
-    void setPosition(const sf::Vector2f& position) override { /*...*/ }
+    sf::Vector2f getPosition() const override;
+    void setPosition(const sf::Vector2f& position);
 
-    sf::Vector2f getSize() const override { return sf::Vector2f(4.f, 3.f); }
-    void setSize(const sf::Vector2f& size) override { /*...*/ }
+    sf::Vector2f getSize() const override;
+    void setSize(const sf::Vector2f& size);
 
 private:
     UIElement* activeElement;
