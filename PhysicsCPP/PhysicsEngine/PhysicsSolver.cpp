@@ -13,13 +13,7 @@ PhysicsSolver::PhysicsSolver(ParticleSystem* sparkss){
     frame.setOrigin(sf::Vector2(frameRadius, frameRadius));
     frame.setPosition(sf::Vector2f(400.0f, 400.0f));
 
-
-    if (!buffer.loadFromFile("./Media/Audio/bouncyBall.wav")) {
-    }
-
     sparks = sparkss;
-
-    sound.setBuffer(buffer);
 }
 
 void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
@@ -90,12 +84,7 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
 
 
         if (impulse < -3.5f || impulse > 3.5f) {
-
-            if (audioActive) {
-                sound.play();
-            }
             
-
             // Calculate the collision point
             sf::Vector2f collisionPoint = a.getPosition() + normal * (a.getRadius() - collision_distance);
 

@@ -32,8 +32,6 @@ private:
 
 	sf::CircleShape frame;
 	std::vector<Ball> balls;
-    sf::SoundBuffer buffer;
-    sf::Sound sound;
     bool audioActive = false;
     ParticleSystem* sparks;
 };
