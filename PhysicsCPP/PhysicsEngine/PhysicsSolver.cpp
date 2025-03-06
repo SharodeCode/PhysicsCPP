@@ -1,8 +1,7 @@
 #include "PhysicsEngine/PhysicsSolver.h"
 #include <future>
-#include "Effects/ParticleSystem.h"
 
-PhysicsSolver::PhysicsSolver(ParticleSystem* sparkss){
+PhysicsSolver::PhysicsSolver(){
 
     // Create the frame (hollow circle)
     float frameRadius = 250.0f;
@@ -12,8 +11,6 @@ PhysicsSolver::PhysicsSolver(ParticleSystem* sparkss){
     frame.setOutlineColor(sf::Color::White);
     frame.setOrigin(sf::Vector2(frameRadius, frameRadius));
     frame.setPosition(sf::Vector2f(400.0f, 400.0f));
-
-    sparks = sparkss;
 }
 
 void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
@@ -88,9 +85,6 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
             // Calculate the collision point
             sf::Vector2f collisionPoint = a.getPosition() + normal * (a.getRadius() - collision_distance);
 
-            // Set the particle system emitter to the collision point and add sparks
-            sparks->setEmitter(collisionPoint);
-            sparks->addParticles(10);
         }
 
 

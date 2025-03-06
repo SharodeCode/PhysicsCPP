@@ -141,7 +141,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Effects\ParticleSystem.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Objects\Ball.cpp" />
@@ -160,7 +159,6 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Effects\ParticleSystem.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Objects\Ball.h" />
     <ClInclude Include="Objects\Portal.h" />
