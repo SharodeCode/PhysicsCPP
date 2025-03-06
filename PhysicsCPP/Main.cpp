@@ -1,9 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include "Ball.h"
-#include "PhysicsSolver.h"
-#include "UI.h"
-#include "Portal.h"
-#include "ParticleSystem.h"
+#include "Objects/Ball.h"
+#include "PhysicsEngine/PhysicsSolver.h"
+#include "UI/UI.h"
+#include "Objects/Portal.h"
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -22,10 +21,7 @@ int main()
 {
     initialise();
 
-    // Instantiate the particle system with an initial particle count of 100
-    ParticleSystem sparks(100);
-
-    PhysicsSolver ps = PhysicsSolver(&sparks);
+    PhysicsSolver ps = PhysicsSolver();
     ps.subSteps = SUB_STEPS;
 
     // Create a clock to control the movement
@@ -40,7 +36,7 @@ int main()
     static bool lockClick = false;
 
     sf::Texture texture;
-    if (!texture.loadFromFile("./images/portal.png"))
+    if (!texture.loadFromFile("./Media/Images/portal.png"))
     {
         // error...
     }
@@ -59,7 +55,6 @@ int main()
 
         accumulator += deltaTime;
 
-        sparks.update(elapsed);
         test.update(deltaTime);
 
         sf::Event event;
@@ -68,24 +63,30 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && lockClick == false) {
-                if (currentButton == Button::buttonType::clickToSpawn) {
-                    lockClick = true;
-                    sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
-                    ps.spawnCircle(mousePosition);
-                }
-                else if (currentButton == Button::buttonType::ballSpawner) {
-                    test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+
+                bool UIClicked = ui.handleEvent(event);
+
+                if (Button* activeButton = dynamic_cast<Button*>(ui.m_UIPanel->getActiveElement())) {
+                    // activeElement is a Button, and activeButton points to it.
+                    // Now you can use any methods specific to Button.
+                    currentButton = activeButton->m_btnType; // Assume getType() is a public method in Button.
                 }
 
-                if (ui.isButtonClicked()) {
-                    currentButton = ui.buttonClicked();
+                if (!UIClicked) {
+                    if (currentButton == Button::buttonType::clickToSpawn) {
+                        sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
+                        ps.spawnCircle(mousePosition);
+                    }
+                    else if (currentButton == Button::buttonType::ballSpawner) {
+                        test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+                    }
                 }
-            }
 
-            if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.mouseButton.button == sf::Mouse::Left && lockClick == true) {
-                    lockClick = false;
+                if (event.type == sf::Event::MouseButtonReleased) {
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        lockClick = false;
+                    }
                 }
             }
         }
@@ -107,8 +108,6 @@ int main()
         ui.updateUI(deltaTime);
 
         window.draw(ps.getFrame());
-
-        window.draw(sparks);
 
         window.display();
     }

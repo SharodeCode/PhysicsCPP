@@ -1,11 +1,8 @@
-
-
 #pragma once
 #include <vector>
-#include "Ball.h"
+#include "Objects/Ball.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "ParticleSystem.h"
 
 constexpr float damping = 0.99f;
 
@@ -14,7 +11,7 @@ class PhysicsSolver
 public:
     int subSteps;
 
-    PhysicsSolver(ParticleSystem* sparkss);
+    PhysicsSolver();
 
     void spawnCircle(const sf::Vector2f& position);
     void applyGravity();
@@ -34,9 +31,6 @@ private:
 
 	sf::CircleShape frame;
 	std::vector<Ball> balls;
-    sf::SoundBuffer buffer;
-    sf::Sound sound;
     bool audioActive = false;
-    ParticleSystem* sparks;
 };
 
