@@ -24,19 +24,19 @@
     <ClCompile Include="UI\UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsEngine\PhysicsSolver.cpp">
+    <ClCompile Include="src\Entities\Ball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Ball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Portal.cpp">
+    <ClCompile Include="src\Entities\Portal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UI\UIPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventManager.cpp">
+    <ClCompile Include="src\Engine\PhysicsSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Components\RigidbodyComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -52,13 +52,10 @@
     <ClInclude Include="UI\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsEngine\PhysicsSolver.h">
+    <ClInclude Include="include\Entities\Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Ball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Portal.h">
+    <ClInclude Include="include\Entities\Portal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UI\UIElement.h">
@@ -67,7 +64,19 @@
     <ClInclude Include="UI\UIPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventManager.h">
+    <ClInclude Include="include\Engine\PhysicsSolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Components\RigidbodyComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Components\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Entities\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

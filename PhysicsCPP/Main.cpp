@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include "Objects/Ball.h"
-#include "PhysicsEngine/PhysicsSolver.h"
+#include "Entities/Ball.h"
+#include "Engine/PhysicsSolver.h"
 #include "UI/UI.h"
-#include "Objects/Portal.h"
+#include "Entities/Portal.h"
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -13,7 +13,6 @@ static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WI
 bool shootBalls = true;
 
 static void initialise() {
-
     window.setFramerateLimit(FRAME_RATE);
 }
 
@@ -29,7 +28,7 @@ int main()
 
     UI ui = UI(&window, &ps);
 
-    float subStepRate = 1.0f / (FRAME_RATE * SUB_STEPS);
+    float subStepRate = (1.0f / FRAME_RATE) / SUB_STEPS;
     float accumulator = 0.0f;
     float spawnCircleTime = 0.0f;
 
@@ -68,9 +67,7 @@ int main()
                 bool UIClicked = ui.handleEvent(event);
 
                 if (Button* activeButton = dynamic_cast<Button*>(ui.m_UIPanel->getActiveElement())) {
-                    // activeElement is a Button, and activeButton points to it.
-                    // Now you can use any methods specific to Button.
-                    currentButton = activeButton->m_btnType; // Assume getType() is a public method in Button.
+                    currentButton = activeButton->m_btnType;
                 }
 
                 if (!UIClicked) {
@@ -90,7 +87,6 @@ int main()
                 }
             }
         }
-
 
 
         ps.update(subStepRate);

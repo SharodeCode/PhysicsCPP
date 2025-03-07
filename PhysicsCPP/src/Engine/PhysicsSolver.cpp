@@ -1,4 +1,4 @@
-#include "PhysicsEngine/PhysicsSolver.h"
+#include "Engine/PhysicsSolver.h"
 #include <future>
 
 PhysicsSolver::PhysicsSolver(){
@@ -76,7 +76,7 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
     
     if (distance <= collision_distance) {
         sf::Vector2f normal = delta / distance;
-        sf::Vector2f relative_velocity = (a.getPosition() - a.position_last) - (b.getPosition() - b.position_last);
+        sf::Vector2f relative_velocity = (a.getPosition() - a.getPositionLast()) - (b.getPosition() - b.getPositionLast());
         float impulse = 2.0f * (relative_velocity.x * normal.x + relative_velocity.y * normal.y);
 
 
@@ -90,8 +90,8 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
 
         const float delta = 0.65f * (distance - collision_distance);
 
-        a.move(- ((normal * delta * b.radius) / (a.radius + b.radius)));
-        b.move((normal * delta * a.radius) / (a.radius + b.radius));
+        a.move(- ((normal * delta * b.getRadius()) / (a.getRadius() + b.getRadius())));
+        b.move((normal * delta * a.getRadius()) / (a.getRadius() + b.getRadius()));
 
     }
 }

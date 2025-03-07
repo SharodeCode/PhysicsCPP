@@ -1,5 +1,5 @@
-#include "Portal.h"
-#include "PhysicsEngine/PhysicsSolver.h"
+#include "Entities/Portal.h"
+#include "Engine/PhysicsSolver.h"
 
 Portal::Portal(PhysicsSolver* physicsSolver, sf::Sprite* sprite) {
 

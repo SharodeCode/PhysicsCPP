@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 #include <vector>
-#include "Objects/Ball.h"
+#include "Entities/Ball.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
@@ -29,8 +29,8 @@ public:
 
 private:
 
-	sf::CircleShape frame;
-	std::vector<Ball> balls;
+    sf::CircleShape frame;
+    std::vector<Ball> balls;
     bool audioActive = false;
 };
 
