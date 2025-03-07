@@ -6,12 +6,12 @@
 
 constexpr float damping = 0.99f;
 
-class PhysicsSolver
+class PhysicsEngine
 {
 public:
     int subSteps;
 
-    PhysicsSolver();
+    PhysicsEngine();
 
     void spawnCircle(const sf::Vector2f& position);
     void applyGravity();

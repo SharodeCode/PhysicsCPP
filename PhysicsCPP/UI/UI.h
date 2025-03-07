@@ -1,12 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Engine/PhysicsSolver.h"
+#include "Engine/PhysicsEngine.h"
 #include "Button.h"
 
 class UI
 {
 public:
-	UI(sf::RenderWindow *RenderWindow, PhysicsSolver* ps);
+	UI(sf::RenderWindow *RenderWindow, PhysicsEngine* ps);
 	void updateUI(float deltaTime);
 	void displayFPS(float fps);
 	void displayNumberOfObjects(int numberOfObjects);
@@ -17,7 +17,7 @@ public:
 
 private:
 	sf::RenderWindow *m_RenderWindow;
-	PhysicsSolver *physicsSolver;
+	PhysicsEngine *physicsSolver;
 	sf::Text textFPS;
 	sf::Text textNumberOfObjects;
 	sf::Font font;

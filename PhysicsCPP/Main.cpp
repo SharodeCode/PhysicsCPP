@@ -1,6 +1,6 @@
-#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
 #include "Entities/Ball.h"
-#include "Engine/PhysicsSolver.h"
+#include "Engine/PhysicsEngine.h"
 #include "UI/UI.h"
 #include "Entities/Portal.h"
 
@@ -20,7 +20,7 @@ int main()
 {
     initialise();
 
-    PhysicsSolver ps = PhysicsSolver();
+    PhysicsEngine ps = PhysicsEngine();
     ps.subSteps = SUB_STEPS;
 
     // Create a clock to control the movement
@@ -28,7 +28,9 @@ int main()
 
     UI ui = UI(&window, &ps);
 
-    float subStepRate = (1.0f / FRAME_RATE) / SUB_STEPS;
+    float subStepRate = (1.0f / FRAME_RATE) / (SUB_STEPS * 0.5f);
+
+
     float accumulator = 0.0f;
     float spawnCircleTime = 0.0f;
 

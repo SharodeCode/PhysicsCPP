@@ -33,7 +33,7 @@
     <ClCompile Include="UI\UIPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\PhysicsSolver.cpp">
+    <ClCompile Include="src\Engine\PhysicsEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Components\RigidbodyComponent.cpp">
@@ -64,7 +64,7 @@
     <ClInclude Include="UI\UIPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\PhysicsSolver.h">
+    <ClInclude Include="include\Engine\PhysicsEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Components\RigidbodyComponent.h">

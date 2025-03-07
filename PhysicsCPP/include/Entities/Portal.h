@@ -1,11 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Engine/PhysicsSolver.h"
+#include "Engine/PhysicsEngine.h"
 
 class Portal
 {
 public:
-	Portal(PhysicsSolver* physicsSolver, sf::Sprite* sprite);
+	Portal(PhysicsEngine* physicsSolver, sf::Sprite* sprite);
 
 	void addPortal(sf::Vector2f position);
 
@@ -14,7 +14,7 @@ public:
 	void drawPortals(sf::RenderWindow* RenderWindow);
 
 private:
-	PhysicsSolver* ps;
+	PhysicsEngine* ps;
 	sf::Sprite* m_sprite;
 
 	float spawnTime = 0;

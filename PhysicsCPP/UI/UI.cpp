@@ -1,10 +1,10 @@
 #include "UI/UI.h"
 #include <SFML/Graphics.hpp>
 #include "UI/Button.h"
-#include "Engine/PhysicsSolver.h"
+#include "Engine/PhysicsEngine.h"
 #include <UI/UIPanel.h>
 
-UI::UI(sf::RenderWindow* RenderWindow, PhysicsSolver* ps)
+UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
 {
 	m_RenderWindow = RenderWindow;
     physicsSolver = ps;

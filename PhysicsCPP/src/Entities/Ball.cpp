@@ -1,7 +1,7 @@
 ﻿#include "Entities/Ball.h"
 #include "PhysicsConstants.h"
 
-Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(1.0f) {
+Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f) {
     shape = sf::CircleShape(radius);
     shape.setFillColor(sf::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
     shape.setOrigin(sf::Vector2f(radius, radius));

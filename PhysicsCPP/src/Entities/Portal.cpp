@@ -1,9 +1,9 @@
 #include "Entities/Portal.h"
-#include "Engine/PhysicsSolver.h"
+#include "Engine/PhysicsEngine.h"
 
-Portal::Portal(PhysicsSolver* physicsSolver, sf::Sprite* sprite) {
+Portal::Portal(PhysicsEngine* physicsEngine, sf::Sprite* sprite) {
 
-    ps = physicsSolver;
+    ps = physicsEngine;
     m_sprite = sprite;
 }
 

@@ -145,7 +145,7 @@
     <ClCompile Include="src\Entities\Ball.cpp" />
     <ClCompile Include="src\Entities\Portal.cpp" />
     <ClCompile Include="src\Components\RigidbodyComponent.cpp" />
-    <ClCompile Include="src\Engine\PhysicsSolver.cpp" />
+    <ClCompile Include="src\Engine\PhysicsEngine.cpp" />
     <ClCompile Include="UI\UIPanel.cpp" />
     <ClCompile Include="UI\Button.cpp" />
     <ClCompile Include="UI\UI.cpp" />
@@ -161,7 +161,7 @@
   <ItemGroup>
     <ClInclude Include="include\Components\Component.h" />
     <ClInclude Include="include\Entities\Entity.h" />
-    <ClInclude Include="include\Engine\PhysicsSolver.h" />
+    <ClInclude Include="include\Engine\PhysicsEngine.h" />
     <ClInclude Include="include\Entities\Ball.h" />
     <ClInclude Include="include\Entities\Portal.h" />
     <ClInclude Include="include\Components\RigidbodyComponent.h" />

@@ -1,7 +1,7 @@
-#include "Engine/PhysicsSolver.h"
+﻿#include "Engine/PhysicsEngine.h"
 #include <future>
 
-PhysicsSolver::PhysicsSolver(){
+PhysicsEngine::PhysicsEngine(){
 
     // Create the frame (hollow circle)
     float frameRadius = 250.0f;
@@ -13,17 +13,21 @@ PhysicsSolver::PhysicsSolver(){
     frame.setPosition(sf::Vector2f(400.0f, 400.0f));
 }
 
-void PhysicsSolver::spawnCircle(const sf::Vector2f& position) {
+void PhysicsEngine::spawnCircle(const sf::Vector2f& position) {
     balls.emplace_back(Ball(position));
 }
 
-void PhysicsSolver::applyGravity() {
+void PhysicsEngine::applyGravity() {
     for (auto& ball : balls) {
-        ball.accelerate(sf::Vector2f(0.0f, ball.getGravity()));
+        RigidbodyComponent* rb = ball.GetRigidbody();
+        if (rb) {
+            rb->ApplyForce(sf::Vector2f(0.0f, rb->mass * ball.getGravity()));
+        }
     }
 }
 
-void PhysicsSolver::updateBalls(float dt)
+
+void PhysicsEngine::updateBalls(float dt)
 {
     for (auto& ball : balls) {
         ball.update(dt);
@@ -31,7 +35,7 @@ void PhysicsSolver::updateBalls(float dt)
     }
 }
 
-void PhysicsSolver::update(float subStepRate)
+void PhysicsEngine::update(float subStepRate)
 {
     std::vector<std::future<void>> futures;
 
@@ -40,8 +44,8 @@ void PhysicsSolver::update(float subStepRate)
 
         applyGravity();
 
-        futures.push_back(std::async(std::launch::async, &PhysicsSolver::checkBallCollisionsCollisionGrid, this));
-        futures.push_back(std::async(std::launch::async, &PhysicsSolver::checkFrameCollisions, this));
+        futures.push_back(std::async(std::launch::async, &PhysicsEngine::checkBallCollisionsCollisionGrid, this));
+        futures.push_back(std::async(std::launch::async, &PhysicsEngine::checkFrameCollisions, this));
 
         for (auto& future : futures) {
             future.wait();
@@ -51,7 +55,7 @@ void PhysicsSolver::update(float subStepRate)
     }
 }
 
-void PhysicsSolver::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius) {
+void PhysicsEngine::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius) {
     sf::Vector2f delta = ball.getPosition() - center;
 
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
@@ -67,7 +71,7 @@ void PhysicsSolver::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f&
     }
 }
 
-void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
+void PhysicsEngine::resolveBallCollision(Ball& a, Ball& b) {
     
     sf::Vector2f delta = a.getPosition() - b.getPosition();
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
@@ -96,14 +100,14 @@ void PhysicsSolver::resolveBallCollision(Ball& a, Ball& b) {
     }
 }
 
-void PhysicsSolver::checkFrameCollisions() {
+void PhysicsEngine::checkFrameCollisions() {
 
     for (auto& ball : balls) {
         resolveHollowCircleCollision(ball, frame.getPosition(), frame.getRadius());
     }
 }
 
-void PhysicsSolver::checkBallCollisionsBruteForce() {
+void PhysicsEngine::checkBallCollisionsBruteForce() {
     for (size_t i = 0; i < balls.size(); ++i) {
         for (size_t j = i + 1; j < balls.size(); ++j) {
             resolveBallCollision(balls[i], balls[j]);
@@ -111,7 +115,7 @@ void PhysicsSolver::checkBallCollisionsBruteForce() {
     }
 }
 
-void PhysicsSolver::checkBallCollisionsCollisionGrid() {
+void PhysicsEngine::checkBallCollisionsCollisionGrid() {
 
     float CELL_SIZE = 40.0f;
 
@@ -154,16 +158,16 @@ void PhysicsSolver::checkBallCollisionsCollisionGrid() {
 }
 
 
-const std::vector<Ball>& PhysicsSolver::getBalls() const
+const std::vector<Ball>& PhysicsEngine::getBalls() const
 {
     return balls;
 }
 
-const sf::CircleShape& PhysicsSolver::getFrame() const
+const sf::CircleShape& PhysicsEngine::getFrame() const
 {
     return frame;
 }
 
-void PhysicsSolver::toggleAudioActive() {
+void PhysicsEngine::toggleAudioActive() {
     audioActive = !audioActive;
 }
