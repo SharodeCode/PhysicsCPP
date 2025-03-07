@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include "Entities/Ball.h"
+#include "Entities/Boundary.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
@@ -15,12 +16,7 @@ public:
 
     void spawnCircle(const sf::Vector2f& position);
     void applyGravity();
-    void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
-    void resolveBallCollision(Ball& a, Ball& b);
-    void checkFrameCollisions();
     void checkBallCollisionsBruteForce();
-    void checkBallCollisionsCollisionGrid();
-    void processGridRange(std::vector<Ball>& balls, const std::vector<std::vector<std::vector<Ball*>>>& grid, int startX, int startY, int endX, int endY);
     const std::vector<Ball>& getBalls() const;
     const sf::CircleShape& getFrame() const;
     void updateBalls(float dt);
@@ -28,8 +24,7 @@ public:
     void toggleAudioActive();
 
 private:
-
-    sf::CircleShape frame;
+    Boundary boundary;
     std::vector<Ball> balls;
     bool audioActive = false;
 };
