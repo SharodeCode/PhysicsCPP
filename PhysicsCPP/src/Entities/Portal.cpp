@@ -1,40 +1,21 @@
-#include "Entities/Portal.h"
-#include "Engine/PhysicsEngine.h"
+﻿#include "Entities/Portal.h"
 
-Portal::Portal(PhysicsEngine* physicsEngine, sf::Sprite* sprite) {
-
-    ps = physicsEngine;
-    m_sprite = sprite;
+Portal::Portal(const sf::Vector2f& pos, float ballRadius, const sf::Texture& texture)
+    : position(pos), spawner(ballRadius) {
+    sprite.setTexture(texture);
+    sprite.setOrigin(sf::Vector2f(texture.getSize().x / 2, texture.getSize().y / 2));
+    sprite.setPosition(position);
 }
 
-void Portal::addPortal(sf::Vector2f position) {
+void Portal::update(float deltaTime, std::vector<Ball>& balls) {
+    timeSinceLastSpawn += deltaTime;
 
-    ballSpawners.emplace_back(position);
-}
-
-void Portal::drawPortals(sf::RenderWindow* RenderWindow) {
-    for (auto& ballSpawner : ballSpawners) {
-
-        m_sprite->setPosition(ballSpawner.x - 50, ballSpawner.y - 50);
-        RenderWindow->draw(*m_sprite);
+    if (timeSinceLastSpawn >= spawnCooldown) {
+        balls.emplace_back(spawner.spawnBall(position));
+        timeSinceLastSpawn = 0.0f;
     }
 }
 
-void Portal::update(float deltaTime) {
-	spawnTime += deltaTime;
-
-    bool spawn = false;
-
-    for (auto& ballSpawner : ballSpawners) {
-
-        if (spawnTime > 0.2)
-        {
-            ps->spawnCircle(ballSpawner);
-            spawn = true;
-        }
-    }
-
-    if (spawn == true) {
-        spawnTime = 0;
-    }
+void Portal::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    target.draw(sprite, states);
 }

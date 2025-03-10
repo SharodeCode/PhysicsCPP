@@ -1,13 +1,16 @@
-#include "Engine/PhysicsEngine.h"
+﻿#include "Engine/PhysicsEngine.h"
 #include "Engine/CollisionSystem.h"
 #include <future>
 
-PhysicsEngine::PhysicsEngine() : boundary(250.0f, sf::Vector2f(400.0f, 400.0f)) {
+PhysicsEngine::PhysicsEngine()
+    : boundary(250.0f, sf::Vector2f(400.0f, 400.0f)), spawner(10.0f) {}
 
+void PhysicsEngine::spawnBall(const sf::Vector2f& position) {
+    balls.emplace_back(spawner.spawnBall(position));
 }
 
-void PhysicsEngine::spawnCircle(const sf::Vector2f& position) {
-    balls.emplace_back(Ball(position));
+void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& texture) {
+    portals.emplace_back(position, 10.0f, texture);
 }
 
 void PhysicsEngine::applyGravity() {
@@ -49,11 +52,20 @@ void PhysicsEngine::update(float subStepRate) {
 
         updateBalls(subStepRate);
     }
+
+    for (auto& portal : portals) {
+        portal.update(subStepRate, balls);
+    }
 }
 
 const std::vector<Ball>& PhysicsEngine::getBalls() const
 {
     return balls;
+}
+
+const std::vector<Portal>& PhysicsEngine::getPortals() const
+{
+    return portals;
 }
 
 const sf::CircleShape& PhysicsEngine::getFrame() const

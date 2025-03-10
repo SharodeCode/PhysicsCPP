@@ -45,8 +45,6 @@ int main()
     sf::Sprite sprite;
     sprite.setTexture(texture);
 
-    Portal test(&ps, &sprite);
-
     Button::buttonType currentButton = Button::buttonType::mute;
 
     while (window.isOpen())
@@ -55,8 +53,6 @@ int main()
         float deltaTime = elapsed.asSeconds();
 
         accumulator += deltaTime;
-
-        test.update(deltaTime);
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -73,12 +69,13 @@ int main()
                 }
 
                 if (!UIClicked) {
+                    sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
+
                     if (currentButton == Button::buttonType::clickToSpawn) {
-                        sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
-                        ps.spawnCircle(mousePosition);
+                        ps.spawnBall(mousePosition);
                     }
                     else if (currentButton == Button::buttonType::ballSpawner) {
-                        test.addPortal(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+                        ps.addPortal(mousePosition, texture);
                     }
                 }
 
@@ -95,12 +92,14 @@ int main()
 
         window.clear();
 
-        test.drawPortals(&window);
         window.draw(sprite);
 
         for(const auto& ball : ps.getBalls())
         {
             window.draw(ball);
+        }
+        for (const auto& portal : ps.getPortals()) {
+            window.draw(portal);
         }
 
         ui.updateUI(deltaTime);

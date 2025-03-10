@@ -1,24 +1,20 @@
-#pragma once
+﻿#pragma once
+#include "Entities/Ball.h"
+#include "Entities/Spawner.h"
 #include <SFML/Graphics.hpp>
-#include "Engine/PhysicsEngine.h"
+#include <vector>
 
-class Portal
-{
-public:
-	Portal(PhysicsEngine* physicsSolver, sf::Sprite* sprite);
-
-	void addPortal(sf::Vector2f position);
-
-	void update(float deltaTime);
-
-	void drawPortals(sf::RenderWindow* RenderWindow);
-
+class Portal: public sf::Drawable {
 private:
-	PhysicsEngine* ps;
-	sf::Sprite* m_sprite;
+    sf::Vector2f position;
+    sf::Sprite sprite;
+    Spawner spawner;
+    float spawnCooldown = 0.5f;
+    float timeSinceLastSpawn = 0.0f;
 
-	float spawnTime = 0;
+public:
+    Portal(const sf::Vector2f& position, float ballRadius, const sf::Texture& texture);
 
-	std::vector<sf::Vector2f> ballSpawners;
+    void update(float deltaTime, std::vector<Ball>& balls);
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
-

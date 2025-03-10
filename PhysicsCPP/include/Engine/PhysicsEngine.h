@@ -2,30 +2,30 @@
 #include <vector>
 #include "Entities/Ball.h"
 #include "Entities/Boundary.h"
+#include "Entities/Spawner.h"
+#include "Entities/Portal.h"
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 
-constexpr float damping = 0.99f;
+class PhysicsEngine {
+private:
+    std::vector<Ball> balls;
+    std::vector<Portal> portals;
+    Boundary boundary;
+    Spawner spawner;
+    bool audioActive = false;
 
-class PhysicsEngine
-{
 public:
-    int subSteps;
+    int subSteps = 1;
 
     PhysicsEngine();
-
-    void spawnCircle(const sf::Vector2f& position);
-    void applyGravity();
-    void checkBallCollisionsBruteForce();
-    const std::vector<Ball>& getBalls() const;
-    const sf::CircleShape& getFrame() const;
-    void updateBalls(float dt);
     void update(float subStepRate);
+    void spawnBall(const sf::Vector2f& position);
+    void addPortal(const sf::Vector2f& position, const sf::Texture& texture);
+    void applyGravity();
+    void updateBalls(float dt);
+
+    const std::vector<Ball>& getBalls() const;
+    const std::vector<Portal>& getPortals() const;
+    const sf::CircleShape& getFrame() const;
     void toggleAudioActive();
-
-private:
-    Boundary boundary;
-    std::vector<Ball> balls;
-    bool audioActive = false;
 };
-
