@@ -3,6 +3,7 @@
 #include "Engine/PhysicsEngine.h"
 #include "UI/UI.h"
 #include "Entities/Portal.h"
+#include <Engine/Renderer.h>
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -27,6 +28,7 @@ int main()
     sf::Clock clock = sf::Clock();
 
     UI ui = UI(&window, &ps);
+    Renderer renderer(&window, &ui);
 
     float subStepRate = (1.0f / FRAME_RATE) / (SUB_STEPS * 0.5f);
 
@@ -90,23 +92,7 @@ int main()
 
         ps.update(subStepRate);
 
-        window.clear();
-
-        window.draw(sprite);
-
-        for(const auto& ball : ps.getBalls())
-        {
-            window.draw(ball);
-        }
-        for (const auto& portal : ps.getPortals()) {
-            window.draw(portal);
-        }
-
-        ui.updateUI(deltaTime);
-
-        window.draw(ps.getFrame());
-
-        window.display();
+        renderer.render(ps, deltaTime);
     }
 
     return 0;

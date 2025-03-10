@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Renderer.cpp" />
     <ClCompile Include="src\Entities\Spawner.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\Engine\CollisionSystem.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="include\Components\Component.h" />
     <ClInclude Include="include\Engine\CollisionSystem.h" />
+    <ClInclude Include="include\Engine\Renderer.h" />
     <ClInclude Include="include\Entities\Boundary.h" />
     <ClInclude Include="include\Entities\Entity.h" />
     <ClInclude Include="include\Engine\PhysicsEngine.h" />
