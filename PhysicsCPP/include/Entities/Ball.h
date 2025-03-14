@@ -2,8 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include "Components/RigidbodyComponent.h"
 #include <Components/RendererComponent.h>
+#include "Components/Component.h"
 
-class Ball : public sf::Drawable, public sf::Transformable {
+class Ball : Component, public sf::Transformable {
 private:
     float radius;
     sf::Vector2f position_last;
@@ -15,9 +16,9 @@ public:
     Ball(sf::Vector2f position);
 
     void update(float dt);
-    void Draw(sf::RenderWindow& window) const;
+    void Draw(sf::RenderWindow& window) const override;
 
-    RendererComponent* GetRenderer() { return &renderer; }
+    RendererComponent* GetRenderer();
     const RendererComponent* GetRenderer() const { return &renderer; }
 
     void accelerate(sf::Vector2f a);
@@ -32,7 +33,4 @@ public:
     void setPositionLast(const sf::Vector2f& pos);
 
     RigidbodyComponent* GetRigidbody() { return &rigidbody; }
-
-protected:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

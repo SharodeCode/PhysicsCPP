@@ -12,4 +12,8 @@ public:
 
     void ApplyForce(const sf::Vector2f& force);
     void Update(float deltaTime) override;
+
+    void Draw(sf::RenderWindow& window) const override {
+        // Rigidbody does NOT need to be drawn, so leave empty
+    }
 };

@@ -1,7 +1,7 @@
 ﻿#include "Entities/Portal.h"
 
-Portal::Portal(const sf::Vector2f& pos, float ballRadius, const sf::Texture& texture)
-    : position(pos), spawner(ballRadius) {
+Portal::Portal(const sf::Vector2f& pos, const sf::Texture& texture)
+    : position(pos), spawner(10.0f) {
     sprite.setTexture(texture);
     sprite.setOrigin(sf::Vector2f(texture.getSize().x / 2, texture.getSize().y / 2));
     sprite.setPosition(position);

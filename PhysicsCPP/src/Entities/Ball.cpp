@@ -51,8 +51,14 @@ float Ball::getRadius() const {
     return radius;
 }
 
-void Ball::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+void Ball::Draw(sf::RenderWindow& window) const {
     if (const RendererComponent* renderer = GetRenderer()) {
-        renderer->Draw(target);
+        renderer->Draw(window);
     }
 }
+
+
+RendererComponent* Ball::GetRenderer() {
+    return &renderer;
+}
+

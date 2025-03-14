@@ -1,10 +1,11 @@
 ﻿#include "Entities/Spawner.h"
 
-Spawner::Spawner(float radius) : ballRadius(radius) {}
+Spawner::Spawner(float radius)
+    : ballRadius(radius) {}
 
 Ball Spawner::spawnBall(const sf::Vector2f& position) {
 
     Ball newBall = Ball(position);
-	newBall.setVelocity(sf::Vector2f(0.0f, 50.0f));
+	newBall.setVelocity(sf::Vector2f(0.0f, 500.0f));
     return newBall;
 }

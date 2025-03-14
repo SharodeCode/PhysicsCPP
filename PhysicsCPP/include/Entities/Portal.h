@@ -9,11 +9,11 @@ private:
     sf::Vector2f position;
     sf::Sprite sprite;
     Spawner spawner;
-    float spawnCooldown = 0.5f;
+    float spawnCooldown = 0.05f;
     float timeSinceLastSpawn = 0.0f;
 
 public:
-    Portal(const sf::Vector2f& position, float ballRadius, const sf::Texture& texture);
+    Portal(const sf::Vector2f& position, const sf::Texture& texture);
 
     void update(float deltaTime, std::vector<Ball>& balls);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

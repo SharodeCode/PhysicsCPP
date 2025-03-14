@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
 class Entity;  // Forward declaration
 
@@ -13,4 +14,6 @@ public:
     Entity* GetOwner() const { return owner; }
 
     virtual void Update(float deltaTime) {}  // Ensure default implementation is provided
+
+    virtual void Draw(sf::RenderWindow& window) const = 0;
 };

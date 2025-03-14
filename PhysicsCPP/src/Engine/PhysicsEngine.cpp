@@ -10,7 +10,7 @@ void PhysicsEngine::spawnBall(const sf::Vector2f& position) {
 }
 
 void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& texture) {
-    portals.emplace_back(position, 10.0f, texture);
+    portals.emplace_back(position, texture);
 }
 
 void PhysicsEngine::applyGravity() {

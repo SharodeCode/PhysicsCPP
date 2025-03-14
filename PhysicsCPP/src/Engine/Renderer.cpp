@@ -11,7 +11,7 @@ void Renderer::render(const PhysicsEngine& engine, float deltaTime) {
     }
 
     for (const auto& ball : engine.getBalls()) {
-        window->draw(ball);
+        ball.GetRenderer()->Draw(*window);
     }
 
     ui->updateUI(deltaTime);
