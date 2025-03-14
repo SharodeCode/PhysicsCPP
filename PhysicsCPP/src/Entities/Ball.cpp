@@ -1,7 +1,7 @@
 ﻿#include "Entities/Ball.h"
 #include "PhysicsConstants.h"
 
-Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f) {
+Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f), renderer(10.0f, sf::Color::White) {
     shape = sf::CircleShape(radius);
     shape.setFillColor(sf::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
     shape.setOrigin(sf::Vector2f(radius, radius));
@@ -48,4 +48,8 @@ float Ball::getRadius() const {
 void Ball::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     states.transform *= getTransform();
     target.draw(shape, states);
+}
+
+void Ball::Draw(sf::RenderWindow& window) const {
+    renderer.Draw(window);
 }
