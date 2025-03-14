@@ -5,7 +5,6 @@
 
 class Ball : public sf::Drawable, public sf::Transformable {
 private:
-    sf::CircleShape shape;
     float radius;
     sf::Vector2f position_last;
     RigidbodyComponent rigidbody;
@@ -17,6 +16,9 @@ public:
 
     void update(float dt);
     void Draw(sf::RenderWindow& window) const;
+
+    RendererComponent* GetRenderer() { return &renderer; }
+    const RendererComponent* GetRenderer() const { return &renderer; }
 
     void accelerate(sf::Vector2f a);
 

@@ -8,6 +8,6 @@ private:
 public:
     RendererComponent(float radius, sf::Color color);
 
-    void Draw(sf::RenderWindow& window) const;
+    void Draw(sf::RenderTarget& target) const;
     void SetPosition(const sf::Vector2f& position);
 };

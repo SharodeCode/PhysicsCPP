@@ -2,11 +2,13 @@
 #include "PhysicsConstants.h"
 
 Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f), renderer(10.0f, sf::Color::White) {
-    shape = sf::CircleShape(radius);
-    shape.setFillColor(sf::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
-    shape.setOrigin(sf::Vector2f(radius, radius));
     setPosition(position);
     position_last = position;
+
+    // Generate a random color
+    sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
+
+    renderer = RendererComponent(radius, randomColor);
 }
 
 void Ball::update(float dt) {
@@ -15,6 +17,10 @@ void Ball::update(float dt) {
 
     rigidbody.Update(dt);
     setPosition(getPosition() + displacement + rigidbody.velocity * (dt * dt));
+
+    if (RendererComponent* renderer = GetRenderer()) {
+        renderer->SetPosition(getPosition());
+    }
 }
 
 void Ball::accelerate(sf::Vector2f a) {
@@ -46,10 +52,7 @@ float Ball::getRadius() const {
 }
 
 void Ball::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    states.transform *= getTransform();
-    target.draw(shape, states);
-}
-
-void Ball::Draw(sf::RenderWindow& window) const {
-    renderer.Draw(window);
+    if (const RendererComponent* renderer = GetRenderer()) {
+        renderer->Draw(target);
+    }
 }
