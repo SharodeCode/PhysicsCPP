@@ -29,7 +29,7 @@ void CollisionSystem::ResolveBallCollision(Ball& a, Ball& b) {
     }
 }
 
-void CollisionSystem::CheckBallCollisions(std::vector<Ball>& balls) {
+void CollisionSystem::CheckBallCollisions(std::vector<std::unique_ptr<Ball>>& balls) {
 
     float CELL_SIZE = 40.0f;
 
@@ -41,10 +41,10 @@ void CollisionSystem::CheckBallCollisions(std::vector<Ball>& balls) {
 
     // Assign balls to grid cells
     for (auto& ball : balls) {
-        int x = static_cast<int>(ball.getPosition().x / CELL_SIZE);
-        int y = static_cast<int>(ball.getPosition().y / CELL_SIZE);
+        int x = static_cast<int>(ball->getPosition().x / CELL_SIZE);
+        int y = static_cast<int>(ball->getPosition().y / CELL_SIZE);
 
-        grid[x][y].push_back(&ball);
+        grid[x][y].push_back(ball.get());
     }
 
     // Check for collisions within the same cell and neighboring cells

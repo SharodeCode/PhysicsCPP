@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-class Portal: public sf::Drawable {
+class Portal: public BaseEntity, public sf::Drawable {
 private:
     sf::Vector2f position;
     sf::Sprite sprite;
@@ -15,6 +15,9 @@ private:
 public:
     Portal(const sf::Vector2f& position, const sf::Texture& texture);
 
-    void update(float deltaTime, std::vector<Ball>& balls);
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void update(float deltaTime, std::vector<std::unique_ptr<Ball>>& balls);
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+    void Update(float deltaTime) override; // Ensure this overrides BaseEntity's Update
+    void Draw(sf::RenderWindow& window) const override; // Ensure this overrides BaseEntity's Draw
 };

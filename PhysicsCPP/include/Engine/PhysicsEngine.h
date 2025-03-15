@@ -8,7 +8,7 @@
 
 class PhysicsEngine {
 private:
-    std::vector<Ball> balls;
+    std::vector<std::unique_ptr<Ball>> balls;
     std::vector<Portal> portals;
     Boundary boundary;
     Spawner spawner;
@@ -24,7 +24,7 @@ public:
     void applyGravity();
     void updateBalls(float dt);
 
-    const std::vector<Ball>& getBalls() const;
+    const std::vector<std::unique_ptr<Ball>>& getBalls() const;
     const std::vector<Portal>& getPortals() const;
     const sf::CircleShape& getFrame() const;
     void toggleAudioActive();

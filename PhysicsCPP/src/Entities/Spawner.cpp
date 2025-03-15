@@ -3,9 +3,9 @@
 Spawner::Spawner(float radius)
     : ballRadius(radius) {}
 
-Ball Spawner::spawnBall(const sf::Vector2f& position) {
+std::unique_ptr<Ball> Spawner::spawnBall(const sf::Vector2f& position) {
+    auto newBall = std::make_unique<Ball>(position);
+    newBall->setVelocity(sf::Vector2f(0.0f, 50.0f));
 
-    Ball newBall = Ball(position);
-	newBall.setVelocity(sf::Vector2f(0.0f, 500.0f));
     return newBall;
 }

@@ -10,4 +10,6 @@ void RigidbodyComponent::ApplyForce(const sf::Vector2f& force) {
 void RigidbodyComponent::Update(float deltaTime) {
     velocity += acceleration * deltaTime;
     acceleration = { 0.f, 0.f };
+
+
 }

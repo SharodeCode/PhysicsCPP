@@ -5,9 +5,11 @@ Portal::Portal(const sf::Vector2f& pos, const sf::Texture& texture)
     sprite.setTexture(texture);
     sprite.setOrigin(sf::Vector2f(texture.getSize().x / 2, texture.getSize().y / 2));
     sprite.setPosition(position);
+
+    addComponent<RendererComponent>(texture);
 }
 
-void Portal::update(float deltaTime, std::vector<Ball>& balls) {
+void Portal::update(float deltaTime, std::vector<std::unique_ptr<Ball>>& balls) {
     timeSinceLastSpawn += deltaTime;
 
     if (timeSinceLastSpawn >= spawnCooldown) {
@@ -19,3 +21,12 @@ void Portal::update(float deltaTime, std::vector<Ball>& balls) {
 void Portal::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(sprite, states);
 }
+
+void Portal::Update(float deltaTime) {
+    // Implement the update logic here
+}
+
+void Portal::Draw(sf::RenderWindow& window) const {
+    window.draw(sprite); // or whatever needs to be drawn
+}
+

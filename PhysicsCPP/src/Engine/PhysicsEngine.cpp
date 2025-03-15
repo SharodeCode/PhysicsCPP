@@ -6,18 +6,18 @@ PhysicsEngine::PhysicsEngine()
     : boundary(250.0f, sf::Vector2f(400.0f, 400.0f)), spawner(10.0f) {}
 
 void PhysicsEngine::spawnBall(const sf::Vector2f& position) {
-    balls.emplace_back(spawner.spawnBall(position));
+    balls.push_back(spawner.spawnBall(position));
 }
 
 void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& texture) {
-    portals.emplace_back(position, texture);
+    portals.push_back(Portal(position, texture));
 }
 
 void PhysicsEngine::applyGravity() {
     for (auto& ball : balls) {
-        RigidbodyComponent* rb = ball.GetRigidbody();
+        RigidbodyComponent* rb = ball->GetRigidbody();
         if (rb) {
-            rb->ApplyForce(sf::Vector2f(0.0f, rb->mass * ball.getGravity()));
+            rb->ApplyForce(sf::Vector2f(0.0f, rb->mass * ball->getGravity()));
         }
     }
 }
@@ -26,8 +26,7 @@ void PhysicsEngine::applyGravity() {
 void PhysicsEngine::updateBalls(float dt)
 {
     for (auto& ball : balls) {
-        ball.update(dt);
-
+        ball->Update(dt);
     }
 }
 
@@ -42,7 +41,7 @@ void PhysicsEngine::update(float subStepRate) {
         futures.push_back(std::async(std::launch::async, &CollisionSystem::CheckBallCollisions, std::ref(balls)));
         futures.push_back(std::async(std::launch::async, [this]() {
             for (auto& ball : balls) {
-                CollisionSystem::ResolveHollowCircleCollision(ball, boundary.getPosition(), boundary.getRadius());
+                CollisionSystem::ResolveHollowCircleCollision(*ball, boundary.getPosition(), boundary.getRadius());
             }
         }));
 
@@ -58,7 +57,7 @@ void PhysicsEngine::update(float subStepRate) {
     }
 }
 
-const std::vector<Ball>& PhysicsEngine::getBalls() const
+const std::vector<std::unique_ptr<Ball>>& PhysicsEngine::getBalls() const
 {
     return balls;
 }

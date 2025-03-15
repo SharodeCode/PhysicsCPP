@@ -3,23 +3,22 @@
 #include "Components/RigidbodyComponent.h"
 #include <Components/RendererComponent.h>
 #include "Components/Component.h"
+#include "Entities/BaseEntity.h"
 
-class Ball : Component, public sf::Transformable {
+class Ball : public BaseEntity, public sf::Transformable {
 private:
     float radius;
     sf::Vector2f position_last;
     RigidbodyComponent rigidbody;
 
-    RendererComponent renderer;
-
 public:
     Ball(sf::Vector2f position);
 
-    void update(float dt);
+    void Update(float deltaTime) override;
     void Draw(sf::RenderWindow& window) const override;
 
-    RendererComponent* GetRenderer();
-    const RendererComponent* GetRenderer() const { return &renderer; }
+    RendererComponent* GetRenderer() const;
+    RigidbodyComponent* GetRigidbody();
 
     void accelerate(sf::Vector2f a);
 
@@ -31,6 +30,4 @@ public:
 
     sf::Vector2f getPositionLast() const;
     void setPositionLast(const sf::Vector2f& pos);
-
-    RigidbodyComponent* GetRigidbody() { return &rigidbody; }
 };

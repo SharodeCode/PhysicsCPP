@@ -5,9 +5,11 @@
 class RendererComponent : public Component {
 private:
     sf::CircleShape shape;
+    sf::Sprite sprite;
 
 public:
     RendererComponent(float radius, sf::Color color);
+    RendererComponent(const sf::Texture& texture);
 
     void Update(float deltaTime) override {}
     void Draw(sf::RenderWindow& window) const override;

@@ -8,5 +8,5 @@ private:
 public:
     Spawner(float radius);
 
-    Ball spawnBall(const sf::Vector2f& position);
+    std::unique_ptr<Ball> spawnBall(const sf::Vector2f& position);
 };

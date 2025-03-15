@@ -1,25 +1,32 @@
 ﻿#include "Entities/Ball.h"
 #include "PhysicsConstants.h"
 
-Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f), renderer(10.0f, sf::Color::White) {
+Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f) {
     setPosition(position);
     position_last = position;
 
     // Generate a random color
     sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
 
-    renderer = RendererComponent(radius, randomColor);
+    addComponent<RigidbodyComponent>();
+    addComponent<RendererComponent>(radius, randomColor);
+    GetRenderer()->SetPosition(position);
 }
 
-void Ball::update(float dt) {
+void Ball::Update(float deltaTime) {
     sf::Vector2f displacement = getPosition() - position_last;
     position_last = getPosition();
 
-    rigidbody.Update(dt);
-    setPosition(getPosition() + displacement + rigidbody.velocity * (dt * dt));
+    rigidbody.Update(deltaTime);
+    setPosition(getPosition() + displacement + rigidbody.velocity * (deltaTime * deltaTime));
 
-    if (RendererComponent* renderer = GetRenderer()) {
+    if (RendererComponent* renderer = getComponent<RendererComponent>()) {
         renderer->SetPosition(getPosition());
+    }
+
+    if (RigidbodyComponent* rb = GetRigidbody()) {
+        rb->Update(deltaTime);
+        setPosition(getPosition() + rb->velocity * deltaTime);
     }
 }
 
@@ -57,8 +64,10 @@ void Ball::Draw(sf::RenderWindow& window) const {
     }
 }
 
-
-RendererComponent* Ball::GetRenderer() {
-    return &renderer;
+RigidbodyComponent* Ball::GetRigidbody() {
+    return getComponent<RigidbodyComponent>();
 }
 
+RendererComponent* Ball::GetRenderer() const {
+    return getComponent<RendererComponent>();
+}
