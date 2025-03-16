@@ -8,17 +8,17 @@
 class Ball : public BaseEntity, public sf::Transformable {
 private:
     float radius;
-    sf::Vector2f position_last;
+    sf::Vector2f positionLast;
     RigidbodyComponent rigidbody;
 
 public:
     Ball(sf::Vector2f position);
 
-    void Update(float deltaTime) override;
-    void Draw(sf::RenderWindow& window) const override;
+    void update(float deltaTime) override;
+    void draw(sf::RenderWindow& window) const override;
 
-    RendererComponent* GetRenderer() const;
-    RigidbodyComponent* GetRigidbody();
+    RendererComponent* getRenderer() const;
+    RigidbodyComponent* getRigidbody();
 
     void accelerate(sf::Vector2f a);
 

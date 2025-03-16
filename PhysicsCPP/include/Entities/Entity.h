@@ -13,7 +13,7 @@ public:
     virtual ~Entity() = default;
 
     template <typename T, typename... Args>
-    T* AddComponent(Args&&... args) {
+    T* addComponent(Args&&... args) {
         auto component = std::make_unique<T>(std::forward<Args>(args)...);
         component->SetOwner(this);
         T* rawPtr = component.get();

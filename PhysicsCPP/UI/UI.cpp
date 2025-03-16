@@ -58,7 +58,7 @@ void UI::updateUI(float deltaTime) {
         displayFramerateTime = 0;
     }
 
-    displayNumberOfObjects(physicsSolver->getBalls().size());
+    displayNumberOfObjects(static_cast<int>(physicsSolver->getBalls().size()));
 
     m_RenderWindow->draw(textFPS);
     m_RenderWindow->draw(textNumberOfObjects);

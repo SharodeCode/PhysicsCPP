@@ -16,8 +16,8 @@ Button::Button(buttonType btnType, float x, float y, float width, float height, 
 }
 
 bool Button::isMouseOver(sf::Vector2i mousePosition) {
-    float mouseX = mousePosition.x;
-    float mouseY = mousePosition.y;
+    float mouseX = static_cast<float>(mousePosition.x);
+    float mouseY = static_cast<float>(mousePosition.y);
 
     float btnPosX = button.getPosition().x;
     float btnPosY = button.getPosition().y;

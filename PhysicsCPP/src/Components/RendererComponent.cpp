@@ -8,10 +8,10 @@ RendererComponent::RendererComponent(float radius, sf::Color color) {
 
 RendererComponent::RendererComponent(const sf::Texture& texture) {
     sprite.setTexture(texture);
-    sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y / 2);
+    sprite.setOrigin(static_cast<float>(texture.getSize().x / 2), static_cast<float>(texture.getSize().y / 2));
 }
 
-void RendererComponent::Draw(sf::RenderWindow& window) const {
+void RendererComponent::draw(sf::RenderWindow& window) const {
     if (sprite.getTexture()) {
         window.draw(sprite); // Draw the texture for portals
     }
@@ -20,6 +20,6 @@ void RendererComponent::Draw(sf::RenderWindow& window) const {
     }
 }
 
-void RendererComponent::SetPosition(const sf::Vector2f& position) {
+void RendererComponent::setPosition(const sf::Vector2f& position) {
     shape.setPosition(position);
 }

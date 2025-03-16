@@ -4,8 +4,8 @@
 
 class CollisionSystem {
 public:
-    static void ResolveBallCollision(Ball& a, Ball& b);
-    static void CheckBallCollisions(std::vector<std::unique_ptr<Ball>>& balls);
-    static void ResolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
+    static void resolveBallCollision(Ball& a, Ball& b);
+    static void checkBallCollisions(std::vector<std::unique_ptr<Ball>>& balls);
+    static void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
     static void checkBallCollisionsBruteForce(std::vector<Ball>& balls);
 };

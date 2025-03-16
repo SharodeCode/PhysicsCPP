@@ -18,6 +18,6 @@ public:
     void update(float deltaTime, std::vector<std::unique_ptr<Ball>>& balls);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-    void Update(float deltaTime) override; // Ensure this overrides BaseEntity's Update
-    void Draw(sf::RenderWindow& window) const override; // Ensure this overrides BaseEntity's Draw
+    void update(float deltaTime) override; // Ensure this overrides BaseEntity's Update
+    void draw(sf::RenderWindow& window) const override; // Ensure this overrides BaseEntity's Draw
 };

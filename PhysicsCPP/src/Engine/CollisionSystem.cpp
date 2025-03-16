@@ -1,7 +1,7 @@
 #include "Engine/CollisionSystem.h"
 #include <cmath>
 
-void CollisionSystem::ResolveBallCollision(Ball& a, Ball& b) {
+void CollisionSystem::resolveBallCollision(Ball& a, Ball& b) {
     sf::Vector2f delta = a.getPosition() - b.getPosition();
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     float collision_distance = a.getRadius() + b.getRadius();
@@ -29,7 +29,7 @@ void CollisionSystem::ResolveBallCollision(Ball& a, Ball& b) {
     }
 }
 
-void CollisionSystem::CheckBallCollisions(std::vector<std::unique_ptr<Ball>>& balls) {
+void CollisionSystem::checkBallCollisions(std::vector<std::unique_ptr<Ball>>& balls) {
 
     float CELL_SIZE = 40.0f;
 
@@ -60,7 +60,7 @@ void CollisionSystem::CheckBallCollisions(std::vector<std::unique_ptr<Ball>>& ba
                             for (auto& ballB : grid[nx][ny]) {
                                 if (ballA != ballB) {
 
-                                    ResolveBallCollision(*ballA, *ballB);
+                                    resolveBallCollision(*ballA, *ballB);
                                 }
                             }
                         }
@@ -71,7 +71,7 @@ void CollisionSystem::CheckBallCollisions(std::vector<std::unique_ptr<Ball>>& ba
     }
 }
 
-void CollisionSystem::ResolveHollowCircleCollision(Ball& ball, const sf::Vector2f& boundaryPosition, float boundaryRadius) {
+void CollisionSystem::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& boundaryPosition, float boundaryRadius) {
     sf::Vector2f delta = ball.getPosition() - boundaryPosition;
 
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
@@ -90,7 +90,7 @@ void CollisionSystem::ResolveHollowCircleCollision(Ball& ball, const sf::Vector2
 void CollisionSystem::checkBallCollisionsBruteForce(std::vector<Ball>& balls) {
     for (size_t i = 0; i < balls.size(); ++i) {
         for (size_t j = i + 1; j < balls.size(); ++j) {
-            ResolveBallCollision(balls[i], balls[j]);
+            resolveBallCollision(balls[i], balls[j]);
         }
     }
 }

@@ -39,6 +39,6 @@ public:
         return nullptr;
     }
 
-    virtual void Update(float deltaTime) = 0;
-    virtual void Draw(sf::RenderWindow& window) const = 0;
+    virtual void update(float deltaTime) = 0;
+    virtual void draw(sf::RenderWindow& window) const = 0;
 };

@@ -71,7 +71,7 @@ int main()
                 }
 
                 if (!UIClicked) {
-                    sf::Vector2f mousePosition(event.mouseButton.x, event.mouseButton.y);
+                    sf::Vector2f mousePosition(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
 
                     if (currentButton == Button::buttonType::clickToSpawn) {
                         ps.spawnBall(mousePosition);

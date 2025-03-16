@@ -3,7 +3,7 @@
 Portal::Portal(const sf::Vector2f& pos, const sf::Texture& texture)
     : position(pos), spawner(10.0f) {
     sprite.setTexture(texture);
-    sprite.setOrigin(sf::Vector2f(texture.getSize().x / 2, texture.getSize().y / 2));
+    sprite.setOrigin(sf::Vector2f(static_cast<float>(texture.getSize().x / 2), static_cast<float>(texture.getSize().y / 2)));
     sprite.setPosition(position);
 
     addComponent<RendererComponent>(texture);
@@ -22,11 +22,11 @@ void Portal::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(sprite, states);
 }
 
-void Portal::Update(float deltaTime) {
+void Portal::update(float deltaTime) {
     // Implement the update logic here
 }
 
-void Portal::Draw(sf::RenderWindow& window) const {
+void Portal::draw(sf::RenderWindow& window) const {
     window.draw(sprite); // or whatever needs to be drawn
 }
 

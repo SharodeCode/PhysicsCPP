@@ -3,29 +3,29 @@
 
 Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f) {
     setPosition(position);
-    position_last = position;
+    positionLast = position;
 
     // Generate a random color
     sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
 
     addComponent<RigidbodyComponent>();
     addComponent<RendererComponent>(radius, randomColor);
-    GetRenderer()->SetPosition(position);
+    getRenderer()->setPosition(position);
 }
 
-void Ball::Update(float deltaTime) {
-    sf::Vector2f displacement = getPosition() - position_last;
-    position_last = getPosition();
+void Ball::update(float deltaTime) {
+    sf::Vector2f displacement = getPosition() - positionLast;
+    positionLast = getPosition();
 
-    rigidbody.Update(deltaTime);
+    rigidbody.update(deltaTime);
     setPosition(getPosition() + displacement + rigidbody.velocity * (deltaTime * deltaTime));
 
     if (RendererComponent* renderer = getComponent<RendererComponent>()) {
-        renderer->SetPosition(getPosition());
+        renderer->setPosition(getPosition());
     }
 
-    if (RigidbodyComponent* rb = GetRigidbody()) {
-        rb->Update(deltaTime);
+    if (RigidbodyComponent* rb = getRigidbody()) {
+        rb->update(deltaTime);
         setPosition(getPosition() + rb->velocity * deltaTime);
     }
 }
@@ -47,27 +47,27 @@ float Ball::getGravity() const {
 }
 
 sf::Vector2f Ball::getPositionLast() const {
-    return position_last;
+    return positionLast;
 }
 
 void Ball::setPositionLast(const sf::Vector2f& pos) {
-    position_last = pos;
+    positionLast = pos;
 }
 
 float Ball::getRadius() const {
     return radius;
 }
 
-void Ball::Draw(sf::RenderWindow& window) const {
-    if (const RendererComponent* renderer = GetRenderer()) {
-        renderer->Draw(window);
+void Ball::draw(sf::RenderWindow& window) const {
+    if (const RendererComponent* renderer = getRenderer()) {
+        renderer->draw(window);
     }
 }
 
-RigidbodyComponent* Ball::GetRigidbody() {
+RigidbodyComponent* Ball::getRigidbody() {
     return getComponent<RigidbodyComponent>();
 }
 
-RendererComponent* Ball::GetRenderer() const {
+RendererComponent* Ball::getRenderer() const {
     return getComponent<RendererComponent>();
 }

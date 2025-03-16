@@ -11,8 +11,8 @@ public:
     RendererComponent(float radius, sf::Color color);
     RendererComponent(const sf::Texture& texture);
 
-    void Update(float deltaTime) override {}
-    void Draw(sf::RenderWindow& window) const override;
+    void update(float deltaTime) override {}
+    void draw(sf::RenderWindow& window) const override;
 
-    void SetPosition(const sf::Vector2f& position);
+    void setPosition(const sf::Vector2f& position);
 };

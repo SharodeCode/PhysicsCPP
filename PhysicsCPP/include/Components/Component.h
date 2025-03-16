@@ -10,10 +10,10 @@ protected:
 public:
     virtual ~Component() = default;
     
-    void SetOwner(Entity* entity) { owner = entity; }
-    Entity* GetOwner() const { return owner; }
+    void setOwner(Entity* entity) { owner = entity; }
+    Entity* getOwner() const { return owner; }
 
-    virtual void Update(float deltaTime) {}  // Ensure default implementation is provided
+    virtual void update(float deltaTime) {}  // Ensure default implementation is provided
 
-    virtual void Draw(sf::RenderWindow& window) const = 0;
+    virtual void draw(sf::RenderWindow& window) const = 0;
 };
