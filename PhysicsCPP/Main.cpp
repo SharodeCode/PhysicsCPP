@@ -22,7 +22,7 @@ int main()
     initialise();
 
     PhysicsEngine ps = PhysicsEngine();
-    ps.subSteps = SUB_STEPS;
+    ps.subStepCount = SUB_STEPS;
 
     // Create a clock to control the movement
     sf::Clock clock = sf::Clock();

@@ -15,7 +15,7 @@ private:
     bool audioActive = false;
 
 public:
-    int subSteps = 1;
+    int subStepCount = 1;
 
     PhysicsEngine();
     void update(float subStepRate);
@@ -26,6 +26,6 @@ public:
 
     const std::vector<std::unique_ptr<Ball>>& getBalls() const;
     const std::vector<Portal>& getPortals() const;
-    const sf::CircleShape& getFrame() const;
+    const sf::CircleShape& getBoundaryShape() const;
     void toggleAudioActive();
 };

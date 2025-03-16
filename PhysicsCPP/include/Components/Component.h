@@ -15,5 +15,5 @@ public:
 
     virtual void update(float deltaTime) {}  // Ensure default implementation is provided
 
-    virtual void draw(sf::RenderWindow& window) const = 0;
+	virtual void draw(sf::RenderWindow& window) const {}  // Ensure default implementation is provided
 };

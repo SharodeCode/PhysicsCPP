@@ -4,10 +4,10 @@ Renderer::Renderer(sf::RenderWindow* win, UI* uiInstance) : window(win), ui(uiIn
 
 void Renderer::render(const PhysicsEngine& engine, float deltaTime) {
     window->clear();
-    window->draw(engine.getFrame());
+    window->draw(engine.getBoundaryShape());
 
     for (const auto& portal : engine.getPortals()) {
-        window->draw(portal);
+        portal.draw(*window);
     }
 
     for (const auto& ballPtr : engine.getBalls()) {

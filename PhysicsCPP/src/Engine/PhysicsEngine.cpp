@@ -10,7 +10,7 @@ void PhysicsEngine::spawnBall(const sf::Vector2f& position) {
 }
 
 void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& texture) {
-    portals.push_back(Portal(position, texture));
+    portals.push_back(Portal(position, texture, balls));
 }
 
 void PhysicsEngine::applyGravity() {
@@ -33,7 +33,7 @@ void PhysicsEngine::updateBalls(float dt)
 void PhysicsEngine::update(float subStepRate) {
     std::vector<std::future<void>> futures;
 
-    for (int i = 0; i < subSteps; i++) {
+    for (int i = 0; i < subStepCount; i++) {
         futures.clear();
 
         applyGravity();
@@ -53,7 +53,7 @@ void PhysicsEngine::update(float subStepRate) {
     }
 
     for (auto& portal : portals) {
-        portal.update(subStepRate, balls);
+        portal.update(subStepRate);
     }
 }
 
@@ -67,7 +67,7 @@ const std::vector<Portal>& PhysicsEngine::getPortals() const
     return portals;
 }
 
-const sf::CircleShape& PhysicsEngine::getFrame() const
+const sf::CircleShape& PhysicsEngine::getBoundaryShape() const
 {
     return boundary.getFrame();
 }
