@@ -21,6 +21,7 @@ public:
     RigidbodyComponent* getRigidbody();
 
     void accelerate(sf::Vector2f a);
+	void resetForces();
 
     float getRadius() const;
 

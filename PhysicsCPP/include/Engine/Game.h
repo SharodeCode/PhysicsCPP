@@ -7,21 +7,21 @@
 
 class Game {
 private:
-    static sf::RenderWindow window;
-    PhysicsEngine physicsEngine;
-    Renderer renderer;
-    UI ui;
-    InputManager inputManager;
+    PhysicsEngine& physicsEngine;
+    Renderer& renderer;
+    UI& ui;
+    InputManager& inputManager;
+    sf::RenderWindow& window;
 
     bool running = true;
     static const int WINDOW_WIDTH = 800;
     static const int WINDOW_HEIGHT = 800;
     const int FRAME_RATE = 60;
-    float subStepRate;
     const int SUB_STEPS = 8;
+    float subStepRate;
 
 public:
-    Game();
+    Game(sf::RenderWindow& window, PhysicsEngine& physicsEngine, Renderer& renderer, UI& ui, InputManager& inputManager);
     void run();
 private:
     void processInput();

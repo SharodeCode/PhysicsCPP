@@ -1,6 +1,7 @@
 ﻿#include "Engine/PhysicsEngine.h"
 #include "Engine/CollisionSystem.h"
 #include <future>
+#include <PhysicsConstants.h>
 
 PhysicsEngine::PhysicsEngine()
     : boundary(250.0f, sf::Vector2f(400.0f, 400.0f)), spawner(10.0f) {}
@@ -15,10 +16,8 @@ void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& t
 
 void PhysicsEngine::applyGravity() {
     for (auto& ball : balls) {
-        if (RigidbodyComponent* rb = ball->getRigidbody()) {
-            rb->resetForces(); // Reset before applying new forces
-            rb->applyForce(sf::Vector2f(0.0f, rb->mass * ball->getGravity())); // Apply gravity
-        }
+        ball->resetForces(); // Reset before applying new forces
+		ball->accelerate(sf::Vector2f(0.0f, GRAVITY));
     }
 }
 

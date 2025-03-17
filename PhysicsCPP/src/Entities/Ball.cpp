@@ -1,7 +1,7 @@
 ﻿#include "Entities/Ball.h"
 #include "PhysicsConstants.h"
 
-Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(50.0f) {
+Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(5000.0f) {
     setPosition(position);
     positionLast = position;
 
@@ -23,15 +23,14 @@ void Ball::update(float deltaTime) {
     if (RendererComponent* renderer = getComponent<RendererComponent>()) {
         renderer->setPosition(getPosition());
     }
-
-    if (RigidbodyComponent* rb = getRigidbody()) {
-        rb->update(deltaTime);
-        setPosition(getPosition() + rb->velocity * deltaTime);
-    }
 }
 
 void Ball::accelerate(sf::Vector2f a) {
-    rigidbody.applyForce(a * rigidbody.mass);
+    rigidbody.applyForce(a);
+}
+
+void Ball::resetForces() {
+	rigidbody.resetForces();
 }
 
 sf::Vector2f Ball::getVelocity() const {

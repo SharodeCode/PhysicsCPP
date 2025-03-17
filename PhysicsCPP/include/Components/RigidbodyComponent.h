@@ -8,7 +8,7 @@ public:
     sf::Vector2f acceleration;
     float mass;
 
-    RigidbodyComponent(float mass = 1.0f);
+    RigidbodyComponent(float mass = 100.0f);
 
     void applyForce(const sf::Vector2f& force);
     void resetForces();

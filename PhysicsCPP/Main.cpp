@@ -5,66 +5,34 @@
 #include "Entities/Portal.h"
 #include <Engine/Renderer.h>
 #include <Engine/InputManager.h>
+#include <Engine/Game.h>
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
 constexpr int FRAME_RATE = 60;
 constexpr int SUB_STEPS = 8;
 
-static sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+static 
 bool shootBalls = true;
-
-static void initialise() {
-    window.setFramerateLimit(FRAME_RATE);
-}
 
 int main()
 {
-    initialise();
+    sf::RenderWindow windowMine = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+    windowMine.setFramerateLimit(FRAME_RATE);
 
     PhysicsEngine ps = PhysicsEngine();
     ps.subStepCount = SUB_STEPS;
 
-    // Create a clock to control the movement
-    sf::Clock clock = sf::Clock();
-
-    UI ui = UI(&window, &ps);
-    Renderer renderer(&window, &ui);
+    UI ui = UI(&windowMine, &ps);
+    Renderer renderer(&windowMine, &ui);
 
     float subStepRate = (1.0f / FRAME_RATE) / (SUB_STEPS * 0.5f);
 
+	InputManager inputManager(ps, ui, windowMine);
 
-    float accumulator = 0.0f;
-    float spawnCircleTime = 0.0f;
+    Game game(windowMine, ps, renderer, ui, inputManager);
 
-    static bool lockClick = false;
-
-    sf::Texture texture;
-    if (!texture.loadFromFile("./Media/Images/portal.png"))
-    {
-        // error...
-    }
-
-    sf::Sprite sprite;
-    sprite.setTexture(texture);
-
-    Button::buttonType currentButton = Button::buttonType::mute;
-
-    while (window.isOpen())
-    {
-        sf::Time elapsed = clock.restart();
-        float deltaTime = elapsed.asSeconds();
-
-        accumulator += deltaTime;
-
-        InputManager inputManager(ps, ui, window);
-
-		inputManager.handleInput();
-
-        ps.update(subStepRate);
-
-        renderer.render(ps, deltaTime);
-    }
+	game.run();
 
     return 0;
 }
