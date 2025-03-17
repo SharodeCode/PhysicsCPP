@@ -17,8 +17,8 @@ public:
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) const override;
 
-    RendererComponent* getRenderer() const;
-    RigidbodyComponent* getRigidbody();
+    std::shared_ptr<RendererComponent> getRenderer() const;
+    std::shared_ptr<RigidbodyComponent> getRigidbody();
 
     void accelerate(sf::Vector2f a);
 	void resetForces();

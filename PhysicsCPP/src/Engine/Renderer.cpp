@@ -12,7 +12,7 @@ void Renderer::render(const PhysicsEngine& engine, float deltaTime) {
 
     for (const auto& ballPtr : engine.getBalls()) {
         if (ballPtr) {
-            if (const RendererComponent* renderer = ballPtr->getRenderer()) {
+            if (const std::shared_ptr<RendererComponent> renderer = ballPtr->getRenderer()) {
                 renderer->draw(*window);
             }
         }

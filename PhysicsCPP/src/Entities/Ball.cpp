@@ -22,7 +22,7 @@ void Ball::update(float deltaTime) {
     rigidbody.update(deltaTime);
     setPosition(getPosition() + displacement + rigidbody.velocity * (deltaTime * deltaTime));
 
-    if (RendererComponent* renderer = getComponent<RendererComponent>()) {
+    if (std::shared_ptr renderer = getComponent<RendererComponent>().lock()) {
         renderer->setPosition(getPosition());
     }
 }
@@ -60,15 +60,15 @@ float Ball::getRadius() const {
 }
 
 void Ball::draw(sf::RenderWindow& window) const {
-    if (const RendererComponent* renderer = getRenderer()) {
+    if (const std::shared_ptr<RendererComponent> renderer = getRenderer()) {
         renderer->draw(window);
     }
 }
 
-RigidbodyComponent* Ball::getRigidbody() {
-    return getComponent<RigidbodyComponent>();
+std::shared_ptr<RigidbodyComponent> Ball::getRigidbody() {
+    return getComponent<RigidbodyComponent>().lock();
 }
 
-RendererComponent* Ball::getRenderer() const {
-    return getComponent<RendererComponent>();
+std::shared_ptr<RendererComponent> Ball::getRenderer() const {
+    return getComponent<RendererComponent>().lock();
 }
