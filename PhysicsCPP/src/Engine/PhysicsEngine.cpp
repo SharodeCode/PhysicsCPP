@@ -16,7 +16,6 @@ void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& t
 
 void PhysicsEngine::applyGravity() {
     for (auto& ball : balls) {
-        ball->resetForces(); // Reset before applying new forces
 		ball->accelerate(sf::Vector2f(0.0f, GRAVITY));
     }
 }

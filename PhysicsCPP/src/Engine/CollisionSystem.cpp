@@ -1,5 +1,6 @@
 #include "Engine/CollisionSystem.h"
 #include <cmath>
+#include <GameConfig.h>
 
 void CollisionSystem::resolveBallCollision(Ball& a, Ball& b) {
     sf::Vector2f delta = a.getPosition() - b.getPosition();
@@ -11,15 +12,6 @@ void CollisionSystem::resolveBallCollision(Ball& a, Ball& b) {
         sf::Vector2f normal = delta / distance;
         sf::Vector2f relative_velocity = (a.getPosition() - a.getPositionLast()) - (b.getPosition() - b.getPositionLast());
         float impulse = 2.0f * (relative_velocity.x * normal.x + relative_velocity.y * normal.y);
-
-
-        if (impulse < -3.5f || impulse > 3.5f) {
-
-            // Calculate the collision point
-            sf::Vector2f collisionPoint = a.getPosition() + normal * (a.getRadius() - collision_distance);
-
-        }
-
 
         const float delta = 0.65f * (distance - collision_distance);
 
@@ -34,8 +26,8 @@ void CollisionSystem::checkBallCollisions(std::vector<std::unique_ptr<Ball>>& ba
     float CELL_SIZE = 40.0f;
 
     // Create the grid
-    int gridWidth = static_cast<int>(std::ceil(800.0f / CELL_SIZE));
-    int gridHeight = static_cast<int>(std::ceil(800.0f / CELL_SIZE));
+    int gridWidth = static_cast<int>(std::ceil(GameConfig::windowWidth / CELL_SIZE));
+    int gridHeight = static_cast<int>(std::ceil(GameConfig::windowHeight / CELL_SIZE));
 
     std::vector<std::vector<std::vector<Ball*>>> grid(gridWidth, std::vector<std::vector<Ball*>>(gridHeight));
 

@@ -6,7 +6,10 @@ Portal::Portal(const sf::Vector2f& position, const sf::Texture& texture, std::ve
     sprite.setOrigin(sf::Vector2f(static_cast<float>(texture.getSize().x / 2), static_cast<float>(texture.getSize().y / 2)));
     sprite.setPosition(position);
 
-    addComponent<RendererComponent>(texture);
+    auto* renderer = addComponent<RendererComponent>(texture);
+    if (renderer) {
+        renderer->setPosition(position);
+    }
 }
 
 void Portal::update(float deltaTime) {
@@ -18,6 +21,8 @@ void Portal::update(float deltaTime) {
 }
 
 void Portal::draw(sf::RenderWindow& window) const {
-    window.draw(sprite);
+    if (const RendererComponent* renderer = getComponent<RendererComponent>()) {
+        renderer->draw(window);
+    }
 }
 

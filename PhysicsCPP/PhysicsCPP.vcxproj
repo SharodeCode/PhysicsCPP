@@ -154,6 +154,7 @@
     <ClCompile Include="src\Entities\Boundary.cpp" />
     <ClCompile Include="src\Entities\Portal.cpp" />
     <ClCompile Include="src\Components\RigidbodyComponent.cpp" />
+    <ClCompile Include="src\GameConfig.cpp" />
     <ClCompile Include="UI\UIPanel.cpp" />
     <ClCompile Include="UI\Button.cpp" />
     <ClCompile Include="UI\UI.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="include\Entities\Portal.h" />
     <ClInclude Include="include\Components\RigidbodyComponent.h" />
     <ClInclude Include="include\Entities\Spawner.h" />
+    <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\PhysicsConstants.h" />
     <ClInclude Include="UI\UIPanel.h" />
     <ClInclude Include="UI\Button.h" />

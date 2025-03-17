@@ -7,8 +7,7 @@
 
 class Game {
 private:
-    sf::RenderWindow window; // Static window
-
+    sf::RenderWindow window;
     PhysicsEngine physicsEngine;
     UI ui;
     Renderer renderer;
@@ -17,7 +16,7 @@ private:
     bool running = true;
     static const int WINDOW_WIDTH = 800;
     static const int WINDOW_HEIGHT = 800;
-    const int FRAME_RATE = 60;
+    const int FRAME_RATE = 120;
     const int SUB_STEPS = 8;
     float subStepRate;
 

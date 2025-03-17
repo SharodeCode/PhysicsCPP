@@ -21,5 +21,10 @@ void RendererComponent::draw(sf::RenderWindow& window) const {
 }
 
 void RendererComponent::setPosition(const sf::Vector2f& position) {
-    shape.setPosition(position);
+    if (shape.getRadius() > 0) {  // Only update shape if it exists
+        shape.setPosition(position);
+    }
+    if (sprite.getTexture()) {  // Only update sprite if a texture exists
+        sprite.setPosition(position);
+    }
 }

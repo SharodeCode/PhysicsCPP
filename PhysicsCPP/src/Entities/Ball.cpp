@@ -14,8 +14,10 @@ Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(0.5f) {
 }
 
 void Ball::update(float deltaTime) {
+
+    sf::Vector2f prevPosition = getPosition();
     sf::Vector2f displacement = getPosition() - positionLast;
-    positionLast = getPosition();
+    positionLast = prevPosition; // Store before moving
 
     rigidbody.update(deltaTime);
     setPosition(getPosition() + displacement + rigidbody.velocity * (deltaTime * deltaTime));

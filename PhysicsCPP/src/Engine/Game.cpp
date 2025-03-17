@@ -7,6 +7,7 @@
 #include <Engine/Renderer.h>
 #include <Engine/InputManager.h>
 #include <Engine/Game.h>
+#include <GameConfig.h>
 
 Game::Game()
     : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "PhysicsCPP"), physicsEngine(), ui(&window, &physicsEngine), // UI needs window first
@@ -16,6 +17,8 @@ Game::Game()
 {
     window.setFramerateLimit(FRAME_RATE);
     physicsEngine.subStepCount = SUB_STEPS;
+
+    GameConfig::setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 
