@@ -4,6 +4,7 @@
 #include "UI/UI.h"
 #include "Entities/Portal.h"
 #include <Engine/Renderer.h>
+#include <Engine/InputManager.h>
 
 constexpr int WINDOW_HEIGHT = 800;
 constexpr int WINDOW_WIDTH = 800;
@@ -56,39 +57,9 @@ int main()
 
         accumulator += deltaTime;
 
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
+        InputManager inputManager(ps, ui, window);
 
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-
-                bool UIClicked = ui.handleEvent(event);
-
-                if (Button* activeButton = dynamic_cast<Button*>(ui.m_UIPanel->getActiveElement())) {
-                    currentButton = activeButton->m_btnType;
-                }
-
-                if (!UIClicked) {
-                    sf::Vector2f mousePosition(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
-
-                    if (currentButton == Button::buttonType::clickToSpawn) {
-                        ps.spawnBall(mousePosition);
-                    }
-                    else if (currentButton == Button::buttonType::ballSpawner) {
-                        ps.addPortal(mousePosition, texture);
-                    }
-                }
-
-                if (event.type == sf::Event::MouseButtonReleased) {
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        lockClick = false;
-                    }
-                }
-            }
-        }
-
+		inputManager.handleInput();
 
         ps.update(subStepRate);
 

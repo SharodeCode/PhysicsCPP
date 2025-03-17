@@ -15,9 +15,9 @@ void PhysicsEngine::addPortal(const sf::Vector2f& position, const sf::Texture& t
 
 void PhysicsEngine::applyGravity() {
     for (auto& ball : balls) {
-        RigidbodyComponent* rb = ball->getRigidbody();
-        if (rb) {
-            rb->ApplyForce(sf::Vector2f(0.0f, rb->mass * ball->getGravity()));
+        if (RigidbodyComponent* rb = ball->getRigidbody()) {
+            rb->resetForces(); // Reset before applying new forces
+            rb->applyForce(sf::Vector2f(0.0f, rb->mass * ball->getGravity())); // Apply gravity
         }
     }
 }

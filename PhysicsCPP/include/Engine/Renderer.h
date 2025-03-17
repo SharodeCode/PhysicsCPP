@@ -11,8 +11,11 @@ private:
     sf::RenderWindow* window;
     UI* ui;
 
+    const int FRAME_RATE = 60;
+
 public:
     Renderer(sf::RenderWindow* win, UI* uiInstance);
 
+    void initialize();
     void render(const PhysicsEngine& engine, float deltaTime);
 };

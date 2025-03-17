@@ -31,7 +31,7 @@ void Ball::update(float deltaTime) {
 }
 
 void Ball::accelerate(sf::Vector2f a) {
-    rigidbody.ApplyForce(a * rigidbody.mass);
+    rigidbody.applyForce(a * rigidbody.mass);
 }
 
 sf::Vector2f Ball::getVelocity() const {

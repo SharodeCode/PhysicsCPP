@@ -142,6 +142,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Components\RendererComponent.cpp" />
+    <ClCompile Include="src\Engine\Game.cpp" />
+    <ClCompile Include="src\Engine\InputManager.cpp" />
     <ClCompile Include="src\Engine\Renderer.cpp" />
     <ClCompile Include="src\Entities\BaseEntity.cpp" />
     <ClCompile Include="src\Entities\Spawner.cpp" />
@@ -168,6 +170,8 @@
     <ClInclude Include="include\Components\Component.h" />
     <ClInclude Include="include\Components\RendererComponent.h" />
     <ClInclude Include="include\Engine\CollisionSystem.h" />
+    <ClInclude Include="include\Engine\Game.h" />
+    <ClInclude Include="include\Engine\InputManager.h" />
     <ClInclude Include="include\Engine\Renderer.h" />
     <ClInclude Include="include\Entities\BaseEntity.h" />
     <ClInclude Include="include\Entities\Boundary.h" />

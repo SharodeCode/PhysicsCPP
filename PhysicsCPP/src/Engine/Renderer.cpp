@@ -22,3 +22,7 @@ void Renderer::render(const PhysicsEngine& engine, float deltaTime) {
 
     window->display();
 }
+
+void Renderer::initialize() {
+    window->setFramerateLimit(FRAME_RATE);
+}

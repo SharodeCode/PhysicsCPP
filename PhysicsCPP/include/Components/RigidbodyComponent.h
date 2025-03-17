@@ -10,6 +10,7 @@ public:
 
     RigidbodyComponent(float mass = 1.0f);
 
-    void ApplyForce(const sf::Vector2f& force);
+    void applyForce(const sf::Vector2f& force);
+    void resetForces();
     void update(float deltaTime) override;
 };
