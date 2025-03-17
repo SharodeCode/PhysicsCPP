@@ -1,7 +1,7 @@
 ﻿#include "Entities/Ball.h"
 #include "PhysicsConstants.h"
 
-Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(5000.0f) {
+Ball::Ball(sf::Vector2f position) : radius(10.0f), rigidbody(0.5f) {
     setPosition(position);
     positionLast = position;
 

@@ -8,8 +8,10 @@
 #include <Engine/InputManager.h>
 #include <Engine/Game.h>
 
-Game::Game(sf::RenderWindow& window, PhysicsEngine& physicsEngine, Renderer& renderer, UI& ui, InputManager& inputManager)
-    : window(window), physicsEngine(physicsEngine), renderer(renderer), ui(ui), inputManager(inputManager),
+Game::Game()
+    : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "PhysicsCPP"), physicsEngine(), ui(&window, &physicsEngine), // UI needs window first
+    renderer(&window, &ui), // Renderer needs window & UI
+    inputManager(physicsEngine, ui, window),
     subStepRate((1.0f / FRAME_RATE) / (SUB_STEPS * 0.5f))
 {
     window.setFramerateLimit(FRAME_RATE);

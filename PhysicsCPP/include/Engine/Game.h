@@ -7,11 +7,12 @@
 
 class Game {
 private:
-    PhysicsEngine& physicsEngine;
-    Renderer& renderer;
-    UI& ui;
-    InputManager& inputManager;
-    sf::RenderWindow& window;
+    sf::RenderWindow window; // Static window
+
+    PhysicsEngine physicsEngine;
+    UI ui;
+    Renderer renderer;
+    InputManager inputManager;
 
     bool running = true;
     static const int WINDOW_WIDTH = 800;
@@ -21,7 +22,7 @@ private:
     float subStepRate;
 
 public:
-    Game(sf::RenderWindow& window, PhysicsEngine& physicsEngine, Renderer& renderer, UI& ui, InputManager& inputManager);
+    Game();
     void run();
 private:
     void processInput();
