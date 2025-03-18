@@ -10,10 +10,11 @@ public:
 	void updateUI(float deltaTime);
 	void displayFPS(float fps);
 	void displayNumberOfObjects(int numberOfObjects);
-	void InitialiseButtons();
 	bool handleEvent(const sf::Event& event);
+	sf::Font& getFont() { return font; }
 
 	std::shared_ptr<UIPanel> m_UIPanel;
+	std::vector<std::shared_ptr<UIElement>> elements;
 
 private:
 	sf::RenderWindow *m_RenderWindow;
@@ -23,7 +24,7 @@ private:
 	sf::Font font;
 	float displayFramerateTime = 0.0f;
 
-	std::vector<std::shared_ptr<UIElement>> elements;
+
 
 
 };

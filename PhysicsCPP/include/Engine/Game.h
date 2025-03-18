@@ -4,6 +4,7 @@
 #include "Engine/Renderer.h"
 #include "UI/UI.h"
 #include "InputManager.h"
+#include "Scenes/SceneManager.h"
 
 class Game {
 private:
@@ -12,6 +13,9 @@ private:
     UI ui;
     Renderer renderer;
     InputManager inputManager;
+    SceneManager sceneManager;
+
+    std::shared_ptr<UIPanel> panel;
 
     bool running = true;
     static const int WINDOW_WIDTH = 800;
@@ -22,7 +26,11 @@ private:
 
 public:
     Game();
+    void InitialiseUI();
     void run();
+
+    PhysicsEngine& getPhysicsEngine() { return physicsEngine; }
+    Renderer& getRenderer() { return renderer; }
 private:
     void processInput();
     void update(float deltaTime);

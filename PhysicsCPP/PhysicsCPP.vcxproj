@@ -155,9 +155,10 @@
     <ClCompile Include="src\Entities\Portal.cpp" />
     <ClCompile Include="src\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="src\GameConfig.cpp" />
-    <ClCompile Include="UI\UIPanel.cpp" />
-    <ClCompile Include="UI\Button.cpp" />
-    <ClCompile Include="UI\UI.cpp" />
+    <ClCompile Include="src\Scenes\Scene.cpp" />
+    <ClCompile Include="src\UI\UIPanel.cpp" />
+    <ClCompile Include="src\UI\Button.cpp" />
+    <ClCompile Include="src\UI\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Media\Fonts\Roboto.ttf">
@@ -184,10 +185,13 @@
     <ClInclude Include="include\Entities\Spawner.h" />
     <ClInclude Include="include\GameConfig.h" />
     <ClInclude Include="include\PhysicsConstants.h" />
-    <ClInclude Include="UI\UIPanel.h" />
-    <ClInclude Include="UI\Button.h" />
-    <ClInclude Include="UI\UI.h" />
-    <ClInclude Include="UI\UIElement.h" />
+    <ClInclude Include="include\Scenes\BallSpawnerScene.h" />
+    <ClInclude Include="include\Scenes\Scene.h" />
+    <ClInclude Include="include\Scenes\SceneManager.h" />
+    <ClInclude Include="include\UI\UIPanel.h" />
+    <ClInclude Include="include\UI\Button.h" />
+    <ClInclude Include="include\UI\UI.h" />
+    <ClInclude Include="include\UI\UIElement.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Media\Audio\bouncyBall.wav" />

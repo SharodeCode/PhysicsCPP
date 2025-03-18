@@ -1,4 +1,4 @@
-#include "UIPanel.h"
+#include "UI/UIPanel.h"
 
 UIPanel::UIPanel(float padding) : padding(padding), activeElement(nullptr)
 {
@@ -14,6 +14,10 @@ void UIPanel::addElement(const std::shared_ptr<UIElement>& element)
         element->setPosition(pos);
     }
     elements.push_back(element);
+
+    if (!activeElement) {
+        activeElement = element.get();
+    }
 }
 
 void UIPanel::draw(sf::RenderWindow& window) {

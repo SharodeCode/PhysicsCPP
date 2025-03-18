@@ -18,7 +18,9 @@ public:
     sf::Text text;
     buttonType m_btnType;
 
-    Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, sf::Font& font, UIPanel& panel);
+    sf::Font font;
+
+    Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, UIPanel& panel);
     bool isMouseOver(sf::Vector2i mousePosition);
     void update(sf::Vector2i mousePosition);
 

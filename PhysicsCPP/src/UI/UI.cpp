@@ -9,8 +9,6 @@ UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
 	m_RenderWindow = RenderWindow;
     physicsSolver = ps;
 
-    UI::InitialiseButtons();
-
     // Initialise font and text
     font.loadFromFile("./Media/Fonts/Roboto.ttf");
     textFPS.setFont(font);
@@ -23,22 +21,6 @@ UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
     textNumberOfObjects.setFillColor(sf::Color::White);
     textNumberOfObjects.setStyle(sf::Text::Regular);
     textNumberOfObjects.setPosition(sf::Vector2f(0, textFPS.getLocalBounds().height + 12));
-}
-
-void UI::InitialiseButtons() {
-    std::shared_ptr<UIPanel> panel = std::make_shared<UIPanel>();
-
-    m_UIPanel = panel;
-
-    const float buttonWidth = 200.f;
-    const float buttonHeight = 50.f;
-    const float buttonGap = 10.f;
-
-    panel->addElement(std::make_shared<Button>(Button::buttonType::mute, (m_RenderWindow->getSize().x - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", font, *m_UIPanel));
-    panel->addElement(std::make_shared<Button>(Button::buttonType::ballSpawner, (m_RenderWindow->getSize().x - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", font, *m_UIPanel));
-    panel->addElement(std::make_shared<Button>(Button::buttonType::clickToSpawn, (m_RenderWindow->getSize().x - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Click to Spawn", font, *m_UIPanel));
-
-    elements.push_back(panel);
 }
 
 void UI::updateUI(float deltaTime) {

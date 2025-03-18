@@ -1,8 +1,10 @@
 #include "UI/Button.h"
 
-Button::Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, sf::Font& font, UIPanel& panel) {
+Button::Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, UIPanel& panel) {
     m_btnType = btnType;
     m_panelGroup = &panel;
+
+    font.loadFromFile("./Media/Fonts/Roboto.ttf");
     
     button.setPosition(sf::Vector2f(x, y));
     button.setSize(sf::Vector2f(width, height));

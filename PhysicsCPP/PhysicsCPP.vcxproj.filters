@@ -18,10 +18,10 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Button.cpp">
+    <ClCompile Include="src\UI\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UI\UI.cpp">
+    <ClCompile Include="src\UI\UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Entities\Ball.cpp">
@@ -30,7 +30,7 @@
     <ClCompile Include="src\Entities\Portal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UI\UIPanel.cpp">
+    <ClCompile Include="src\UI\UIPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Components\RigidbodyComponent.cpp">
@@ -66,6 +66,9 @@
     <ClCompile Include="src\GameConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scenes\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Font Include="Media\Fonts\Roboto.ttf">
@@ -73,10 +76,10 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UI\Button.h">
+    <ClInclude Include="include\UI\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UI\UI.h">
+    <ClInclude Include="include\UI\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Entities\Ball.h">
@@ -85,10 +88,10 @@
     <ClInclude Include="include\Entities\Portal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UI\UIElement.h">
+    <ClInclude Include="include\UI\UIElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UI\UIPanel.h">
+    <ClInclude Include="include\UI\UIPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\PhysicsEngine.h">
@@ -131,6 +134,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GameConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scenes\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scenes\SceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scenes\BallSpawnerScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
