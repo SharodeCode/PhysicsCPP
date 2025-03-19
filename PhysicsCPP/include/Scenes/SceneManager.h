@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 #include <unordered_map>
 #include <string>
 #include "Scenes/Scene.h"
-#include "Engine/Game.h"
+
 
 class SceneManager {
 private:
@@ -25,7 +25,6 @@ public:
         }
     }
 
-
     void update(float deltaTime) {
         if (currentScene) {
             currentScene->update(deltaTime);
@@ -36,5 +35,19 @@ public:
         if (currentScene) {
             currentScene->render(window);
         }
+
+        if (auto panel = currentScene->getUIPanel()) {
+            panel->draw(window);
+        }
+    }
+
+    void handleInput(InputAction action, sf::Vector2f spawnPosition) {
+        if (currentScene) {
+            currentScene->onInput(action, spawnPosition);
+        }
+    }
+
+    std::shared_ptr<Scene> getCurrentScene() const {
+		return currentScene;
     }
 };

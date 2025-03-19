@@ -2,23 +2,23 @@
 
 Renderer::Renderer(sf::RenderWindow* win, UI* uiInstance) : window(win), ui(uiInstance) {}
 
-void Renderer::render(const PhysicsEngine& engine, float deltaTime) {
+void Renderer::render(const SceneManager& sceneManager, float deltaTime) {
     window->clear();
-    window->draw(engine.getBoundaryShape());
+    //window->draw(sceneManager.getCurrentScene()->getGameObjects);
 
-    for (const auto& portal : engine.getPortals()) {
-        portal.draw(*window);
-    }
+    const auto currentScene = sceneManager.getCurrentScene();
+    if (!currentScene) return;
 
-    for (const auto& ballPtr : engine.getBalls()) {
-        if (ballPtr) {
-            if (const std::shared_ptr<RendererComponent> renderer = ballPtr->getRenderer()) {
-                renderer->draw(*window);
-            }
+    for (const auto& object : currentScene->getGameObjects()) {
+        if (const std::shared_ptr<RendererComponent> renderer = object->getComponent<RendererComponent>().lock()) {
+            renderer->draw(*window);
         }
     }
 
-    ui->updateUI(deltaTime);
+    // Draw UI Panel
+    if (auto panel = currentScene->getUIPanel()) {
+        panel->draw(*window);
+    }
 
     window->display();
 }

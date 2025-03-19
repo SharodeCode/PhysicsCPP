@@ -1,30 +1,40 @@
 #include "Components/RendererComponent.h"
 
-RendererComponent::RendererComponent(float radius, sf::Color color) {
+
+RendererComponent::RendererComponent(float radius, sf::Color color, BaseEntity* entity) : owner(entity) {
     shape.setRadius(radius);
     shape.setFillColor(color);
     shape.setOrigin(radius, radius);
 }
 
-RendererComponent::RendererComponent(const sf::Texture& texture) {
+RendererComponent::RendererComponent(const sf::Texture& texture, BaseEntity* entity) : owner(entity) {
     sprite.setTexture(texture);
     sprite.setOrigin(static_cast<float>(texture.getSize().x / 2), static_cast<float>(texture.getSize().y / 2));
 }
 
-void RendererComponent::draw(sf::RenderWindow& window) const {
-    if (sprite.getTexture()) {
-        window.draw(sprite); // Draw the texture for portals
-    }
-    else {
-        window.draw(shape); // Draw the circle shape for balls
-    }
+RendererComponent::RendererComponent(float radius, sf::Color fillColor, sf::Color outlineColor, float outlineThickness, BaseEntity* entity) : owner(entity) {
+    shape.setRadius(radius);
+    shape.setFillColor(fillColor);  // Likely transparent
+    shape.setOutlineThickness(outlineThickness);
+    shape.setOutlineColor(outlineColor);
+	shape.setOrigin(radius, radius);
+
+	owner->setPosition(sf::Vector2(400.0f, 400.0f));
 }
 
-void RendererComponent::setPosition(const sf::Vector2f& position) {
-    if (shape.getRadius() > 0) {  // Only update shape if it exists
-        shape.setPosition(position);
+
+
+void RendererComponent::draw(sf::RenderWindow& window) const {
+    if (owner) {
+        sf::Vector2f pos = owner->getPosition();
+        const_cast<sf::CircleShape&>(shape).setPosition(pos);
+        const_cast<sf::Sprite&>(sprite).setPosition(pos);
     }
-    if (sprite.getTexture()) {  // Only update sprite if a texture exists
-        sprite.setPosition(position);
+
+    if (sprite.getTexture()) {
+        window.draw(sprite);
+    }
+    else {
+        window.draw(shape);
     }
 }

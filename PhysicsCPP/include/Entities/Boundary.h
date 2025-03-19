@@ -1,14 +1,22 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Entities/BaseEntity.h"
+#include "Components/RigidbodyComponent.h"
 
-class Boundary {
+class Boundary : public BaseEntity {
 private:
     sf::CircleShape frame;
+    std::shared_ptr<RigidbodyComponent> rigidbody;
+    float radius;
 
 public:
     Boundary(float radius, sf::Vector2f position);
 
-    const sf::CircleShape& getFrame() const;
     float getRadius() const;
-    sf::Vector2f getPosition() const;
+
+    std::shared_ptr<RigidbodyComponent> getRigidbody() const { return rigidbody; }
+
+    // Implement required functions from BaseEntity
+    void update(float deltaTime) override;
+    void draw(sf::RenderWindow& window) const override;
 };

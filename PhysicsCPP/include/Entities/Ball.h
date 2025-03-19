@@ -5,11 +5,11 @@
 #include "Components/Component.h"
 #include "Entities/BaseEntity.h"
 
-class Ball : public BaseEntity, public sf::Transformable {
+class Ball : public BaseEntity {
 private:
     float radius;
-    sf::Vector2f positionLast;
-    RigidbodyComponent rigidbody;
+    std::shared_ptr<RigidbodyComponent> rigidbody;
+    std::shared_ptr<RendererComponent> renderer;
 
 public:
     Ball(sf::Vector2f position);
@@ -21,14 +21,10 @@ public:
     std::shared_ptr<RigidbodyComponent> getRigidbody();
 
     void accelerate(sf::Vector2f a);
-	void resetForces();
+    void resetForces();
 
     float getRadius() const;
-
     sf::Vector2f getVelocity() const;
     void setVelocity(const sf::Vector2f& vel);
     float getGravity() const;
-
-    sf::Vector2f getPositionLast() const;
-    void setPositionLast(const sf::Vector2f& pos);
 };

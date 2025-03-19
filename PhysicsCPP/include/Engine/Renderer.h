@@ -5,6 +5,7 @@
 #include "Entities/Portal.h"
 #include "Engine/PhysicsEngine.h"
 #include <UI/UI.h>
+#include <Scenes/SceneManager.h>
 
 class Renderer {
 private:
@@ -17,5 +18,5 @@ public:
     Renderer(sf::RenderWindow* win, UI* uiInstance);
 
     void initialize();
-    void render(const PhysicsEngine& engine, float deltaTime);
+    void render(const SceneManager& sceneManager, float deltaTime);
 };

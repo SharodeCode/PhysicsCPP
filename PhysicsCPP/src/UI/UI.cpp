@@ -29,7 +29,6 @@ void UI::updateUI(float deltaTime) {
         button->update(sf::Mouse::getPosition(*m_RenderWindow));
     }
     
-
     // Update framerate
     displayFramerateTime += deltaTime;
     float fps = 1.0f / (deltaTime);
@@ -40,7 +39,7 @@ void UI::updateUI(float deltaTime) {
         displayFramerateTime = 0;
     }
 
-    displayNumberOfObjects(static_cast<int>(physicsSolver->getBalls().size()));
+    //displayNumberOfObjects(static_cast<int>(physicsSolver->getBalls().size()));
 
     m_RenderWindow->draw(textFPS);
     m_RenderWindow->draw(textNumberOfObjects);

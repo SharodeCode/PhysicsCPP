@@ -1,22 +1,21 @@
 #include "Entities/Boundary.h"
+#include <Components/RendererComponent.h>
 
-Boundary::Boundary(float radius, sf::Vector2f position) {
-    frame = sf::CircleShape(radius, 100);
-    frame.setOutlineThickness(10.0f);
-    frame.setFillColor(sf::Color::Transparent);
-    frame.setOutlineColor(sf::Color::White);
-    frame.setOrigin(sf::Vector2(radius, radius));
-    frame.setPosition(position);
-}
-
-const sf::CircleShape& Boundary::getFrame() const {
-    return frame;
+Boundary::Boundary(float radius, sf::Vector2f position) : radius(radius){
+    rigidbody = std::make_shared<RigidbodyComponent>(this, RigidbodyComponent::Type::Static, radius);
+    addComponent<RendererComponent>(radius, sf::Color::Transparent, sf::Color::White, 10.0f, this);
 }
 
 float Boundary::getRadius() const {
-    return frame.getRadius();
+    return radius;
 }
 
-sf::Vector2f Boundary::getPosition() const {
-    return frame.getPosition();
+void Boundary::update(float deltaTime) {
+    // Static boundary does not need to update
+}
+
+void Boundary::draw(sf::RenderWindow& window) const {
+    if (auto renderer = getComponent<RendererComponent>().lock()) {
+        renderer->draw(window);  // Let the renderer handle the drawing
+    }
 }

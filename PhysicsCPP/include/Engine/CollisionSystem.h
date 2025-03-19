@@ -1,11 +1,12 @@
 #pragma once
 #include "Entities/Ball.h"
+#include "Entities/BaseEntity.h"
 #include <vector>
 
 class CollisionSystem {
 public:
-    static void resolveBallCollision(Ball& a, Ball& b);
-    static void checkBallCollisions(std::vector<std::unique_ptr<Ball>>& balls);
-    static void resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& center, float outerRadius);
+    static void resolveBallCollision(RigidbodyComponent& a, RigidbodyComponent& b);
+    static void checkBallCollisions(std::vector<std::shared_ptr<RigidbodyComponent>>& balls);
+    static void resolveHollowCircleCollision(std::shared_ptr<RigidbodyComponent>& ball, const sf::Vector2f& center, float outerRadius);
     static void checkBallCollisionsBruteForce(std::vector<Ball>& balls);
 };

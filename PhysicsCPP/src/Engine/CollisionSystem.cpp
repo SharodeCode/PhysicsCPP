@@ -1,27 +1,38 @@
-#include "Engine/CollisionSystem.h"
+﻿#include "Engine/CollisionSystem.h"
 #include <cmath>
 #include <GameConfig.h>
+#include "Entities/BaseEntity.h"
 
-void CollisionSystem::resolveBallCollision(Ball& a, Ball& b) {
-    sf::Vector2f delta = a.getPosition() - b.getPosition();
+void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyComponent& b) {
+    sf::Vector2f delta = a.getOwner()->getPosition() - b.getOwner()->getPosition();
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
     float collision_distance = a.getRadius() + b.getRadius();
 
+    if (distance < collision_distance) {
+        sf::Vector2f normal = delta / distance; // Collision normal
+        sf::Vector2f relative_velocity = a.getVelocity() - b.getVelocity();
 
-    if (distance <= collision_distance) {
-        sf::Vector2f normal = delta / distance;
-        sf::Vector2f relative_velocity = (a.getPosition() - a.getPositionLast()) - (b.getPosition() - b.getPositionLast());
-        float impulse = 2.0f * (relative_velocity.x * normal.x + relative_velocity.y * normal.y);
+        // Ensure objects move apart by computing impulse correctly
+        float elasticity = 0.9f;  // 90% elasticity for bounce
+        float impulse = (-(1 + elasticity) * (relative_velocity.x * normal.x + relative_velocity.y * normal.y)) /
+            ((1 / a.getMass()) + (1 / b.getMass()));
 
-        const float delta = 0.65f * (distance - collision_distance);
+        sf::Vector2f impulseVector = impulse * normal;
 
-        a.move(-((normal * delta * b.getRadius()) / (a.getRadius() + b.getRadius())));
-        b.move((normal * delta * a.getRadius()) / (a.getRadius() + b.getRadius()));
+        // Apply impulse to change velocity, preventing sticking
+        a.setVelocity(a.getVelocity() + (impulseVector / a.getMass()));
+        b.setVelocity(b.getVelocity() - (impulseVector / b.getMass()));
 
+        // Push objects apart to prevent overlap
+        float pushFactor = 0.5f; // Ensures equal separation
+        const float deltaMove = 0.65f * (distance - collision_distance);
+        a.move(-(normal * deltaMove * pushFactor));
+        b.move(normal * deltaMove * pushFactor);
     }
 }
 
-void CollisionSystem::checkBallCollisions(std::vector<std::unique_ptr<Ball>>& balls) {
+
+void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyComponent>>& balls) {
 
     float CELL_SIZE = 40.0f;
 
@@ -29,14 +40,14 @@ void CollisionSystem::checkBallCollisions(std::vector<std::unique_ptr<Ball>>& ba
     int gridWidth = static_cast<int>(std::ceil(GameConfig::windowWidth / CELL_SIZE));
     int gridHeight = static_cast<int>(std::ceil(GameConfig::windowHeight / CELL_SIZE));
 
-    std::vector<std::vector<std::vector<Ball*>>> grid(gridWidth, std::vector<std::vector<Ball*>>(gridHeight));
+    std::vector<std::vector<std::vector<RigidbodyComponent*>>> grid(gridWidth, std::vector<std::vector<RigidbodyComponent*>>(gridHeight));
 
     // Assign balls to grid cells
-    for (auto& ball : balls) {
-        int x = static_cast<int>(ball->getPosition().x / CELL_SIZE);
-        int y = static_cast<int>(ball->getPosition().y / CELL_SIZE);
+    for (auto& rb : balls) {
+        int x = static_cast<int>(rb->getOwner()->getPosition().x / CELL_SIZE);
+        int y = static_cast<int>(rb->getOwner()->getPosition().y / CELL_SIZE);
 
-        grid[x][y].push_back(ball.get());
+        grid[x][y].push_back(rb.get());
     }
 
     // Check for collisions within the same cell and neighboring cells
@@ -63,26 +74,33 @@ void CollisionSystem::checkBallCollisions(std::vector<std::unique_ptr<Ball>>& ba
     }
 }
 
-void CollisionSystem::resolveHollowCircleCollision(Ball& ball, const sf::Vector2f& boundaryPosition, float boundaryRadius) {
-    sf::Vector2f delta = ball.getPosition() - boundaryPosition;
+void CollisionSystem::resolveHollowCircleCollision(std::shared_ptr<RigidbodyComponent>& ball, const sf::Vector2f& boundaryPosition, float boundaryRadius) {
+    sf::Vector2f delta = ball->getOwner()->getPosition() - boundaryPosition;
 
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
-    float ballRadius = ball.getRadius();
+    float ballRadius = ball->getRadius();
 
+    // Ensure the ball remains inside the boundary
     if (distance >= boundaryRadius - ballRadius) {
-        sf::Vector2f normal = delta / distance;
+        sf::Vector2f normal = delta / distance; // Get direction from boundary center to ball
 
-        ball.setVelocity(ball.getVelocity() - (0.8f * (ball.getVelocity().x * normal.x + ball.getVelocity().y * normal.y) * normal));
-        ball.setVelocity(ball.getVelocity() * 0.99f);
+        // Reflect velocity based on collision normal
+        sf::Vector2f velocity = ball->getVelocity();
+        float dotProduct = (velocity.x * normal.x + velocity.y * normal.y);
+        sf::Vector2f reflection = velocity - 2.0f * dotProduct * normal;
 
-        ball.setPosition(boundaryPosition + normal * (boundaryRadius - ballRadius));
+        ball->setVelocity(reflection * 0.8f); // Apply velocity damping (80% energy retained)
+        ball->setVelocity(ball->getVelocity() * 0.99f); // Apply additional friction
+
+        // Move ball just outside the boundary to prevent overlapping
+        ball->getOwner()->setPosition(boundaryPosition + normal * (boundaryRadius - ballRadius));
     }
 }
 
 void CollisionSystem::checkBallCollisionsBruteForce(std::vector<Ball>& balls) {
     for (size_t i = 0; i < balls.size(); ++i) {
         for (size_t j = i + 1; j < balls.size(); ++j) {
-            resolveBallCollision(balls[i], balls[j]);
+            //resolveBallCollision(balls[i], balls[j]);
         }
     }
 }

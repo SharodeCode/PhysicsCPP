@@ -5,6 +5,10 @@
 #include "UI/UI.h"
 #include "InputManager.h"
 #include "Scenes/SceneManager.h"
+#include "Entities/Ball.h"
+#include "Entities/Portal.h"
+#include <GameConfig.h>
+#include <Scenes/BallSpawnerScene.h>
 
 class Game {
 private:
@@ -12,8 +16,9 @@ private:
     PhysicsEngine physicsEngine;
     UI ui;
     Renderer renderer;
-    InputManager inputManager;
     SceneManager sceneManager;
+    InputManager inputManager;
+
 
     std::shared_ptr<UIPanel> panel;
 
@@ -26,13 +31,13 @@ private:
 
 public:
     Game();
-    void InitialiseUI();
     void run();
 
     PhysicsEngine& getPhysicsEngine() { return physicsEngine; }
     Renderer& getRenderer() { return renderer; }
+
+    void render();
+
 private:
     void processInput();
-    void update(float deltaTime);
-    void render();
 };

@@ -3,6 +3,14 @@
 #include <memory>
 #include "Entities/BaseEntity.h"  // Game objects
 #include <SFML/Graphics.hpp>
+#include "Engine/InputManager.h"
+
+enum class InputAction;
+
+class PhysicsEngine;
+class Renderer;
+class UI;
+class UIPanel;
 
 class Scene {
 protected:
@@ -21,11 +29,20 @@ public:
         renderer = render;
         ui = uiSystem;
     }
+
+    const std::vector<std::shared_ptr<BaseEntity>>& getGameObjects() const {
+        return gameObjects;
+    }
+
     virtual void initialize() = 0;  // Setup the scene
     virtual void update(float deltaTime) = 0; // Update game objects
     virtual void render(sf::RenderWindow& window) = 0; // Draw everything
 
+    std::shared_ptr<UIPanel> getUIPanel() { return uiPanel; }
+
     void addGameObject(std::shared_ptr<BaseEntity> object) {
         gameObjects.push_back(object);
     }
+
+    virtual void onInput(InputAction action, sf::Vector2f spawnPosition) = 0;
 };

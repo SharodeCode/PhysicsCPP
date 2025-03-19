@@ -1,7 +1,7 @@
 #include "Engine/InputManager.h"
 
-InputManager::InputManager(PhysicsEngine& engine, UI& uiInstance, sf::RenderWindow& win)
-    : physicsEngine(engine), ui(uiInstance), window(win) {
+InputManager::InputManager(PhysicsEngine& engine, UI& uiInstance, sf::RenderWindow& win, SceneManager* sceneManager)
+    : physicsEngine(engine), ui(uiInstance), window(win), sceneManager(sceneManager) {
     if (!texture.loadFromFile("./Media/Images/portal.png")) {
         // Handle texture load failure
     }
@@ -25,10 +25,10 @@ void InputManager::handleInput() {
                 sf::Vector2f mousePosition(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
 
                 if (currentButton == Button::buttonType::clickToSpawn) {
-                    physicsEngine.spawnBall(mousePosition);
+					sceneManager->handleInput(InputAction::SpawnBall, mousePosition);
                 }
                 else if (currentButton == Button::buttonType::ballSpawner) {
-                    physicsEngine.addPortal(mousePosition, texture);
+                    sceneManager->handleInput(InputAction::SpawnPortal, mousePosition);
                 }
             }
         }
