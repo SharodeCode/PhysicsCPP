@@ -1,8 +1,7 @@
 #pragma once
-#include "Component.h"
 #include <SFML/System/Vector2.hpp>
-
-class BaseEntity;
+#include "Component.h"
+#include "Entities/BaseEntity.h"
 
 class RigidbodyComponent : public Component {
 public:
@@ -17,7 +16,6 @@ public:
     };
 
     RigidbodyComponent(BaseEntity* owner, Type type, float radius) : owner(owner), type(type), mass(5.0f), radius(radius) {}
-    RigidbodyComponent(float mass = 100.0f);
 
     void applyForce(const sf::Vector2f& force);
     void resetForces();
@@ -28,10 +26,12 @@ public:
 
     BaseEntity* getOwner() const { return owner; }
 
-	sf::Vector2f setVelocity(const sf::Vector2f& vel) { return velocity = vel; }
+	void applyVelocity(const sf::Vector2f& vel) { velocity = vel; }
 	sf::Vector2f getVelocity() const { return velocity; }
 
 	float getMass() const { return mass; }
+
+	Type getType() const { return type; }
 
 private:
     BaseEntity* owner;

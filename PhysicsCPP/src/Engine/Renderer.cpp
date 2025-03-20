@@ -4,7 +4,6 @@ Renderer::Renderer(sf::RenderWindow* win, UI* uiInstance) : window(win), ui(uiIn
 
 void Renderer::render(const SceneManager& sceneManager, float deltaTime) {
     window->clear();
-    //window->draw(sceneManager.getCurrentScene()->getGameObjects);
 
     const auto currentScene = sceneManager.getCurrentScene();
     if (!currentScene) return;
@@ -14,15 +13,8 @@ void Renderer::render(const SceneManager& sceneManager, float deltaTime) {
             renderer->draw(*window);
         }
     }
-
-    // Draw UI Panel
-    if (auto panel = currentScene->getUIPanel()) {
-        panel->draw(*window);
-    }
-
-    window->display();
 }
 
 void Renderer::initialize() {
-    window->setFramerateLimit(FRAME_RATE);
+    window->setFramerateLimit(GameConfig::FRAME_RATE);
 }

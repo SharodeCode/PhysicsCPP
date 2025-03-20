@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include "Components/RigidbodyComponent.h"
-#include <Components/RendererComponent.h>
-#include "Components/Component.h"
-#include "Entities/BaseEntity.h"
+#include "Components/RendererComponent.h"
+#include "PhysicsConstants.h"
 
 class Ball : public BaseEntity {
 private:

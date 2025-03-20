@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics/RenderWindow.hpp>
+
 class UIElement {
 public:
     //TODO: Modify so that the render window is not being passed around so much

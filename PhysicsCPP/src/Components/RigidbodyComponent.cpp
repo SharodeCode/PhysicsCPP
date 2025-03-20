@@ -1,8 +1,4 @@
 ﻿#include "Components/RigidbodyComponent.h"
-#include "Entities/BaseEntity.h"
-
-RigidbodyComponent::RigidbodyComponent(float mass)
-    : mass(mass), velocity(0.f, 0.f), acceleration(0.f, 0.f) {}
 
 void RigidbodyComponent::applyForce(const sf::Vector2f& force) {
     acceleration += force / mass;

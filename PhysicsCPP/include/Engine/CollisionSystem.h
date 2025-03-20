@@ -1,7 +1,9 @@
 #pragma once
+#include <vector>
+#include <cmath>
+#include "GameConfig.h"
 #include "Entities/Ball.h"
 #include "Entities/BaseEntity.h"
-#include <vector>
 
 class CollisionSystem {
 public:

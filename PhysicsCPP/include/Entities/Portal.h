@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "Entities/Ball.h"
-#include "Entities/Spawner.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "Entities/Ball.h"
+#include "Entities/Spawner.h"
 
 class Portal: public BaseEntity {
 private:

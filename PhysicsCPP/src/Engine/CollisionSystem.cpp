@@ -1,7 +1,5 @@
 ﻿#include "Engine/CollisionSystem.h"
-#include <cmath>
-#include <GameConfig.h>
-#include "Entities/BaseEntity.h"
+
 
 void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyComponent& b) {
     sf::Vector2f delta = a.getOwner()->getPosition() - b.getOwner()->getPosition();
@@ -20,8 +18,8 @@ void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyCompo
         sf::Vector2f impulseVector = impulse * normal;
 
         // Apply impulse to change velocity, preventing sticking
-        a.setVelocity(a.getVelocity() + (impulseVector / a.getMass()));
-        b.setVelocity(b.getVelocity() - (impulseVector / b.getMass()));
+        a.applyVelocity(a.getVelocity() + (impulseVector / a.getMass()));
+        b.applyVelocity(b.getVelocity() - (impulseVector / b.getMass()));
 
         // Push objects apart to prevent overlap
         float pushFactor = 0.5f; // Ensures equal separation
@@ -34,18 +32,18 @@ void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyCompo
 
 void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyComponent>>& balls) {
 
-    float CELL_SIZE = 40.0f;
+    float CELL_GRID_SIZE = 40.0f;
 
     // Create the grid
-    int gridWidth = static_cast<int>(std::ceil(GameConfig::windowWidth / CELL_SIZE));
-    int gridHeight = static_cast<int>(std::ceil(GameConfig::windowHeight / CELL_SIZE));
+    int gridWidth = static_cast<int>(std::ceil(GameConfig::WINDOW_WIDTH / CELL_GRID_SIZE));
+    int gridHeight = static_cast<int>(std::ceil(GameConfig::WINDOW_HEIGHT / CELL_GRID_SIZE));
 
     std::vector<std::vector<std::vector<RigidbodyComponent*>>> grid(gridWidth, std::vector<std::vector<RigidbodyComponent*>>(gridHeight));
 
     // Assign balls to grid cells
     for (auto& rb : balls) {
-        int x = static_cast<int>(rb->getOwner()->getPosition().x / CELL_SIZE);
-        int y = static_cast<int>(rb->getOwner()->getPosition().y / CELL_SIZE);
+        int x = static_cast<int>(rb->getOwner()->getPosition().x / CELL_GRID_SIZE);
+        int y = static_cast<int>(rb->getOwner()->getPosition().y / CELL_GRID_SIZE);
 
         grid[x][y].push_back(rb.get());
     }
@@ -89,8 +87,8 @@ void CollisionSystem::resolveHollowCircleCollision(std::shared_ptr<RigidbodyComp
         float dotProduct = (velocity.x * normal.x + velocity.y * normal.y);
         sf::Vector2f reflection = velocity - 2.0f * dotProduct * normal;
 
-        ball->setVelocity(reflection * 0.8f); // Apply velocity damping (80% energy retained)
-        ball->setVelocity(ball->getVelocity() * 0.99f); // Apply additional friction
+        ball->applyVelocity(reflection * 0.8f); // Apply velocity damping (80% energy retained)
+        ball->applyVelocity(ball->getVelocity() * 0.99f); // Apply additional friction
 
         // Move ball just outside the boundary to prevent overlapping
         ball->getOwner()->setPosition(boundaryPosition + normal * (boundaryRadius - ballRadius));

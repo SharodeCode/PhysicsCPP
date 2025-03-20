@@ -1,8 +1,5 @@
 #include "UI/UI.h"
-#include <SFML/Graphics.hpp>
-#include "UI/Button.h"
-#include "Engine/PhysicsEngine.h"
-#include <UI/UIPanel.h>
+#include <iostream>
 
 UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
 {
@@ -10,7 +7,9 @@ UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
     physicsSolver = ps;
 
     // Initialise font and text
-    font.loadFromFile("./Media/Fonts/Roboto.ttf");
+    if (!font.loadFromFile("./Media/Fonts/Roboto.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+    }
     textFPS.setFont(font);
     textFPS.setCharacterSize(10);
     textFPS.setFillColor(sf::Color::White);
@@ -23,7 +22,7 @@ UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
     textNumberOfObjects.setPosition(sf::Vector2f(0, textFPS.getLocalBounds().height + 12));
 }
 
-void UI::updateUI(float deltaTime) {
+void UI::update(float deltaTime) {
     
     for (auto& button : elements) {
         button->update(sf::Mouse::getPosition(*m_RenderWindow));
@@ -39,16 +38,19 @@ void UI::updateUI(float deltaTime) {
         displayFramerateTime = 0;
     }
 
-    //displayNumberOfObjects(static_cast<int>(physicsSolver->getBalls().size()));
-
-    m_RenderWindow->draw(textFPS);
-    m_RenderWindow->draw(textNumberOfObjects);
-
-    for (auto& button : elements) {
-
-        button->draw(*m_RenderWindow);
-    }
+    displayNumberOfObjects(static_cast<int>(physicsSolver->getRigidbodyCount()));
 }
+
+void UI::render(sf::RenderWindow& window) {
+    if (m_UIPanel) {
+        m_UIPanel->draw(window);  // Draw panel first
+    }
+
+    // Draw text elements after the panel
+    window.draw(textFPS);
+    window.draw(textNumberOfObjects);
+}
+
 
 void UI::displayFPS(float fps)
 {

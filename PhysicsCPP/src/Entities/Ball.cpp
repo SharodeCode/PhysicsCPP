@@ -1,5 +1,5 @@
 ﻿#include "Entities/Ball.h"
-#include "PhysicsConstants.h"
+
 
 Ball::Ball(sf::Vector2f position) : radius(10.0f) {
     setPosition(position);
@@ -24,10 +24,6 @@ void Ball::update(float deltaTime) {
     setPosition(getPosition() + displacement + rigidbody->velocity * (deltaTime * deltaTime));
 
     if (std::shared_ptr renderer = getComponent<RendererComponent>().lock()) {
-        setPosition(getPosition());
-    }
-
-    if (rigidbody) {
         setPosition(getPosition());
     }
 }

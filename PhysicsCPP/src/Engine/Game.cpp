@@ -1,19 +1,19 @@
 #include "Engine/Game.h"
 
 Game::Game()
-    : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "PhysicsCPP"), physicsEngine(), ui(&window, &physicsEngine), // UI needs window first
+    : window(sf::VideoMode(GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT), "PhysicsCPP"), physicsEngine(), ui(&window, &physicsEngine), // UI needs window first
     renderer(&window, &ui), // Renderer needs window & UI
     sceneManager(),
     inputManager(physicsEngine, ui, window, &sceneManager),
-    subStepRate((1.0f / FRAME_RATE) / (SUB_STEPS * 0.5f))
+    subStepRate((1.0f / GameConfig::FRAME_RATE) / (GameConfig::SUBSTEP_COUNT))
 {
-    window.setFramerateLimit(FRAME_RATE);
-    physicsEngine.subStepCount = SUB_STEPS;
+    window.setFramerateLimit(GameConfig::FRAME_RATE);
+    physicsEngine.subStepCount = GameConfig::SUBSTEP_COUNT;
 
-    GameConfig::setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    GameConfig::setWindowSize(GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT);
     
     sceneManager.addScene("Ball Spawner", std::make_shared<BallSpawnerScene>());
-    sceneManager.setScene("Ball Spawner", &physicsEngine, &renderer, &ui);  // Start at Gameplay
+    sceneManager.setScene("Ball Spawner", &physicsEngine, &ui);  // Start at Gameplay
 }
 
 void Game::run() {
@@ -27,7 +27,8 @@ void Game::run() {
         processInput();
 
         sceneManager.update(deltaTime);
-		physicsEngine.update(deltaTime);
+        physicsEngine.update(deltaTime);
+        ui.update(deltaTime);
 
         render();
     }
@@ -39,5 +40,11 @@ void Game::processInput() {
 }
 
 void Game::render() {
-    renderer.render(sceneManager, 1.0f / 120.0f);
+    renderer.render(sceneManager, 1.0f / GameConfig::FRAME_RATE);
+
+    // UI should be drawn last, after scene rendering
+    ui.render(window);
+
+    // Now call display at the very end
+    window.display();
 }

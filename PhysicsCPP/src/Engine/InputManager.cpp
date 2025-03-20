@@ -2,9 +2,6 @@
 
 InputManager::InputManager(PhysicsEngine& engine, UI& uiInstance, sf::RenderWindow& win, SceneManager* sceneManager)
     : physicsEngine(engine), ui(uiInstance), window(win), sceneManager(sceneManager) {
-    if (!texture.loadFromFile("./Media/Images/portal.png")) {
-        // Handle texture load failure
-    }
 }
 
 void InputManager::handleInput() {

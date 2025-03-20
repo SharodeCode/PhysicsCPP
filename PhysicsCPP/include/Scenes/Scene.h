@@ -1,8 +1,8 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
-#include "Entities/BaseEntity.h"  // Game objects
-#include <SFML/Graphics.hpp>
+#include "Entities/BaseEntity.h"
 #include "Engine/InputManager.h"
 
 enum class InputAction;
@@ -17,16 +17,14 @@ protected:
     std::vector<std::shared_ptr<BaseEntity>> gameObjects;  // Physics-based objects
 
     PhysicsEngine* physicsEngine = nullptr;
-    Renderer* renderer = nullptr;
     std::shared_ptr<UIPanel> uiPanel;
     UI* ui = nullptr;
 
 public:
     virtual ~Scene() = default;
 
-    void setSystems(PhysicsEngine* physics, Renderer* render, UI* uiSystem) {
+    void setSystems(PhysicsEngine* physics, UI* uiSystem) {
         physicsEngine = physics;
-        renderer = render;
         ui = uiSystem;
     }
 
@@ -36,7 +34,6 @@ public:
 
     virtual void initialize() = 0;  // Setup the scene
     virtual void update(float deltaTime) = 0; // Update game objects
-    virtual void render(sf::RenderWindow& window) = 0; // Draw everything
 
     std::shared_ptr<UIPanel> getUIPanel() { return uiPanel; }
 

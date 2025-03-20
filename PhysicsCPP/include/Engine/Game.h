@@ -5,10 +5,8 @@
 #include "UI/UI.h"
 #include "InputManager.h"
 #include "Scenes/SceneManager.h"
-#include "Entities/Ball.h"
-#include "Entities/Portal.h"
-#include <GameConfig.h>
-#include <Scenes/BallSpawnerScene.h>
+#include "GameConfig.h"
+#include "Scenes/BallSpawnerScene.h"
 
 class Game {
 private:
@@ -23,10 +21,6 @@ private:
     std::shared_ptr<UIPanel> panel;
 
     bool running = true;
-    static const int WINDOW_WIDTH = 800;
-    static const int WINDOW_HEIGHT = 800;
-    const int FRAME_RATE = 120;
-    const int SUB_STEPS = 8;
     float subStepRate;
 
 public:

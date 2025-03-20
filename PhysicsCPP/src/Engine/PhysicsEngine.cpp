@@ -1,7 +1,4 @@
 ﻿#include "Engine/PhysicsEngine.h"
-#include "Engine/CollisionSystem.h"
-#include <future>
-#include <PhysicsConstants.h>
 
 PhysicsEngine::PhysicsEngine()
     : spawner(10.0f) {}
@@ -9,7 +6,9 @@ PhysicsEngine::PhysicsEngine()
 
 void PhysicsEngine::applyGravity() {
     for (auto& rigidBody : rigidbodies) {
-        rigidBody->applyForce(sf::Vector2f(0.0f, GRAVITY));
+        if (rigidBody->getType() == RigidbodyComponent::Type::Dynamic) {
+            rigidBody->applyForce(sf::Vector2f(0.0f, GRAVITY));
+        }
     }
 }
 

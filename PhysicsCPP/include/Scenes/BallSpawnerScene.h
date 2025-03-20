@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Entities/Ball.h"
 #include "UI/Button.h"
+#include "GameConfig.h"
 
 class BallSpawnerScene : public Scene {
 private:
@@ -14,8 +15,10 @@ public:
 		initialiseUI();
 		boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(100.f, 400.f));
 		addGameObject(boundary);
-		physicsEngine->boundary = boundary;
+		physicsEngine->setBoundary(boundary);
 		//physicsEngine->addRigidbody(boundary->getRigidbody());
+
+		spawnBalls(500);
     }
 
     void initialiseUI(){
@@ -35,13 +38,7 @@ public:
     }
 
     void update(float deltaTime) override {
-        physicsEngine->update(0.0008333f);
-    }
-
-    void render(sf::RenderWindow& window) override {
-        if (uiPanel) {
-            uiPanel->draw(window);
-        }
+        
     }
 
     void onInput(InputAction action, sf::Vector2f spawnPosition) {
@@ -51,4 +48,45 @@ public:
             physicsEngine->addRigidbody(ball->getRigidbody());
         }
     }
+
+    void spawnBalls(int count) {
+        const float ballRadius = 10.0f;
+        const float spacing = ballRadius * 2.2f;  // Slightly larger than diameter to prevent overlap
+        const int maxRetries = 10; // Avoid infinite loops if placement is difficult
+
+        std::vector<sf::Vector2f> positions; // Track placed positions
+
+        for (int i = 0; i < count; ++i) {
+            int retries = 0;
+            bool placed = false;
+
+            while (!placed && retries < maxRetries) {
+                // Generate a random position within the window but inside the boundary
+                float x = static_cast<float>(rand() % (GameConfig::WINDOW_WIDTH - 2 * (int)ballRadius) + ballRadius);
+                float y = static_cast<float>(rand() % (GameConfig::WINDOW_HEIGHT - 2 * (int)ballRadius) + ballRadius);
+                sf::Vector2f newPos(x, y);
+
+                // Check if the position overlaps with existing balls
+                bool valid = true;
+                for (const auto& pos : positions) {
+                    if (std::hypot(pos.x - newPos.x, pos.y - newPos.y) < spacing) {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid) {
+                    auto ball = std::make_shared<Ball>(newPos);
+                    addGameObject(ball);
+                    physicsEngine->addRigidbody(ball->getRigidbody());
+                    positions.push_back(newPos);
+                    placed = true;
+                }
+                else {
+                    ++retries;
+                }
+            }
+        }
+    }
+
 };

@@ -17,10 +17,10 @@ public:
         scenes[name] = scene;
     }
 
-    void setScene(const std::string& name, PhysicsEngine* physics, Renderer* render, UI* ui) {
+    void setScene(const std::string& name, PhysicsEngine* physics, UI* ui) {
         if (scenes.find(name) != scenes.end()) {
             currentScene = scenes[name];
-            currentScene->setSystems(physics, render, ui);
+            currentScene->setSystems(physics, ui);
             currentScene->initialize();
         }
     }
@@ -28,16 +28,6 @@ public:
     void update(float deltaTime) {
         if (currentScene) {
             currentScene->update(deltaTime);
-        }
-    }
-
-    void render(sf::RenderWindow& window) {
-        if (currentScene) {
-            currentScene->render(window);
-        }
-
-        if (auto panel = currentScene->getUIPanel()) {
-            panel->draw(window);
         }
     }
 

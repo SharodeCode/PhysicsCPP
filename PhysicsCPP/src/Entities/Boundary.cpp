@@ -1,5 +1,4 @@
 #include "Entities/Boundary.h"
-#include <Components/RendererComponent.h>
 
 Boundary::Boundary(float radius, sf::Vector2f position) : radius(radius){
     rigidbody = std::make_shared<RigidbodyComponent>(this, RigidbodyComponent::Type::Static, radius);

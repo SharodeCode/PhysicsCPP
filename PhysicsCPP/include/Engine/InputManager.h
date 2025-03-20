@@ -17,7 +17,6 @@ private:
     PhysicsEngine& physicsEngine;
     UI& ui;
     sf::RenderWindow& window;
-    sf::Texture texture;
     Button::buttonType currentButton = Button::buttonType::mute;
     SceneManager* sceneManager;
 

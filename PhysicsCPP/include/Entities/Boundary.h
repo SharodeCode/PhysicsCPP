@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Entities/BaseEntity.h"
 #include "Components/RigidbodyComponent.h"
+#include "Components/RendererComponent.h"
 
 class Boundary : public BaseEntity {
 private:
