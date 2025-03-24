@@ -10,6 +10,10 @@ private:
     std::shared_ptr<Button> spawnButton;
     std::shared_ptr<Boundary> boundary;
 
+    sf::Vector2f fastSpawnOrigin;
+    bool fastSpawning = false;
+    float fastSpawnTimer = 0.f;
+
 public:
     void initialize() override {
 		initialiseUI();
@@ -30,6 +34,8 @@ public:
         uiPanel->addElement(std::make_shared<Button>(Button::buttonType::mute, (800 - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", *uiPanel));
         uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballSpawner, (800 - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", *uiPanel));
         uiPanel->addElement(std::make_shared<Button>(Button::buttonType::clickToSpawn, (800 - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Click to Spawn", *uiPanel));
+		uiPanel->addElement(std::make_shared<Button>(Button::buttonType::fastSpawn, (800 - 200.f), ((3 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Fast Spawn", *uiPanel));
+
         
 
 		ui->m_UIPanel = uiPanel;
@@ -38,16 +44,43 @@ public:
     }
 
     void update(float deltaTime) override {
+        if (fastSpawning) {
+            fastSpawnTimer += deltaTime;
+            const float spawnInterval = 0.01f;  // fast!
+
+            while (fastSpawnTimer >= spawnInterval) {
+                fastSpawnTimer -= spawnInterval;
+
+                float angle = static_cast<float>(std::rand()) / RAND_MAX * 2.f * 3.14159f;
+                float dist = static_cast<float>(std::rand()) / RAND_MAX * 10.f;
+
+                sf::Vector2f offset(std::cos(angle) * dist, std::sin(angle) * dist);
+                spawnBall(fastSpawnOrigin + offset);
+            }
+        }
+
         
     }
 
     void onInput(InputAction action, sf::Vector2f spawnPosition) {
         if (action == InputAction::SpawnBall) {
-            auto ball = std::make_shared<Ball>(spawnPosition);
-            addGameObject(ball);
-            physicsEngine->addRigidbody(ball->getRigidbody());
+            spawnBall(spawnPosition);
         }
+        else if (action == InputAction::FastSpawn) {
+            fastSpawnOrigin = spawnPosition;
+            fastSpawning = true;
+            fastSpawnTimer = 0.f;
+		}
+		else if (action == InputAction::StopFastSpawn) {
+			fastSpawning = false;
+		}
     }
+
+	void spawnBall(sf::Vector2f spawnPosition) {
+		auto ball = std::make_shared<Ball>(spawnPosition);
+		addGameObject(ball);
+		physicsEngine->addRigidbody(ball->getRigidbody());
+	}
 
     void spawnBalls(int count) {
         const float ballRadius = 10.0f;
@@ -76,9 +109,7 @@ public:
                 }
 
                 if (valid) {
-                    auto ball = std::make_shared<Ball>(newPos);
-                    addGameObject(ball);
-                    physicsEngine->addRigidbody(ball->getRigidbody());
+					spawnBall(newPos);
                     positions.push_back(newPos);
                     placed = true;
                 }

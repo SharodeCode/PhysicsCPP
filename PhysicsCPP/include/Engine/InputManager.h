@@ -9,7 +9,9 @@ class SceneManager;
 
 enum class InputAction {
     SpawnBall,
-	SpawnPortal
+	SpawnPortal,
+	FastSpawn,
+	StopFastSpawn
 };
 
 class InputManager {

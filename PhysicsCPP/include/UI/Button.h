@@ -19,7 +19,8 @@ public:
     {
         mute,
         ballSpawner,
-        clickToSpawn
+        clickToSpawn,
+        fastSpawn
     };
 
     sf::RectangleShape button;
