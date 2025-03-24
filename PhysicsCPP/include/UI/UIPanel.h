@@ -31,6 +31,7 @@ public:
 
     sf::Vector2f getSize() const override;
     void setSize(const sf::Vector2f& size);
+	void toggleActive() override;
 
 private:
     UIElement* activeElement;

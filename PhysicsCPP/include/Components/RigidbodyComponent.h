@@ -15,7 +15,7 @@ public:
         Dynamic  // Movable (e.g., balls, objects)
     };
 
-    RigidbodyComponent(BaseEntity* owner, Type type, float radius) : owner(owner), type(type), mass(5.0f), radius(radius) {}
+    RigidbodyComponent(BaseEntity* owner, Type type, float radius) : owner(owner), type(type), mass(0.05f), radius(radius) {}
 
     void applyForce(const sf::Vector2f& force);
     void resetForces();

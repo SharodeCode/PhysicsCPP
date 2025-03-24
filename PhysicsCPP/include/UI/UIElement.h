@@ -7,6 +7,7 @@ public:
     virtual void draw(sf::RenderWindow& window) = 0; // Pure virtual function for drawing
     virtual void update(sf::Vector2i mousePosition) = 0; // Pure virtual function for updating
     virtual bool handleEvent(const sf::Event& event, sf::Vector2i mousePosition) = 0; // Pure virtual function for handling events
+    virtual void toggleActive() = 0;
 
     // Getters and setters for position.
     virtual sf::Vector2f getPosition() const = 0;

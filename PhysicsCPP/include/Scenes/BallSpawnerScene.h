@@ -18,7 +18,7 @@ public:
 		physicsEngine->setBoundary(boundary);
 		//physicsEngine->addRigidbody(boundary->getRigidbody());
 
-		spawnBalls(500);
+		spawnBalls(50);
     }
 
     void initialiseUI(){

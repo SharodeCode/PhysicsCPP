@@ -69,7 +69,7 @@ void Button::update(sf::Vector2i mousePosition) {
     }
 }
 
-void Button::toggleActive() {
+void Button::toggleActive(){
 
     active = !active;
 

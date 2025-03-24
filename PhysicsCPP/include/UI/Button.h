@@ -35,7 +35,7 @@ public:
     sf::Vector2f getSize() const override { return button.getSize(); }
     void setSize(const sf::Vector2f& size) override { button.setSize(size); }
 
-    void toggleActive();
+    void toggleActive() override;
 
 private:
     sf::Color colourActive = sf::Color::Red;

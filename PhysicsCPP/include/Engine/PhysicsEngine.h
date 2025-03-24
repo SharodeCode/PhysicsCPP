@@ -18,7 +18,7 @@ private:
     bool audioActive = false;
 
 public:
-    int subStepCount = 1;
+    int subStepCount;
 
     PhysicsEngine();
     void update(float subStepRate);

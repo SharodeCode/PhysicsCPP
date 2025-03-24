@@ -5,7 +5,7 @@ Game::Game()
     renderer(&window, &ui), // Renderer needs window & UI
     sceneManager(),
     inputManager(physicsEngine, ui, window, &sceneManager),
-    subStepRate((1.0f / GameConfig::FRAME_RATE) / (GameConfig::SUBSTEP_COUNT))
+    subStepRate((1.0f / GameConfig::FRAME_RATE) / GameConfig::SUBSTEP_COUNT)
 {
     window.setFramerateLimit(GameConfig::FRAME_RATE);
     physicsEngine.subStepCount = GameConfig::SUBSTEP_COUNT;

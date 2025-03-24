@@ -14,10 +14,6 @@ void UIPanel::addElement(const std::shared_ptr<UIElement>& element)
         element->setPosition(pos);
     }
     elements.push_back(element);
-
-    if (!activeElement) {
-        activeElement = element.get();
-    }
 }
 
 void UIPanel::draw(sf::RenderWindow& window) {
@@ -43,6 +39,9 @@ bool UIPanel::handleEvent(const sf::Event& event, sf::Vector2i mousePosition) {
 }
 
 void UIPanel::setActiveElement(UIElement& element) {
+	if (activeElement != NULL)
+		activeElement->toggleActive();
+
     activeElement = &element;
 }
 
@@ -56,3 +55,5 @@ void UIPanel::setPosition(const sf::Vector2f& position) { /*...*/ }
 
 sf::Vector2f UIPanel::getSize() const { return sf::Vector2f(4.f, 3.f); }
 void UIPanel::setSize(const sf::Vector2f& size) { /*...*/ }
+
+void UIPanel::toggleActive() {}
