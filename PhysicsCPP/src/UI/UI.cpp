@@ -1,5 +1,7 @@
-#include "UI/UI.h"
 #include <iostream>
+#include "UI/UI.h"
+
+
 
 UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
 {
@@ -20,6 +22,8 @@ UI::UI(sf::RenderWindow* RenderWindow, PhysicsEngine* ps)
     textNumberOfObjects.setFillColor(sf::Color::White);
     textNumberOfObjects.setStyle(sf::Text::Regular);
     textNumberOfObjects.setPosition(sf::Vector2f(0, textFPS.getLocalBounds().height + 12));
+
+    theme.loadFont("./Media/Fonts/Roboto.ttf");
 }
 
 void UI::update(float deltaTime) {

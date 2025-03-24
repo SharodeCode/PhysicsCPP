@@ -1,20 +1,23 @@
 #include "UI/Button.h"
 
-Button::Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, UIPanel& panel) {
+Button::Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, UIPanel& panel)
+{
     m_btnType = btnType;
     m_panelGroup = &panel;
-
-    font.loadFromFile("./Media/Fonts/Roboto.ttf");
     
     button.setPosition(sf::Vector2f(x, y));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(colourInactive);
+    button.setFillColor(UITheme::colourInactive);
 
-    text.setFont(font);
+    text.setFont(UITheme::getFont());
     text.setString(buttonText);
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::White);
-    text.setPosition(button.getPosition());
+    
+    sf::FloatRect textBounds = text.getLocalBounds();
+    text.setOrigin(textBounds.left + textBounds.width / 2.f, textBounds.top + textBounds.height / 2.f);
+    text.setPosition(button.getPosition().x + button.getSize().x / 2.f,
+    button.getPosition().y + button.getSize().y / 2.f);
 }
 
 bool Button::isMouseOver(sf::Vector2i mousePosition) {
@@ -46,7 +49,7 @@ bool Button::handleEvent(const sf::Event& event, sf::Vector2i mousePosition) {
     if (event.type == sf::Event::MouseButtonPressed && isMouseOver(mousePosition)) {
         toggleActive();
         if (active) {
-            m_panelGroup->setActiveElement(*this); // Assumes "ui" is a reference to the UI, you'll need to pass it to Button in some way
+            m_panelGroup->setActiveElement(*this);
         }
         else {
             //m_panelGroup->setActiveElement(nullptr);
@@ -59,13 +62,13 @@ bool Button::handleEvent(const sf::Event& event, sf::Vector2i mousePosition) {
 void Button::update(sf::Vector2i mousePosition) {
     // update button color based on mouse over
     if (isMouseOver(mousePosition)) {
-        button.setFillColor(colourHover);
+        setVisualState(VisualState::Hovered);
     }
     else if (active) {
-        button.setFillColor(colourActive);
+        setVisualState(VisualState::Active);
     }
     else {
-        button.setFillColor(colourInactive);
+        setVisualState(VisualState::Inactive);
     }
 }
 
@@ -73,4 +76,12 @@ void Button::toggleActive(){
 
     active = !active;
 
+}
+
+void Button::setVisualState(VisualState state) {
+    switch (state) {
+    case VisualState::Hovered: button.setFillColor(UITheme::colourHover); break;
+    case VisualState::Active:  button.setFillColor(UITheme::colourActive); break;
+    case VisualState::Inactive: button.setFillColor(UITheme::colourInactive); break;
+    }
 }

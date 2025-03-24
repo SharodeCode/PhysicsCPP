@@ -192,6 +192,7 @@
     <ClInclude Include="include\UI\Button.h" />
     <ClInclude Include="include\UI\UI.h" />
     <ClInclude Include="include\UI\UIElement.h" />
+    <ClInclude Include="include\UI\UITheme.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Media\Audio\bouncyBall.wav" />

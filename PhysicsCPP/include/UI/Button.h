@@ -2,9 +2,17 @@
 #include <SFML/Graphics.hpp>
 #include "UI/UIElement.h"
 #include "UI/UIPanel.h"
+#include "UI/UITheme.h"
 
 class Button : public UIElement
 {
+
+    enum class VisualState {
+        Inactive,
+        Hovered,
+        Active
+    };
+
 
 public:
     enum buttonType
@@ -17,8 +25,6 @@ public:
     sf::RectangleShape button;
     sf::Text text;
     buttonType m_btnType;
-
-    sf::Font font;
 
     Button(buttonType btnType, float x, float y, float width, float height, std::string buttonText, UIPanel& panel);
     bool isMouseOver(sf::Vector2i mousePosition);
@@ -35,13 +41,11 @@ public:
     sf::Vector2f getSize() const override { return button.getSize(); }
     void setSize(const sf::Vector2f& size) override { button.setSize(size); }
 
-    void toggleActive() override;
+    void toggleActive();
+
+	void setVisualState(VisualState state);
 
 private:
-    sf::Color colourActive = sf::Color::Red;
-    sf::Color colourInactive = sf::Color::Blue;
-    sf::Color colourHover = sf::Color::Green;
-
     UIPanel* m_panelGroup;
 
     bool active = false;

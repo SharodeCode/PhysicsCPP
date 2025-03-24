@@ -3,6 +3,7 @@
 #include "Engine/PhysicsEngine.h"
 #include "UI/Button.h"
 #include "UI/UIPanel.h"
+#include "UI/UITheme.h"
 
 class UI
 {
@@ -25,6 +26,7 @@ private:
 	sf::Text textNumberOfObjects;
 	sf::Font font;
 	float displayFramerateTime = 0.0f;
+	UITheme theme;
 
 
 
