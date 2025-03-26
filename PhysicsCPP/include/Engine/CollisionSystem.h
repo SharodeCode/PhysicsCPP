@@ -6,6 +6,11 @@
 #include "Entities/BaseEntity.h"
 
 class CollisionSystem {
+private:
+    static std::vector<std::vector<std::vector<RigidbodyComponent*>>> spatialGrid;
+    static int gridWidth;
+    static int gridHeight;
+
 public:
     static void resolveBallCollision(RigidbodyComponent& a, RigidbodyComponent& b);
     static void checkBallCollisions(std::vector<std::shared_ptr<RigidbodyComponent>>& balls);

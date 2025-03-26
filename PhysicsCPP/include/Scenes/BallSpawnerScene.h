@@ -17,12 +17,12 @@ private:
 public:
     void initialize() override {
 		initialiseUI();
-		boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(100.f, 400.f));
+		boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
 		addGameObject(boundary);
 		physicsEngine->setBoundary(boundary);
 		//physicsEngine->addRigidbody(boundary->getRigidbody());
 
-		spawnBalls(50);
+		spawnBalls(0);
     }
 
     void initialiseUI(){
@@ -44,6 +44,7 @@ public:
     }
 
     void update(float deltaTime) override {
+
         if (fastSpawning) {
             fastSpawnTimer += deltaTime;
             const float spawnInterval = 0.01f;  // fast!
@@ -54,12 +55,11 @@ public:
                 float angle = static_cast<float>(std::rand()) / RAND_MAX * 2.f * 3.14159f;
                 float dist = static_cast<float>(std::rand()) / RAND_MAX * 10.f;
 
-                sf::Vector2f offset(std::cos(angle) * dist, std::sin(angle) * dist);
+                sf::Vector2f offset = sf::Vector2f(cos(angle), sin(angle)) * (GameConfig::BALL_RADIUS * 2.1f);
                 spawnBall(fastSpawnOrigin + offset);
+
             }
         }
-
-        
     }
 
     void onInput(InputAction action, sf::Vector2f spawnPosition) {
@@ -77,10 +77,24 @@ public:
     }
 
 	void spawnBall(sf::Vector2f spawnPosition) {
-		auto ball = std::make_shared<Ball>(spawnPosition);
-		addGameObject(ball);
-		physicsEngine->addRigidbody(ball->getRigidbody());
+        if (isOverlapping(spawnPosition, GameConfig::BALL_RADIUS)) return;
+
+        auto ball = std::make_shared<Ball>(spawnPosition);
+        addGameObject(ball);
+        physicsEngine->addRigidbody(ball->getRigidbody());
+        balls.push_back(ball);  // Needed for isOverlapping
 	}
+
+    bool isOverlapping(const sf::Vector2f& pos, float radius) {
+        for (const auto& ball : balls) {
+            sf::Vector2f otherPos = ball->getPosition();
+            float dist = std::hypot(pos.x - otherPos.x, pos.y - otherPos.y);
+            if (dist < radius * 2.0f) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     void spawnBalls(int count) {
         const float ballRadius = 10.0f;

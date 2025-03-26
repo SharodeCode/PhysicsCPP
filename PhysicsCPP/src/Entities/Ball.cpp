@@ -1,7 +1,7 @@
 ﻿#include "Entities/Ball.h"
 
 
-Ball::Ball(sf::Vector2f position) : radius(10.0f) {
+Ball::Ball(sf::Vector2f position) : radius(GameConfig::BALL_RADIUS) {
     setPosition(position);
 
     positionLast = position;
@@ -9,23 +9,13 @@ Ball::Ball(sf::Vector2f position) : radius(10.0f) {
     // Generate a random color
     sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
 
-    rigidbody = addComponent<RigidbodyComponent>(this, RigidbodyComponent::Type::Dynamic, 10.0f);
+    rigidbody = addComponent<RigidbodyComponent>(this, RigidbodyComponent::Type::Dynamic, radius);
 
     addComponent<RendererComponent>(radius, randomColor, this);
 }
 
 void Ball::update(float deltaTime) {
 
-    sf::Vector2f prevPosition = getPosition();
-    sf::Vector2f displacement = getPosition() - positionLast;
-    positionLast = prevPosition; // Store before moving
-
-    rigidbody->update(deltaTime);
-    setPosition(getPosition() + displacement + rigidbody->velocity * (deltaTime * deltaTime));
-
-    if (std::shared_ptr renderer = getComponent<RendererComponent>().lock()) {
-        setPosition(getPosition());
-    }
 }
 
 void Ball::accelerate(sf::Vector2f a) {

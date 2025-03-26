@@ -3,6 +3,7 @@
 #include "Components/RigidbodyComponent.h"
 #include "Components/RendererComponent.h"
 #include "PhysicsConstants.h"
+#include "GameConfig.h"
 
 class Ball : public BaseEntity {
 private:

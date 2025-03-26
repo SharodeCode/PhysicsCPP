@@ -21,14 +21,24 @@ void Game::run() {
     float accumulator = 0.0f;
 
     while (window.isOpen()) {
-        float deltaTime = clock.restart().asSeconds();
+        float rawDelta = clock.restart().asSeconds();
+        float deltaTime = std::min(rawDelta, 1.f / 60.f);
+
+        if(deltaTime != 0)
+            subStepRate = (deltaTime) / GameConfig::SUBSTEP_COUNT;
+
         accumulator += deltaTime;
 
         processInput();
 
         sceneManager.update(deltaTime);
-        physicsEngine.update(deltaTime);
-        ui.update(deltaTime);
+
+        while (accumulator >= subStepRate) {
+            physicsEngine.update(subStepRate);
+            accumulator -= subStepRate;
+        }
+
+        ui.update(rawDelta);
 
         render();
     }

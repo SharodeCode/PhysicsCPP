@@ -16,6 +16,7 @@ private:
     Spawner spawner;
     std::shared_ptr<Boundary> boundary;
     bool audioActive = false;
+    void updateRigidBodies(float subStepRate);
 
 public:
     int subStepCount;

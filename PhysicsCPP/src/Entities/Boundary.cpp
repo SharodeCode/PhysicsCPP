@@ -1,8 +1,11 @@
 #include "Entities/Boundary.h"
 
-Boundary::Boundary(float radius, sf::Vector2f position) : radius(radius){
+Boundary::Boundary(float radius, sf::Vector2f position) : radius(radius) {
     rigidbody = std::make_shared<RigidbodyComponent>(this, RigidbodyComponent::Type::Static, radius);
     addComponent<RendererComponent>(radius, sf::Color::Transparent, sf::Color::White, 10.0f, this);
+
+    setPosition(position);               // Sets center position
+    setPositionLast(position);          // Required for Verlet-style bodies
 }
 
 float Boundary::getRadius() const {

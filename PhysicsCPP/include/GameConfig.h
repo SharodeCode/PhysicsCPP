@@ -16,11 +16,12 @@ public:
     static constexpr float GRAVITY = 9.81f;
     static constexpr float ELASTICITY = 0.9f;
     static constexpr float FRICTION = 0.98f;
-    static constexpr int SUBSTEP_COUNT = 8;
+    static constexpr int SUBSTEP_COUNT = 3;
+    static constexpr float pixelsPerMeter = 100.0f;
 
     // 🏀 Collision settings
     static constexpr float COLLISION_PUSH_FACTOR = 0.65f;
-    static constexpr float BALL_RADIUS = 10.0f;
+    static constexpr float BALL_RADIUS = 5.0f;
     static constexpr float BALL_MASS = 1.0f;
     static constexpr float BOUNDARY_RADIUS = 300.0f;
 };

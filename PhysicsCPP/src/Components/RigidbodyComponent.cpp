@@ -5,12 +5,12 @@ void RigidbodyComponent::applyForce(const sf::Vector2f& force) {
 }
 
 void RigidbodyComponent::update(float deltaTime) {
-    velocity += acceleration * deltaTime;
-    acceleration = { 0.f, 0.f };
+    //velocity += acceleration * deltaTime;
+    //acceleration = { 0.f, 0.f };
 
-    if (owner) {
-        owner->setPosition(owner->getPosition() + velocity * deltaTime);
-    }
+    //if (owner) {
+    //    owner->setPosition(owner->getPosition() + velocity * deltaTime);
+    //}
 }
 
 void RigidbodyComponent::resetForces() {
