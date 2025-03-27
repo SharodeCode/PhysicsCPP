@@ -19,30 +19,48 @@ Game::Game()
 void Game::run() {
     sf::Clock clock;
     float accumulator = 0.0f;
+    float startTime = 0.0f;
+
+	// Stable timestep loop.
+    const float fixedDelta = 1.0f / GameConfig::FRAME_RATE;
 
     while (window.isOpen()) {
+        // Measure real-world time since last frame
         float rawDelta = clock.restart().asSeconds();
-        float deltaTime = std::min(rawDelta, 1.f / 60.f);
 
-        if(deltaTime != 0)
-            subStepRate = (deltaTime) / GameConfig::SUBSTEP_COUNT;
+        // Clamp large frame spikes (e.g., due to window dragging or pausing)
+        float deltaTime = std::min(rawDelta, 1.f / GameConfig::FRAME_RATE);
 
         accumulator += deltaTime;
 
+        // Handle player input events
         processInput();
 
-        sceneManager.update(deltaTime);
-
-        while (accumulator >= subStepRate) {
-            physicsEngine.update(subStepRate);
-            accumulator -= subStepRate;
+        // Run simulation in fixed time steps to maintain determinism
+        while (accumulator >= fixedDelta) {
+			update(fixedDelta);
+            accumulator -= fixedDelta;
         }
 
+        // Update UI using real delta time (for FPS display)
         ui.update(rawDelta);
 
+        // Render the scene and UI to the window
         render();
     }
 
+}
+
+void Game::update(float fixedDelta) {
+	// Compute the rate that each supbstep should run, based on the fixed timestep.
+    float subStepRate = fixedDelta / static_cast<float>(GameConfig::SUBSTEP_COUNT);
+
+    for (int i = 0; i < GameConfig::SUBSTEP_COUNT; ++i) {
+        sceneManager.update(subStepRate);         // spawn, control, etc.
+        physicsEngine.update(subStepRate); // single substep
+    }
+
+    //physicsEngine.finalizeFrame(); // optional per-frame logic
 }
 
 void Game::processInput() {

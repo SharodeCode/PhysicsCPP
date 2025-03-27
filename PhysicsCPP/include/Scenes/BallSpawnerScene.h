@@ -14,13 +14,17 @@ private:
     bool fastSpawning = false;
     float fastSpawnTimer = 0.f;
 
+    // Ball Pourer
+    float ballPourerSpawnTimer = 0.f;
+
+    sf::FloatRect openBoxBoundary;
+
 public:
     void initialize() override {
 		initialiseUI();
 		boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
 		addGameObject(boundary);
 		physicsEngine->setBoundary(boundary);
-		//physicsEngine->addRigidbody(boundary->getRigidbody());
 
 		spawnBalls(0);
     }
@@ -59,6 +63,24 @@ public:
                 spawnBall(fastSpawnOrigin + offset);
 
             }
+        }
+
+        sf::Vector2f hoseOrigin(100.f, 100.f); // starting point
+        sf::Vector2f hoseVelocity(150.f, -50.f); // in pixels per second
+
+        ballPourerSpawnTimer += deltaTime;
+        if (ballPourerSpawnTimer >= 0.08f) { // tweak this for smoother flow
+            ballPourerSpawnTimer = 0.f;
+
+            auto ball = std::make_shared<Ball>(hoseOrigin);
+
+            // convert velocity to Verlet offset using substepRate
+            sf::Vector2f verletOffset = hoseVelocity * deltaTime;
+            ball->getRigidbody()->getOwner()->setPositionLast(hoseOrigin - verletOffset);
+
+            addGameObject(ball);
+            physicsEngine->addRigidbody(ball->getRigidbody());
+            balls.push_back(ball);
         }
     }
 

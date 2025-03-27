@@ -9,17 +9,22 @@ void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyCompo
 
 	// Calculate the vector between a and b and their distance
     sf::Vector2f delta = a.getOwner()->getPosition() - b.getOwner()->getPosition();
-    float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+    float distSq = delta.x * delta.x + delta.y * delta.y;
+    float collisionDist = a.getRadius() + b.getRadius();
+    float collisionDistSq = collisionDist * collisionDist;
+
 
     // Minimum distance before 2 balls are considered colliding
     float collision_distance = a.getRadius() + b.getRadius();
 
 	// Prevent division by zero when balls are on top of each other
-    if (distance < .01f)
-        distance = .01f;
+    if (distSq < .0001f)
+        distSq = .0001f;
 
     // Only proceed if balls are overlapping
-    if (distance < collision_distance) {
+    if (distSq < collisionDistSq) {
+        float distance = std::sqrt(distSq);
+
 		// Calculate the normal vector between the two balls. And the overlap.
         sf::Vector2f normal = delta / distance;
         float overlap = collision_distance - distance;

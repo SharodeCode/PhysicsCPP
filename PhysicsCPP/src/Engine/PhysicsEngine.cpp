@@ -6,28 +6,22 @@ PhysicsEngine::PhysicsEngine()
 void PhysicsEngine::update(float subStepRate) {
     std::vector<std::future<void>> futures;
 
-	// Substep loop to correct collisions multiple times per frame.
-    for (int i = 0; i < subStepCount; i++) {
+	// Update movement and gravity
+    updateRigidBodies(subStepRate);
 
-		// Update movement and gravity
-        updateRigidBodies(subStepRate);
-
-        std::vector<std::future<void>> futures;
-
-        // One thread: update + resolve boundary for each rigidbody
-        futures.push_back(std::async(std::launch::async, [this, subStepRate]() {
-            for (auto& rb : rigidbodies) {
-                CollisionSystem::resolveHollowCircleCollision(rb, boundary->getPosition(), boundary->getRadius());
-            }
-            }));
-
-        for (auto& future : futures) {
-            future.wait();
+    // One thread: update + resolve boundary for each rigidbody
+    futures.push_back(std::async(std::launch::async, [this, subStepRate]() {
+        for (auto& rb : rigidbodies) {
+            //CollisionSystem::resolveHollowCircleCollision(rb, boundary->getPosition(), boundary->getRadius());
         }
+        }));
 
-        // Collision check after all motion and boundaries resolved
-        CollisionSystem::checkBallCollisions(rigidbodies);
+    for (auto& future : futures) {
+        future.wait();
     }
+
+    // Collision check after all motion and boundaries resolved
+    CollisionSystem::checkBallCollisions(rigidbodies);
 
 
     for (auto& portal : portals) {

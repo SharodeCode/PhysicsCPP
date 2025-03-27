@@ -29,6 +29,7 @@ public:
 
     PhysicsEngine& getPhysicsEngine() { return physicsEngine; }
     Renderer& getRenderer() { return renderer; }
+    void update(float fixedDelta);
 
     void render();
 
