@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Scene.h"
 #include "Entities/Ball.h"
+#include "Entities/Boundaries/CircleBoundary.h"
+#include "Entities/Boundaries/OpenBoxBoundary.h"
 #include "UI/Button.h"
 #include "GameConfig.h"
 
@@ -8,7 +10,6 @@ class BallSpawnerScene : public Scene {
 private:
     std::vector<std::shared_ptr<Ball>> balls;
     std::shared_ptr<Button> spawnButton;
-    std::shared_ptr<Boundary> boundary;
 
     sf::Vector2f fastSpawnOrigin;
     bool fastSpawning = false;
@@ -27,55 +28,35 @@ public:
     void initialize() override {
         initialiseUI();
 
-		BoxBoundary();
+        BoxBoundaryInitialise();
 
         spawnBalls(0);
     }
 
 
-    void CircleBoundary() {
-        boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
-		boundary->boundaryType = Boundary::BoundaryType::Circle;
-        addGameObject(boundary);
-        physicsEngine->setBoundary(boundary);
+    void CircleBoundaryInitialise() {
+        sf::Vector2f center(400.f, 400.f);
+        float radius = 250.f;
+
+        auto circle = std::make_shared<CircleBoundary>(center, radius);
+        physicsEngine->addBoundary(circle);
+        addGameObject(circle);  // Optional for rendering
     }
 
-    void BoxBoundary() {
+    void BoxBoundaryInitialise() {
         const float wallThickness = 10.f;
         const float boxWidth = 600.f;
         const float boxHeight = 400.f;
-        sf::Vector2f boxCenter(400.f, 400.f);  // Center of the box
-        boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
-        boundary->boundaryType = Boundary::BoundaryType::OpenBox;
-        physicsEngine->setBoundary(boundary);
+        sf::Vector2f boxCenter(400.f, 400.f);
 
-        // Left wall
-        auto leftWall = std::make_shared<BoundaryWall>(
-            sf::Vector2f(wallThickness, boxHeight),
-            sf::Vector2f(-boxWidth / 2.f + wallThickness / 2.f, 0.f),
-            boxCenter
-        );
-        addGameObject(leftWall);
+        auto box = std::make_shared<OpenBoxBoundary>(boxCenter, boxWidth, boxHeight, wallThickness);
+        physicsEngine->addBoundary(box);
+        addGameObject(box);
 
-        // Right wall
-        auto rightWall = std::make_shared<BoundaryWall>(
-            sf::Vector2f(wallThickness, boxHeight),
-            sf::Vector2f(boxWidth / 2.f - wallThickness / 2.f, 0.f),
-            boxCenter
-        );
-        addGameObject(rightWall);
+        for (const auto& wall : box->getWalls()) {
+            addGameObject(wall);
+        }
 
-        // Bottom wall
-        auto bottomWall = std::make_shared<BoundaryWall>(
-            sf::Vector2f(boxWidth, wallThickness),
-            sf::Vector2f(0.f, boxHeight / 2.f - wallThickness / 2.f),
-            boxCenter
-        );
-        addGameObject(bottomWall);
-
-        physicsEngine->addWall(leftWall);
-        physicsEngine->addWall(rightWall);
-        physicsEngine->addWall(bottomWall);
     }
 
     void initialiseUI(){
@@ -90,7 +71,6 @@ public:
 		uiPanel->addElement(std::make_shared<Button>(Button::buttonType::fastSpawn, (800 - 200.f), ((3 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Fast Spawn", *uiPanel));
         uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballPourer, (800 - 200.f), ((4 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Ball Pourer", *uiPanel));
         
-
 		ui->m_UIPanel = uiPanel;
 
         ui->elements.push_back(uiPanel);
@@ -120,20 +100,19 @@ public:
 
             sf::Vector2f offset = sf::Vector2f(cos(angle), sin(angle)) * (GameConfig::BALL_RADIUS * 2.1f);
             spawnBall(fastSpawnOrigin + offset);
-
         }
     }
 
     void ballPourer(float deltaTime) {
         sf::Vector2f hoseOrigin(250.f, 250.f); // starting point
-        sf::Vector2f hoseVelocity(150.f, -50.f); // in pixels per second
+        sf::Vector2f hoseVelocity(300.f, -50.f); // in pixels per second
 
         ballPourerSpawnTimer += deltaTime;
         if (ballPourerSpawnTimer >= 0.08f) { // tweak this for smoother flow
             ballPourerSpawnTimer = 0.f;
 
             for (int i = 0; i < ballPourCount; ++i) {
-                sf::Vector2f offset(hoseOrigin.x, hoseOrigin.y + i * 15.f); //vertical spread
+                sf::Vector2f offset(hoseOrigin.x, hoseOrigin.y + i * 10.f); //vertical spread
                 auto ball = std::make_shared<Ball>(offset);
 
                 sf::Vector2f verletOffset = hoseVelocity * deltaTime;

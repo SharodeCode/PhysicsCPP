@@ -146,12 +146,13 @@
     <ClCompile Include="src\Engine\InputManager.cpp" />
     <ClCompile Include="src\Engine\Renderer.cpp" />
     <ClCompile Include="src\Entities\BaseEntity.cpp" />
+    <ClCompile Include="src\Entities\Boundaries\CircleBoundary.cpp" />
+    <ClCompile Include="src\Entities\Boundaries\OpenBoxBoundary.cpp" />
     <ClCompile Include="src\Entities\Spawner.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\Engine\CollisionSystem.cpp" />
     <ClCompile Include="src\Engine\PhysicsEngine.cpp" />
     <ClCompile Include="src\Entities\Ball.cpp" />
-    <ClCompile Include="src\Entities\Boundary.cpp" />
     <ClCompile Include="src\Entities\Portal.cpp" />
     <ClCompile Include="src\Components\RigidbodyComponent.cpp" />
     <ClCompile Include="src\GameConfig.cpp" />
@@ -176,8 +177,10 @@
     <ClInclude Include="include\Engine\InputManager.h" />
     <ClInclude Include="include\Engine\Renderer.h" />
     <ClInclude Include="include\Entities\BaseEntity.h" />
-    <ClInclude Include="include\Entities\Boundary.h" />
+    <ClInclude Include="include\Entities\Boundaries\BaseBoundary.h" />
+    <ClInclude Include="include\Entities\Boundaries\OpenBoxBoundary.h" />
     <ClInclude Include="include\Entities\BoundaryWall.h" />
+    <ClInclude Include="include\Entities\Boundaries\CircleBoundary.h" />
     <ClInclude Include="include\Entities\Entity.h" />
     <ClInclude Include="include\Engine\PhysicsEngine.h" />
     <ClInclude Include="include\Entities\Ball.h" />

@@ -55,7 +55,7 @@ void Game::run() {
 
 		// Benchmarking logic
         if (GameConfig::ENABLE_BENCHMARKING) {
-            int ballCount = physicsEngine.getRigidbodyCount();
+            int ballCount = static_cast<int>(physicsEngine.getRigidbodyCount());
 
             if (ballCount == 0 || ballCount == 10 || ballCount == 50 || ballCount == 100 ||
                 ballCount == 250 || ballCount == 500 || ballCount == 600 || ballCount == 800 || ballCount == 1000
@@ -90,7 +90,7 @@ void Game::run() {
             float averageFPS = 1.f / avgFrameTime;
 
             if (!benchmarkTriggered && recentFrames.size() == sampleWindow && averageFPS < 60.f) {
-                int activeBallCount = physicsEngine.getRigidbodyCount();
+                size_t activeBallCount = physicsEngine.getRigidbodyCount();
                 std::cout << "[Benchmark] FPS dropped below 60 with " << activeBallCount << " balls.\n";
                 benchmarkTriggered = true;
             }
@@ -112,7 +112,7 @@ void Game::update(float fixedDelta) {
 
 		physicsTimer.restart(); // BENCHMARKING: Time physics update
         physicsEngine.update(subStepRate); // single substep
-		physicsTime = physicsTimer.getElapsedTime().asMicroseconds(); // BENCHMARKING: Time physics update
+		physicsTime = static_cast<float>(physicsTimer.restart().asMicroseconds()); // BENCHMARKING: Time physics update
 
         totalSubstepTime += stepTimer.getElapsedTime().asMicroseconds();  // BENCHMARKING: Time substeps
     }

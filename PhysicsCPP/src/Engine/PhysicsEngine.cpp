@@ -11,16 +11,10 @@ void PhysicsEngine::update(float subStepRate) {
 
     // One thread: update + resolve boundary for each rigidbody
     futures.push_back(std::async(std::launch::async, [this, subStepRate]() {
-
         for (auto& rb : rigidbodies) {
-            if (boundary->boundaryType == Boundary::BoundaryType::Circle) {
-                CollisionSystem::resolveHollowCircleCollision(rb, boundary->getPosition(), boundary->getRadius());
+            for (const auto& boundary : boundaries) {
+                boundary->resolve(rb);
             }
-            else if (boundary->boundaryType == Boundary::BoundaryType::OpenBox) {
-                CollisionSystem::resolveBoxWallCollisions(rb, staticWalls);
-            }
-            
-
         }
         }));
 

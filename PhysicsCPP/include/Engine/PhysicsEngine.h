@@ -3,7 +3,7 @@
 #include <vector>
 #include <future>
 #include "Entities/Ball.h"
-#include "Entities/Boundary.h"
+#include "Entities/Boundaries/BaseBoundary.h"
 #include "Entities/Spawner.h"
 #include "Entities/Portal.h"
 #include "Engine/CollisionSystem.h"
@@ -14,11 +14,9 @@ private:
     std::vector<std::shared_ptr<RigidbodyComponent>> rigidbodies;
     std::vector<Portal> portals;
     Spawner spawner;
-    std::shared_ptr<Boundary> boundary;
+    std::vector<std::shared_ptr<BaseBoundary>> boundaries;
     bool audioActive = false;
     void updateRigidBodies(float subStepRate);
-
-    std::vector<std::shared_ptr<BoundaryWall>> staticWalls;
 
 public:
     int subStepCount;
@@ -34,15 +32,11 @@ public:
         rigidbodies.push_back(rb);
     }
 
-	int getRigidbodyCount() const {
+	size_t getRigidbodyCount() const {
 		return rigidbodies.size();
 	}
 
-	void setBoundary(std::shared_ptr<Boundary> boundary) {
-		this->boundary = boundary;
-	}
-
-    void addWall(const std::shared_ptr<BoundaryWall>& wall) {
-        staticWalls.push_back(wall);
+    void addBoundary(std::shared_ptr<BaseBoundary> b) {
+        boundaries.push_back(b);
     }
 };
