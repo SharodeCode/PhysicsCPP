@@ -17,10 +17,9 @@ void InputManager::handleInput() {
             if (Button* activeButton = dynamic_cast<Button*>(ui.m_UIPanel->getActiveElement())) {
                 currentButton = activeButton->m_btnType;
             }
+            sf::Vector2f mousePosition(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
 
             if (!UIClicked) {
-                sf::Vector2f mousePosition(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
-
                 if (currentButton == Button::buttonType::clickToSpawn) {
 					sceneManager->handleInput(InputAction::SpawnBall, mousePosition);
                 }
@@ -29,7 +28,10 @@ void InputManager::handleInput() {
                 }
                 else if (currentButton == Button::buttonType::fastSpawn) {
                     sceneManager->handleInput(InputAction::FastSpawn, mousePosition); // You'll add this next
-                }
+				}
+            }
+            else if (currentButton == Button::buttonType::ballPourer) {
+                sceneManager->handleInput(InputAction::BallPourer, mousePosition);
             }
 		}
 		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {

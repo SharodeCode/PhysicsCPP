@@ -18,6 +18,8 @@ private:
     bool audioActive = false;
     void updateRigidBodies(float subStepRate);
 
+    std::vector<std::shared_ptr<BoundaryWall>> staticWalls;
+
 public:
     int subStepCount;
 
@@ -39,4 +41,8 @@ public:
 	void setBoundary(std::shared_ptr<Boundary> boundary) {
 		this->boundary = boundary;
 	}
+
+    void addWall(const std::shared_ptr<BoundaryWall>& wall) {
+        staticWalls.push_back(wall);
+    }
 };

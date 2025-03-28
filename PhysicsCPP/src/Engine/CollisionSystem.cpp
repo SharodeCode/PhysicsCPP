@@ -1,6 +1,9 @@
 ﻿#include "Engine/CollisionSystem.h"
 #include <iostream>
 
+int CollisionSystem::collisionChecks = 0;
+int CollisionSystem::collisionsResolved = 0;
+
 std::vector<std::vector<std::vector<RigidbodyComponent*>>> CollisionSystem::spatialGrid;
 int CollisionSystem::gridWidth = 0;
 int CollisionSystem::gridHeight = 0;
@@ -23,6 +26,7 @@ void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyCompo
 
     // Only proceed if balls are overlapping
     if (distSq < collisionDistSq) {
+        collisionsResolved++;
         float distance = std::sqrt(distSq);
 
 		// Calculate the normal vector between the two balls. And the overlap.
@@ -81,7 +85,6 @@ void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyC
 
         spatialGrid[x][y].push_back(ball.get());
     }
-    int colCount = 0;
 
     // Loop over every cell in the spatial grid
     for (int x = 0; x < gridWidth; ++x) {
@@ -107,7 +110,7 @@ void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyC
 
                             // Prevent double processing, each pair only processed once.
                             if (ballA < ballB) {
-								++colCount;
+								++collisionChecks;
                                 resolveBallCollision(*ballA, *ballB); // Check and resolve potential collision
                             }
                         }
@@ -117,8 +120,6 @@ void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyC
 
         }
     }
-    std::cout << "Collisions this frame: " << colCount << "\n";
-    colCount = 0;
 }
 
 void CollisionSystem::resolveHollowCircleCollision(std::shared_ptr<RigidbodyComponent>& ball, const sf::Vector2f& boundaryPosition, float boundaryRadius) {
@@ -144,6 +145,48 @@ void CollisionSystem::resolveHollowCircleCollision(std::shared_ptr<RigidbodyComp
         ball->getOwner()->setPosition(boundaryPosition + normal * (boundaryRadius - ballRadius));
     }
 
+}
+
+void CollisionSystem::resolveBoxWallCollisions(std::shared_ptr<RigidbodyComponent>& ball, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls) {
+    sf::Vector2f newPos = ball->getOwner()->getPosition();
+    sf::Vector2f prevPos = ball->getOwner()->getPositionLast();
+    float radius = ball->getRadius();
+
+    for (const auto& wall : staticWalls) {
+        auto renderer = wall->getComponent<RendererComponent>().lock();
+        if (!renderer) continue;
+
+        sf::Vector2f wallPos = wall->getPosition();
+        sf::Vector2f wallSize = renderer->getSize();
+        sf::Vector2f half = wallSize / 2.f;
+
+        // AABB closest point
+        sf::Vector2f clamped = {
+            std::max(wallPos.x - half.x, std::min(newPos.x, wallPos.x + half.x)),
+            std::max(wallPos.y - half.y, std::min(newPos.y, wallPos.y + half.y))
+        };
+
+        sf::Vector2f delta = newPos - clamped;
+        float distSq = delta.x * delta.x + delta.y * delta.y;
+
+        if (distSq < radius * radius) {
+            float dist = std::sqrt(distSq);
+            sf::Vector2f normal = (dist > 0.001f) ? delta / dist : sf::Vector2f(0.f, -1.f);
+            float penetration = radius - dist;
+
+            // Correct position
+            newPos += normal * penetration;
+            ball->getOwner()->setPosition(newPos);
+
+            // Reflect verlet velocity
+            sf::Vector2f vel = newPos - prevPos;
+            float dot = vel.x * normal.x + vel.y * normal.y;
+            vel -= 2.f * dot * normal;
+            vel *= GameConfig::ELASTICITY;
+
+            ball->getOwner()->setPositionLast(newPos - vel);
+        }
+    }
 }
 
 void CollisionSystem::checkBallCollisionsBruteForce(std::vector<Ball>& balls) {

@@ -1,4 +1,7 @@
 #pragma once
+#include <iostream>
+#include <deque>
+#include <unordered_set>
 #include <SFML/Graphics.hpp>
 #include "Engine/PhysicsEngine.h"
 #include "Engine/Renderer.h"
@@ -22,6 +25,16 @@ private:
 
     bool running = true;
     float subStepRate;
+
+    //Benchmarking
+    float frameTimeAccumulator = 0.f;
+    int frameCount = 0;
+    bool benchmarkTriggered = false;
+    const int sampleWindow = 10;
+    float totalSubstepTime = 0.f;
+    sf::Clock physicsTimer;
+    float physicsTime;
+
 
 public:
     Game();

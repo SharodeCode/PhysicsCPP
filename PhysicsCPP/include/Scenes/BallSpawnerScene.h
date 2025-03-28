@@ -15,18 +15,67 @@ private:
     float fastSpawnTimer = 0.f;
 
     // Ball Pourer
+	bool ballPourerToggle = false;
     float ballPourerSpawnTimer = 0.f;
+    int ballPourCount = 5;
+
 
     sf::FloatRect openBoxBoundary;
 
+
 public:
     void initialize() override {
-		initialiseUI();
-		boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
-		addGameObject(boundary);
-		physicsEngine->setBoundary(boundary);
+        initialiseUI();
 
-		spawnBalls(0);
+		BoxBoundary();
+
+        spawnBalls(0);
+    }
+
+
+    void CircleBoundary() {
+        boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
+		boundary->boundaryType = Boundary::BoundaryType::Circle;
+        addGameObject(boundary);
+        physicsEngine->setBoundary(boundary);
+    }
+
+    void BoxBoundary() {
+        const float wallThickness = 10.f;
+        const float boxWidth = 600.f;
+        const float boxHeight = 400.f;
+        sf::Vector2f boxCenter(400.f, 400.f);  // Center of the box
+        boundary = std::make_shared<Boundary>(250.f, sf::Vector2f(400.f, 400.f));
+        boundary->boundaryType = Boundary::BoundaryType::OpenBox;
+        physicsEngine->setBoundary(boundary);
+
+        // Left wall
+        auto leftWall = std::make_shared<BoundaryWall>(
+            sf::Vector2f(wallThickness, boxHeight),
+            sf::Vector2f(-boxWidth / 2.f + wallThickness / 2.f, 0.f),
+            boxCenter
+        );
+        addGameObject(leftWall);
+
+        // Right wall
+        auto rightWall = std::make_shared<BoundaryWall>(
+            sf::Vector2f(wallThickness, boxHeight),
+            sf::Vector2f(boxWidth / 2.f - wallThickness / 2.f, 0.f),
+            boxCenter
+        );
+        addGameObject(rightWall);
+
+        // Bottom wall
+        auto bottomWall = std::make_shared<BoundaryWall>(
+            sf::Vector2f(boxWidth, wallThickness),
+            sf::Vector2f(0.f, boxHeight / 2.f - wallThickness / 2.f),
+            boxCenter
+        );
+        addGameObject(bottomWall);
+
+        physicsEngine->addWall(leftWall);
+        physicsEngine->addWall(rightWall);
+        physicsEngine->addWall(bottomWall);
     }
 
     void initialiseUI(){
@@ -39,7 +88,7 @@ public:
         uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballSpawner, (800 - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", *uiPanel));
         uiPanel->addElement(std::make_shared<Button>(Button::buttonType::clickToSpawn, (800 - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Click to Spawn", *uiPanel));
 		uiPanel->addElement(std::make_shared<Button>(Button::buttonType::fastSpawn, (800 - 200.f), ((3 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Fast Spawn", *uiPanel));
-
+        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballPourer, (800 - 200.f), ((4 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Ball Pourer", *uiPanel));
         
 
 		ui->m_UIPanel = uiPanel;
@@ -50,37 +99,51 @@ public:
     void update(float deltaTime) override {
 
         if (fastSpawning) {
-            fastSpawnTimer += deltaTime;
-            const float spawnInterval = 0.01f;  // fast!
-
-            while (fastSpawnTimer >= spawnInterval) {
-                fastSpawnTimer -= spawnInterval;
-
-                float angle = static_cast<float>(std::rand()) / RAND_MAX * 2.f * 3.14159f;
-                float dist = static_cast<float>(std::rand()) / RAND_MAX * 10.f;
-
-                sf::Vector2f offset = sf::Vector2f(cos(angle), sin(angle)) * (GameConfig::BALL_RADIUS * 2.1f);
-                spawnBall(fastSpawnOrigin + offset);
-
-            }
+			fastSpawner(deltaTime);
         }
 
-        sf::Vector2f hoseOrigin(100.f, 100.f); // starting point
+		if (ballPourerToggle) {
+			ballPourer(deltaTime);
+		}
+
+    }
+
+    void fastSpawner(float deltaTime) {
+        fastSpawnTimer += deltaTime;
+        const float spawnInterval = 0.01f;  // fast!
+
+        while (fastSpawnTimer >= spawnInterval) {
+            fastSpawnTimer -= spawnInterval;
+
+            float angle = static_cast<float>(std::rand()) / RAND_MAX * 2.f * 3.14159f;
+            float dist = static_cast<float>(std::rand()) / RAND_MAX * 10.f;
+
+            sf::Vector2f offset = sf::Vector2f(cos(angle), sin(angle)) * (GameConfig::BALL_RADIUS * 2.1f);
+            spawnBall(fastSpawnOrigin + offset);
+
+        }
+    }
+
+    void ballPourer(float deltaTime) {
+        sf::Vector2f hoseOrigin(250.f, 250.f); // starting point
         sf::Vector2f hoseVelocity(150.f, -50.f); // in pixels per second
 
         ballPourerSpawnTimer += deltaTime;
         if (ballPourerSpawnTimer >= 0.08f) { // tweak this for smoother flow
             ballPourerSpawnTimer = 0.f;
 
-            auto ball = std::make_shared<Ball>(hoseOrigin);
+            for (int i = 0; i < ballPourCount; ++i) {
+                sf::Vector2f offset(hoseOrigin.x, hoseOrigin.y + i * 15.f); //vertical spread
+                auto ball = std::make_shared<Ball>(offset);
 
-            // convert velocity to Verlet offset using substepRate
-            sf::Vector2f verletOffset = hoseVelocity * deltaTime;
-            ball->getRigidbody()->getOwner()->setPositionLast(hoseOrigin - verletOffset);
+                sf::Vector2f verletOffset = hoseVelocity * deltaTime;
+                ball->getRigidbody()->getOwner()->setPositionLast(offset - verletOffset);
 
-            addGameObject(ball);
-            physicsEngine->addRigidbody(ball->getRigidbody());
-            balls.push_back(ball);
+                addGameObject(ball);
+                physicsEngine->addRigidbody(ball->getRigidbody());
+                balls.push_back(ball);
+            }
+
         }
     }
 
@@ -96,6 +159,9 @@ public:
 		else if (action == InputAction::StopFastSpawn) {
 			fastSpawning = false;
 		}
+        else if (action == InputAction::BallPourer) {
+            ballPourerToggle = !ballPourerToggle;
+        }
     }
 
 	void spawnBall(sf::Vector2f spawnPosition) {

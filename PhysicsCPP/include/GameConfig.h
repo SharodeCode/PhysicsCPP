@@ -8,6 +8,8 @@ public:
     static int WINDOW_WIDTH;
     static int WINDOW_HEIGHT;
 
+    static constexpr bool ENABLE_BENCHMARKING = true;
+
     // 🚀 Adjustable settings
     static constexpr bool VSYNC_ENABLED = true;
     static constexpr int FRAME_RATE = 120;

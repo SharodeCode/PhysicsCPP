@@ -177,6 +177,7 @@
     <ClInclude Include="include\Engine\Renderer.h" />
     <ClInclude Include="include\Entities\BaseEntity.h" />
     <ClInclude Include="include\Entities\Boundary.h" />
+    <ClInclude Include="include\Entities\BoundaryWall.h" />
     <ClInclude Include="include\Entities\Entity.h" />
     <ClInclude Include="include\Engine\PhysicsEngine.h" />
     <ClInclude Include="include\Entities\Ball.h" />

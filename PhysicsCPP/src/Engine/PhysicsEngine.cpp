@@ -11,8 +11,16 @@ void PhysicsEngine::update(float subStepRate) {
 
     // One thread: update + resolve boundary for each rigidbody
     futures.push_back(std::async(std::launch::async, [this, subStepRate]() {
+
         for (auto& rb : rigidbodies) {
-            //CollisionSystem::resolveHollowCircleCollision(rb, boundary->getPosition(), boundary->getRadius());
+            if (boundary->boundaryType == Boundary::BoundaryType::Circle) {
+                CollisionSystem::resolveHollowCircleCollision(rb, boundary->getPosition(), boundary->getRadius());
+            }
+            else if (boundary->boundaryType == Boundary::BoundaryType::OpenBox) {
+                CollisionSystem::resolveBoxWallCollisions(rb, staticWalls);
+            }
+            
+
         }
         }));
 
@@ -32,6 +40,8 @@ void PhysicsEngine::update(float subStepRate) {
 void PhysicsEngine::updateRigidBodies(float subStepRate) {
 
     for (auto rb : rigidbodies) {
+        if (rb->getType() != RigidbodyComponent::Type::Dynamic) continue;
+
         // Get current and previous position
         sf::Vector2f pos = rb->getOwner()->getPosition();
         sf::Vector2f prev = rb->getOwner()->getPositionLast();
@@ -44,8 +54,9 @@ void PhysicsEngine::updateRigidBodies(float subStepRate) {
 
         // Place a limit of fast movement
         float maxDist = 10.f;
-        if (std::hypot(motion.x, motion.y) > maxDist)
-            motion = (motion / std::hypot(motion.x, motion.y)) * maxDist;
+        float dist = std::hypot(motion.x, motion.y);
+        if (dist > maxDist)
+            motion = (motion / dist) * maxDist;
 
 		// Verlet position update based on motion and acceleration
         sf::Vector2f newPos = pos + motion + acceleration * (subStepRate * subStepRate);

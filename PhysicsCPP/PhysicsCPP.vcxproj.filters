@@ -148,6 +148,9 @@
     <ClInclude Include="include\UI\UITheme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Entities\BoundaryWall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="Media\Audio\bouncyBall.wav">
