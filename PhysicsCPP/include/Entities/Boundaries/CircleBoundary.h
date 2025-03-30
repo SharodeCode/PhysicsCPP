@@ -13,6 +13,10 @@ public:
     void update(float) override {}
     void draw(sf::RenderWindow&) const override;
 
+    sf::Vector2f getRenderPosition() const override {
+        return center;
+    }
+
 private:
     sf::Vector2f center;
     float radius;

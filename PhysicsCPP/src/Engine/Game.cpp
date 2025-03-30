@@ -108,8 +108,9 @@ void Game::update(float fixedDelta) {
 
     for (int i = 0; i < GameConfig::SUBSTEP_COUNT; ++i) {
         sf::Clock stepTimer;
+        
         sceneManager.update(subStepRate); // spawn, control, etc.
-
+        
 		physicsTimer.restart(); // BENCHMARKING: Time physics update
         physicsEngine.update(subStepRate); // single substep
 		physicsTime = static_cast<float>(physicsTimer.restart().asMicroseconds()); // BENCHMARKING: Time physics update

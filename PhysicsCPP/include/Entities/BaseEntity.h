@@ -6,8 +6,6 @@
 class BaseEntity {
 protected:
     std::vector<std::shared_ptr<Component>> components;
-    sf::Vector2f position;
-    sf::Vector2f positionLast;
 
 public:
     virtual ~BaseEntity() = default;
@@ -42,10 +40,5 @@ public:
 
     virtual void update(float deltaTime) = 0;
     virtual void draw(sf::RenderWindow& window) const = 0;
-
-    void setPosition(const sf::Vector2f& newPos) { position = newPos; }
-    sf::Vector2f getPosition() const { return position; }
-
-    void setPositionLast(const sf::Vector2f& newPos) { positionLast = newPos; }
-    sf::Vector2f getPositionLast() const { return positionLast; }
+    virtual sf::Vector2f getRenderPosition() const { return sf::Vector2f(); }
 };

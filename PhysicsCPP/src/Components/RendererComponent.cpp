@@ -18,8 +18,6 @@ RendererComponent::RendererComponent(float radius, sf::Color fillColor, sf::Colo
     shape.setOutlineThickness(outlineThickness);
     shape.setOutlineColor(outlineColor);
 	shape.setOrigin(radius, radius);
-
-	owner->setPosition(sf::Vector2(400.0f, 400.0f));
 }
 
 RendererComponent::RendererComponent(const sf::Vector2f& size, sf::Color fillColor, BaseEntity* entity)
@@ -35,7 +33,7 @@ RendererComponent::RendererComponent(const sf::Vector2f& size, sf::Color fillCol
 void RendererComponent::draw(sf::RenderWindow& window) const {
     if (!owner) return;
 
-    sf::Vector2f pos = owner->getPosition();
+    sf::Vector2f pos = owner->getRenderPosition();
 
     if (sprite.getTexture()) {
         const_cast<sf::Sprite&>(sprite).setPosition(pos);

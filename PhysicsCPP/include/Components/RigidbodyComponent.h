@@ -2,18 +2,21 @@
 #include <SFML/System/Vector2.hpp>
 #include "Component.h"
 #include "Entities/BaseEntity.h"
+#include "Engine/PhysicsDataPool.h"
 
 class RigidbodyComponent : public Component {
 public:
-    sf::Vector2f velocity;
-    sf::Vector2f acceleration;
-    float mass;
-    float radius;
-
     enum class Type {
         Static,  // Unmovable (e.g., walls, ground, boundaries)
         Dynamic  // Movable (e.g., balls, objects)
     };
+
+    sf::Vector2f velocity;
+    sf::Vector2f acceleration;
+    float mass;
+    float radius;
+    PhysicsDataPool* pool;
+    int physicsIndex;
 
     RigidbodyComponent(BaseEntity* owner, Type type, float radius) : owner(owner), type(type), mass(0.05f), radius(radius) {}
 
@@ -32,6 +35,10 @@ public:
 	float getMass() const { return mass; }
 
 	Type getType() const { return type; }
+
+    void setPhysicsData(PhysicsDataPool* p, int idx) { pool = p; physicsIndex = idx; }
+    PhysicsDataPool* getPool() const { return pool; }
+    int getIndex() const { return physicsIndex; }
 
 private:
     BaseEntity* owner;

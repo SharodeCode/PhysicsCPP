@@ -1,9 +1,7 @@
 ﻿#include "Entities/Portal.h"
 
 Portal::Portal(const sf::Vector2f& position, const sf::Texture& texture, std::vector<std::unique_ptr<Ball>>& ballList)
-    : balls(ballList), spawner(10.0f) {
-    setPosition(position);  // Now stored in BaseEntity
-
+    : balls(ballList), spawner(10.0f), position(position) {
     // Attach Renderer Component
     auto renderer = addComponent<RendererComponent>(texture, nullptr);
 }
@@ -12,7 +10,7 @@ Portal::Portal(const sf::Vector2f& position, const sf::Texture& texture, std::ve
 void Portal::update(float deltaTime) {
     timeSinceLastSpawn += deltaTime;
     if (timeSinceLastSpawn >= spawnCooldown) {
-        balls.emplace_back(spawner.spawnBall(position));
+        //balls.emplace_back(spawner.spawnBall(position));
         timeSinceLastSpawn = 0.0f;
     }
 }

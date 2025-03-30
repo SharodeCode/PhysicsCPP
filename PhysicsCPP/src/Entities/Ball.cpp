@@ -1,18 +1,20 @@
 ﻿#include "Entities/Ball.h"
 
 
-Ball::Ball(sf::Vector2f position) : radius(GameConfig::BALL_RADIUS) {
-    setPosition(position);
-
-    positionLast = position;
-
-    // Generate a random color
+Ball::Ball(sf::Vector2f position, PhysicsDataPool* pool, int index)
+    : radius(GameConfig::BALL_RADIUS),
+    physicsData(pool), physicsIndex(index)
+{
     sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
 
     rigidbody = addComponent<RigidbodyComponent>(this, RigidbodyComponent::Type::Dynamic, radius);
+    rigidbody->setPhysicsData(pool, index);
 
     addComponent<RendererComponent>(radius, randomColor, this);
+
+    setPosition(position);
 }
+
 
 void Ball::update(float deltaTime) {
 

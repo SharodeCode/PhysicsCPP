@@ -4,6 +4,7 @@
 #include "Components/RendererComponent.h"
 #include "PhysicsConstants.h"
 #include "GameConfig.h"
+#include <Engine/PhysicsDataPool.h>
 
 class Ball : public BaseEntity {
 private:
@@ -12,7 +13,27 @@ private:
     std::shared_ptr<RendererComponent> renderer;
 
 public:
-    Ball(sf::Vector2f position);
+    Ball(sf::Vector2f position, PhysicsDataPool* pool, int index);
+
+    int physicsIndex = -1;
+
+    PhysicsDataPool* physicsData = nullptr;
+
+    sf::Vector2f getPosition() const {
+        const auto& data = physicsData->get(physicsIndex);
+        return { data.x, data.y };
+    }
+
+    void setPosition(const sf::Vector2f& pos) {
+        auto& data = physicsData->get(physicsIndex);
+        data.x = pos.x;
+        data.y = pos.y;
+    }
+
+    sf::Vector2f getRenderPosition() const override {
+        const auto& d = physicsData->get(physicsIndex);
+        return { d.x, d.y };
+    }
 
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) const override;

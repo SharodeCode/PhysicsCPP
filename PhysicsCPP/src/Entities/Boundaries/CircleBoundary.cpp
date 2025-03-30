@@ -2,13 +2,14 @@
 
 CircleBoundary::CircleBoundary(const sf::Vector2f& center, float radius)
     : center(center), radius(radius) {
-    setPosition(center);
     addComponent<RendererComponent>(radius, sf::Color::Transparent, sf::Color::White, 3.f, this);
 
 }
 
 void CircleBoundary::resolve(std::shared_ptr<RigidbodyComponent>& rb) const {
-    CollisionSystem::resolveHollowCircleCollision(rb, center, radius);
+    auto* pool = rb->getPool();
+    int idx = rb->getIndex();
+    CollisionSystem::resolveHollowCircleCollision(*pool, idx, radius, center);
 }
 
 void CircleBoundary::draw(sf::RenderWindow& window) const {

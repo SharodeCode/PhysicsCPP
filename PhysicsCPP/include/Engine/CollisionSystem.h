@@ -8,18 +8,22 @@
 
 class CollisionSystem {
 private:
-    static std::vector<std::vector<std::vector<RigidbodyComponent*>>> spatialGrid;
     static int gridWidth;
     static int gridHeight;
 
 public:
+
+    #define FLAT_INDEX(x, y) ((y) * CollisionSystem::gridWidth + (x))
+
     // Benchmark
     static int collisionChecks;
     static int collisionsResolved;
 
-    static void resolveBallCollision(RigidbodyComponent& a, RigidbodyComponent& b);
-    static void checkBallCollisions(std::vector<std::shared_ptr<RigidbodyComponent>>& balls);
-    static void resolveHollowCircleCollision(std::shared_ptr<RigidbodyComponent>& ball, const sf::Vector2f& center, float outerRadius);
-    static void resolveBoxWallCollisions(std::shared_ptr<RigidbodyComponent>& ball, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls);
+    static std::vector<std::vector<int>> spatialGridFlat;
+
+    static void checkBallCollisions(PhysicsDataPool& pool);
+    static void resolveHollowCircleCollision(PhysicsDataPool& pool, int physicsIndex, float boundaryRadius, const sf::Vector2f& boundaryCenter);
+    static void resolveBoxWallCollisions(RigidbodyComponent& rb, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls);
     static void checkBallCollisionsBruteForce(std::vector<Ball>& balls);
+    static void resolveBallCollision(FlatBallData& a, FlatBallData& b);
 };

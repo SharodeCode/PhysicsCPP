@@ -18,7 +18,7 @@ void RigidbodyComponent::resetForces() {
 }
 
 void RigidbodyComponent::move(const sf::Vector2f& displacement) {
-    if (owner) {
-        owner->setPosition(owner->getPosition() + displacement);
-    }
+    auto& data = pool->ballData[physicsIndex];
+    data.x += displacement.x;
+    data.y += displacement.y;
 }

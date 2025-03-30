@@ -175,6 +175,7 @@
     <ClInclude Include="include\Engine\CollisionSystem.h" />
     <ClInclude Include="include\Engine\Game.h" />
     <ClInclude Include="include\Engine\InputManager.h" />
+    <ClInclude Include="include\Engine\PhysicsDataPool.h" />
     <ClInclude Include="include\Engine\Renderer.h" />
     <ClInclude Include="include\Entities\BaseEntity.h" />
     <ClInclude Include="include\Entities\Boundaries\BaseBoundary.h" />

@@ -3,61 +3,55 @@
 
 int CollisionSystem::collisionChecks = 0;
 int CollisionSystem::collisionsResolved = 0;
-
-std::vector<std::vector<std::vector<RigidbodyComponent*>>> CollisionSystem::spatialGrid;
 int CollisionSystem::gridWidth = 0;
 int CollisionSystem::gridHeight = 0;
 
-void CollisionSystem::resolveBallCollision(RigidbodyComponent& a, RigidbodyComponent& b) {
+std::vector<std::vector<int>> CollisionSystem::spatialGridFlat;
 
-	// Calculate the vector between a and b and their distance
-    sf::Vector2f delta = a.getOwner()->getPosition() - b.getOwner()->getPosition();
-    float distSq = delta.x * delta.x + delta.y * delta.y;
-    float collisionDist = a.getRadius() + b.getRadius();
-    float collisionDistSq = collisionDist * collisionDist;
+void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b) {
 
+    // Calculate the vector between a and b and their squared distance
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+    float distSq = dx * dx + dy * dy;
 
     // Minimum distance before 2 balls are considered colliding
-    float collision_distance = a.getRadius() + b.getRadius();
+    float minDist = a.radius + b.radius;
 
-	// Prevent division by zero when balls are on top of each other
-    if (distSq < .0001f)
-        distSq = .0001f;
+    // Prevent division by zero when balls are on top of each other and only proceed if balls are overlapping
+    if (distSq < 0.0001f || distSq >= minDist * minDist)
+        return;
 
-    // Only proceed if balls are overlapping
-    if (distSq < collisionDistSq) {
-        collisionsResolved++;
-        float distance = std::sqrt(distSq);
+    // Calculate the normal vector and overlap
+    float dist = std::sqrt(distSq);
+    float overlap = minDist - dist + 0.01f; // Add bias to ensure separation
+    float nx = dx / dist;
+    float ny = dy / dist;
 
-		// Calculate the normal vector between the two balls. And the overlap.
-        sf::Vector2f normal = delta / distance;
-        float overlap = collision_distance - distance;
+    // Push both objects apart equally along the collision normal
+    float percent = 0.5f; // Equal push
+    float pushX = nx * overlap * percent;
+    float pushY = ny * overlap * percent;
 
-        // Push both objects apart equally along the collision normal.
-        float percent = 0.5f; // 0.5 for equal displacement
-        sf::Vector2f correction = normal * (overlap * percent);
-        a.getOwner()->setPosition(a.getOwner()->getPosition() + correction);
-        b.getOwner()->setPosition(b.getOwner()->getPosition() - correction);
+    a.x += pushX;
+    a.y += pushY;
+    b.x -= pushX;
+    b.y -= pushY;
 
-		// Compute velocity based on previous position
-        sf::Vector2f aVel = a.getOwner()->getPosition() - a.getOwner()->getPositionLast();
-        sf::Vector2f bVel = b.getOwner()->getPosition() - b.getOwner()->getPositionLast();
-        sf::Vector2f relVel = aVel - bVel;
-        float relNormal = relVel.x * normal.x + relVel.y * normal.y;
+    // Dampen velocity by adjusting last position
+    const float damping = 0.98f;  // 1 = no damping, <1 = dampen motion
+    float ax = a.x - a.lastX;
+    float ay = a.y - a.lastY;
+    float bx = b.x - b.lastX;
+    float by = b.y - b.lastY;
 
-		// Apply a bound, only resolve if balls are moving towards each other
-        if (relNormal < 0.f) {
-            float bounce = 0.05f; // 0 = no bounce, 1 = full bounce
-            sf::Vector2f impulse = normal * (-relNormal * bounce);
-
-            a.getOwner()->setPositionLast(a.getOwner()->getPositionLast() - impulse * 0.5f);
-            b.getOwner()->setPositionLast(b.getOwner()->getPositionLast() + impulse * 0.5f);
-        }
-
-    }
+    a.lastX = a.x - ax * damping;
+    a.lastY = a.y - ay * damping;
+    b.lastX = b.x - bx * damping;
+    b.lastY = b.y - by * damping;
 }
 
-void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyComponent>>& balls) {
+void CollisionSystem::checkBallCollisions(PhysicsDataPool& pool) {
 
     // Setup spatial grid
     const float CELL_SIZE = GameConfig::BALL_RADIUS * 4.0f;
@@ -65,92 +59,92 @@ void CollisionSystem::checkBallCollisions(std::vector<std::shared_ptr<RigidbodyC
     gridHeight = static_cast<int>(std::ceil(GameConfig::WINDOW_HEIGHT / CELL_SIZE));
 
     // First-time setup or window resize only if needed
-    if (spatialGrid.size() != gridWidth || spatialGrid[0].size() != gridHeight) {
-        spatialGrid = std::vector<std::vector<std::vector<RigidbodyComponent*>>>(
-            gridWidth, std::vector<std::vector<RigidbodyComponent*>>(gridHeight)
-        );
+    if (spatialGridFlat.size() != gridWidth * gridHeight) {
+        spatialGridFlat = std::vector<std::vector<int>>(gridWidth * gridHeight);
     }
     else {
-        // If no new grid needed, reuse existing grid structure, clear contents
-        for (int x = 0; x < gridWidth; ++x)
-            for (int y = 0; y < gridHeight; ++y)
-                spatialGrid[x][y].clear();
+        // If reusing grid, clear contents.
+        for (auto& cell : spatialGridFlat) cell.clear();
     }
 
     // Assign balls to grid cells
-    for (auto& ball : balls) {
-		// Clamped to stop calculations of balls that are offscreen.
-        int x = std::clamp(static_cast<int>(ball->getOwner()->getPosition().x / CELL_SIZE), 0, gridWidth - 1);
-        int y = std::clamp(static_cast<int>(ball->getOwner()->getPosition().y / CELL_SIZE), 0, gridHeight - 1);
-
-        spatialGrid[x][y].push_back(ball.get());
+    for (int i = 0; i < pool.ballData.size(); ++i) {
+        const auto& ball = pool.get(i);
+        
+        // Clamped to stop calculations of balls that are offscreen.
+        int x = std::clamp(static_cast<int>(ball.x / CELL_SIZE), 0, gridWidth - 1);
+        int y = std::clamp(static_cast<int>(ball.y / CELL_SIZE), 0, gridHeight - 1);
+        spatialGridFlat[FLAT_INDEX(x, y)].push_back(i);
     }
 
     // Loop over every cell in the spatial grid
     for (int x = 0; x < gridWidth; ++x) {
         for (int y = 0; y < gridHeight; ++y) {
 
-            // Loop over neighboring cell offsets (-1, 0, 1) in both directions
-            for (int i = -1; i <= 1; ++i) {
-                for (int j = -1; j <= 1; ++j) {
-
-                    int nx = x + i; // Neighbor cell X
-                    int ny = y + j; // Neighbor cell Y
+            for (int dx = -1; dx <= 1; ++dx) {
+                for (int dy = -1; dy <= 1; ++dy) {
+                    int nx = x + dx; // Neighbor cell X
+                    int ny = y + dy; // Neighbor cell Y
 
                     // Skip out-of-bounds neighbors
                     if (nx < 0 || ny < 0 || nx >= gridWidth || ny >= gridHeight) continue;
 
+                    const auto& cellA = spatialGridFlat[FLAT_INDEX(x, y)];
+                    const auto& cellB = spatialGridFlat[FLAT_INDEX(nx, ny)];
+
                     // Loop over all balls in the current cell
-                    for (auto* ballA : spatialGrid[x][y]) {
-
+                    for (int idxA : cellA) {
                         // Loop over all balls in the neighbor cell
-                        for (auto* ballB : spatialGrid[nx][ny]) {
-
-                            if (ballA == ballB) continue; // Skip self-collision
-
-                            // Prevent double processing, each pair only processed once.
-                            if (ballA < ballB) {
-								++collisionChecks;
-                                resolveBallCollision(*ballA, *ballB); // Check and resolve potential collision
-                            }
+                        for (int idxB : cellB) {
+							if (idxA >= idxB) continue; // Skip self-collision and double processing, each pair only processed once.
+                            
+                            ++collisionChecks;
+                            resolveBallCollision(pool.get(idxA), pool.get(idxB)); // Check and resolve potential collision
                         }
                     }
                 }
             }
-
         }
     }
+
 }
 
-void CollisionSystem::resolveHollowCircleCollision(std::shared_ptr<RigidbodyComponent>& ball, const sf::Vector2f& boundaryPosition, float boundaryRadius) {
-    sf::Vector2f delta = ball->getOwner()->getPosition() - boundaryPosition;
+
+void CollisionSystem::resolveHollowCircleCollision(PhysicsDataPool& pool, int physicsIndex, float boundaryRadius, const sf::Vector2f& boundaryCenter) {
+    FlatBallData& data = pool.get(physicsIndex);
+    sf::Vector2f pos(data.x, data.y);
+    sf::Vector2f delta = pos - boundaryCenter;
 
     float distance = std::sqrt(delta.x * delta.x + delta.y * delta.y);
-    float ballRadius = ball->getRadius();
+    float maxDist = boundaryRadius - data.radius;
 
-    if (distance > boundaryRadius - ballRadius) {
+    if (distance > maxDist) {
         sf::Vector2f normal = delta / distance;
+        float overlap = distance - maxDist;
 
-        // Reflect motion
-        sf::Vector2f vel = ball->getOwner()->getPosition() - ball->getOwner()->getPositionLast();
-        float relNormal = vel.x * normal.x + vel.y * normal.y;
+        // Push inward along the normal
+        data.x -= normal.x * overlap;
+        data.y -= normal.y * overlap;
 
-        if (relNormal > 0.f) {
-            float elasticity = 0.02f;
-            sf::Vector2f impulse = normal * (-relNormal * elasticity);
-            ball->getOwner()->setPositionLast(ball->getOwner()->getPositionLast() - impulse);
-        }
-
-        // Clamp inside
-        ball->getOwner()->setPosition(boundaryPosition + normal * (boundaryRadius - ballRadius));
+        // Dampen motion
+        float dx = data.x - data.lastX;
+        float dy = data.y - data.lastY;
+        float damping = 0.98f;
+        data.lastX = data.x - dx * damping;
+        data.lastY = data.y - dy * damping;
     }
+
 
 }
 
-void CollisionSystem::resolveBoxWallCollisions(std::shared_ptr<RigidbodyComponent>& ball, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls) {
-    sf::Vector2f newPos = ball->getOwner()->getPosition();
-    sf::Vector2f prevPos = ball->getOwner()->getPositionLast();
-    float radius = ball->getRadius();
+void CollisionSystem::resolveBoxWallCollisions(RigidbodyComponent& rb, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls) {
+    auto* pool = rb.getPool();
+    int idx = rb.getIndex();
+    auto& data = pool->get(idx);
+
+    float radius = data.radius;
+    float newX = data.x;
+    float newY = data.y;
 
     for (const auto& wall : staticWalls) {
         auto renderer = wall->getComponent<RendererComponent>().lock();
@@ -160,33 +154,33 @@ void CollisionSystem::resolveBoxWallCollisions(std::shared_ptr<RigidbodyComponen
         sf::Vector2f wallSize = renderer->getSize();
         sf::Vector2f half = wallSize / 2.f;
 
-        // AABB closest point
-        sf::Vector2f clamped = {
-            std::max(wallPos.x - half.x, std::min(newPos.x, wallPos.x + half.x)),
-            std::max(wallPos.y - half.y, std::min(newPos.y, wallPos.y + half.y))
-        };
+        float clampedX = std::clamp(newX, wallPos.x - half.x, wallPos.x + half.x);
+        float clampedY = std::clamp(newY, wallPos.y - half.y, wallPos.y + half.y);
 
-        sf::Vector2f delta = newPos - clamped;
-        float distSq = delta.x * delta.x + delta.y * delta.y;
+        float dx = newX - clampedX;
+        float dy = newY - clampedY;
+        float distSq = dx * dx + dy * dy;
 
         if (distSq < radius * radius) {
             float dist = std::sqrt(distSq);
-            sf::Vector2f normal = (dist > 0.001f) ? delta / dist : sf::Vector2f(0.f, -1.f);
+            float nx = (dist > 0.001f) ? dx / dist : 0.f;
+            float ny = (dist > 0.001f) ? dy / dist : -1.f;
             float penetration = radius - dist;
 
-            // Correct position
-            newPos += normal * penetration;
-            ball->getOwner()->setPosition(newPos);
+            // Push out
+            data.x += nx * penetration;
+            data.y += ny * penetration;
 
-            // Reflect verlet velocity
-            sf::Vector2f vel = newPos - prevPos;
-            float dot = vel.x * normal.x + vel.y * normal.y;
-            vel -= 2.f * dot * normal;
-            vel *= GameConfig::ELASTICITY;
+            // Dampen motion
+            float velX = data.x - data.lastX;
+            float velY = data.y - data.lastY;
+            float damping = GameConfig::ELASTICITY;
 
-            ball->getOwner()->setPositionLast(newPos - vel);
+            data.lastX = data.x - velX * damping;
+            data.lastY = data.y - velY * damping;
         }
     }
+
 }
 
 void CollisionSystem::checkBallCollisionsBruteForce(std::vector<Ball>& balls) {

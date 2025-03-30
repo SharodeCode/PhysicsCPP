@@ -28,7 +28,7 @@ public:
     void initialize() override {
         initialiseUI();
 
-        BoxBoundaryInitialise();
+        CircleBoundaryInitialise();
 
         spawnBalls(0);
     }
@@ -113,10 +113,20 @@ public:
 
             for (int i = 0; i < ballPourCount; ++i) {
                 sf::Vector2f offset(hoseOrigin.x, hoseOrigin.y + i * 10.f); //vertical spread
-                auto ball = std::make_shared<Ball>(offset);
+
+                // Inject physics
+                int index = physicsEngine->dataPool.allocateBall(
+                    hoseOrigin.x,
+                    hoseOrigin.y + i * 10.f,
+                    GameConfig::BALL_RADIUS
+                );
+
+                auto ball = std::make_shared<Ball>(offset, &physicsEngine->dataPool, index);
 
                 sf::Vector2f verletOffset = hoseVelocity * deltaTime;
-                ball->getRigidbody()->getOwner()->setPositionLast(offset - verletOffset);
+                auto& data = ball->physicsData->get(ball->physicsIndex);
+                data.lastX = (offset - verletOffset).x;
+                data.lastY = (offset - verletOffset).y;
 
                 addGameObject(ball);
                 physicsEngine->addRigidbody(ball->getRigidbody());
@@ -146,7 +156,19 @@ public:
 	void spawnBall(sf::Vector2f spawnPosition) {
         if (isOverlapping(spawnPosition, GameConfig::BALL_RADIUS)) return;
 
-        auto ball = std::make_shared<Ball>(spawnPosition);
+        // Inject physics
+        int index = physicsEngine->dataPool.allocateBall(
+            spawnPosition.x,
+            spawnPosition.y,
+            GameConfig::BALL_RADIUS
+        );
+
+        auto ball = std::make_shared<Ball>(spawnPosition, &physicsEngine->dataPool, index);
+
+        auto& data = ball->physicsData->get(ball->physicsIndex);
+        data.lastX = spawnPosition.x;
+        data.lastY = spawnPosition.y;
+
         addGameObject(ball);
         physicsEngine->addRigidbody(ball->getRigidbody());
         balls.push_back(ball);  // Needed for isOverlapping

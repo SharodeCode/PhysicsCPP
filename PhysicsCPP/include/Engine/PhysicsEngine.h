@@ -20,6 +20,7 @@ private:
 
 public:
     int subStepCount;
+    PhysicsDataPool dataPool;
 
     PhysicsEngine();
     void update(float subStepRate);

@@ -1,4 +1,5 @@
 ﻿#include "Engine/PhysicsEngine.h"
+#include <iostream>
 
 PhysicsEngine::PhysicsEngine()
     : spawner(10.0f) {}
@@ -23,7 +24,7 @@ void PhysicsEngine::update(float subStepRate) {
     }
 
     // Collision check after all motion and boundaries resolved
-    CollisionSystem::checkBallCollisions(rigidbodies);
+    CollisionSystem::checkBallCollisions(dataPool);
 
 
     for (auto& portal : portals) {
@@ -33,29 +34,35 @@ void PhysicsEngine::update(float subStepRate) {
 
 void PhysicsEngine::updateRigidBodies(float subStepRate) {
 
-    for (auto rb : rigidbodies) {
-        if (rb->getType() != RigidbodyComponent::Type::Dynamic) continue;
+    for (FlatBallData& ball : dataPool.ballData) {
 
         // Get current and previous position
-        sf::Vector2f pos = rb->getOwner()->getPosition();
-        sf::Vector2f prev = rb->getOwner()->getPositionLast();
+        float x = ball.x;
+        float y = ball.y;
+        float lastX = ball.lastX;
+        float lastY = ball.lastY;
 
-        sf::Vector2f acceleration(0.f, GRAVITY * GameConfig::pixelsPerMeter);
+        float accelY = GRAVITY * GameConfig::pixelsPerMeter;
 
-		// Compute motion based on preious position
-        sf::Vector2f motion = pos - prev;
+        // Compute motion and clamp
+        float motionX = x - lastX;
+        float motionY = y - lastY;
 
+        float distSq = motionX * motionX + motionY * motionY;
+        if (distSq > 100.0f) { // 10^2
+            float dist = std::sqrt(distSq);
+            motionX = (motionX / dist) * 10.f;
+            motionY = (motionY / dist) * 10.f;
+        }
 
-        // Place a limit of fast movement
-        float maxDist = 10.f;
-        float dist = std::hypot(motion.x, motion.y);
-        if (dist > maxDist)
-            motion = (motion / dist) * maxDist;
+        // Verlet update
+        float newX = x + motionX;
+        float newY = y + motionY + accelY * (subStepRate * subStepRate);
 
-		// Verlet position update based on motion and acceleration
-        sf::Vector2f newPos = pos + motion + acceleration * (subStepRate * subStepRate);
-        rb->getOwner()->setPositionLast(pos);
-        rb->getOwner()->setPosition(newPos);
+        ball.lastX = x;
+        ball.lastY = y;
+        ball.x = newX;
+        ball.y = newY;
     }
 
 }

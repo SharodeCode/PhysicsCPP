@@ -1,7 +1,7 @@
 #include "Entities/Boundaries/OpenBoxBoundary.h"
 #include "Engine/CollisionSystem.h"
 
-OpenBoxBoundary::OpenBoxBoundary(const sf::Vector2f& center, float width, float height, float thickness) {
+OpenBoxBoundary::OpenBoxBoundary(const sf::Vector2f& center, float width, float height, float thickness) : center(center) {
     // Left
     walls.push_back(std::make_shared<BoundaryWall>(
         sf::Vector2f(thickness, height),
@@ -22,13 +22,14 @@ OpenBoxBoundary::OpenBoxBoundary(const sf::Vector2f& center, float width, float 
         sf::Vector2f(0.f, height / 2.f - thickness / 2.f),
         center
     ));
-
-    // Position and add to scene if needed
-    setPosition(center);
 }
 
 void OpenBoxBoundary::resolve(std::shared_ptr<RigidbodyComponent>& rb) const {
-    CollisionSystem::resolveBoxWallCollisions(rb, walls);
+    if (!rb || !rb->getPool()) return;
+
+    // Get a mutable reference to the ball data
+    auto& data = rb->getPool()->ballData[rb->getIndex()];
+    CollisionSystem::resolveBoxWallCollisions(*rb, walls);
 }
 
 void OpenBoxBoundary::draw(sf::RenderWindow& window) const {

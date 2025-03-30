@@ -14,6 +14,11 @@ public:
 
     const std::vector<std::shared_ptr<BoundaryWall>>& getWalls() const { return walls; }
 
+    sf::Vector2f getRenderPosition() const override {
+        return center;
+    }
+
 private:
+    sf::Vector2f center;
     std::vector<std::shared_ptr<BoundaryWall>> walls;
 };
