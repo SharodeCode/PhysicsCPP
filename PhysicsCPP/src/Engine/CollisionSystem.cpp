@@ -1,5 +1,6 @@
 ﻿#include "Engine/CollisionSystem.h"
 #include <iostream>
+#include <array>
 
 int CollisionSystem::collisionChecks = 0;
 int CollisionSystem::collisionsResolved = 0;
@@ -7,6 +8,10 @@ int CollisionSystem::gridWidth = 0;
 int CollisionSystem::gridHeight = 0;
 
 std::vector<std::vector<int>> CollisionSystem::spatialGridFlat;
+
+static constexpr std::array<int[2], 6> neighborOffsets = {{
+    {0, 0}, {1, 0}, {0, 1}, {1, 1}, {-1, 1}, {-1, 0}
+} };
 
 void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b) {
 
@@ -21,6 +26,8 @@ void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b) {
     // Prevent division by zero when balls are on top of each other and only proceed if balls are overlapping
     if (distSq < 0.0001f || distSq >= minDist * minDist)
         return;
+
+    collisionsResolved++;
 
     // Calculate the normal vector and overlap
     float dist = std::sqrt(distSq);
@@ -70,7 +77,7 @@ void CollisionSystem::checkBallCollisions(PhysicsDataPool& pool) {
     // Assign balls to grid cells
     for (int i = 0; i < pool.ballData.size(); ++i) {
         const auto& ball = pool.get(i);
-        
+
         // Clamped to stop calculations of balls that are offscreen.
         int x = std::clamp(static_cast<int>(ball.x / CELL_SIZE), 0, gridWidth - 1);
         int y = std::clamp(static_cast<int>(ball.y / CELL_SIZE), 0, gridHeight - 1);
@@ -81,28 +88,33 @@ void CollisionSystem::checkBallCollisions(PhysicsDataPool& pool) {
     for (int x = 0; x < gridWidth; ++x) {
         for (int y = 0; y < gridHeight; ++y) {
 
-            for (int dx = -1; dx <= 1; ++dx) {
-                for (int dy = -1; dy <= 1; ++dy) {
-                    int nx = x + dx; // Neighbor cell X
-                    int ny = y + dy; // Neighbor cell Y
+            for (const auto& offset : neighborOffsets) {
+                int dx = offset[0];
+                int dy = offset[1];
+                int nx = x + dx; // Neighbor cell X
+                int ny = y + dy; // Neighbor cell Y
 
-                    // Skip out-of-bounds neighbors
-                    if (nx < 0 || ny < 0 || nx >= gridWidth || ny >= gridHeight) continue;
+                // Skip out-of-bounds neighbors
+                if (nx < 0 || ny < 0 || nx >= gridWidth || ny >= gridHeight) continue;
 
-                    const auto& cellA = spatialGridFlat[FLAT_INDEX(x, y)];
-                    const auto& cellB = spatialGridFlat[FLAT_INDEX(nx, ny)];
+                const auto& cellA = spatialGridFlat[FLAT_INDEX(x, y)];
+                if (cellA.empty()) continue;
+                const auto& cellB = spatialGridFlat[FLAT_INDEX(nx, ny)];
+                if (cellB.empty()) continue;
 
-                    // Loop over all balls in the current cell
-                    for (int idxA : cellA) {
-                        // Loop over all balls in the neighbor cell
-                        for (int idxB : cellB) {
-							if (idxA >= idxB) continue; // Skip self-collision and double processing, each pair only processed once.
-                            
-                            ++collisionChecks;
-                            resolveBallCollision(pool.get(idxA), pool.get(idxB)); // Check and resolve potential collision
-                        }
+                // Loop over all balls in the current cell
+                for (int idxA : cellA) {
+                    // Loop over all balls in the neighbor cell
+                    for (int idxB : cellB) {
+                        if (idxA == idxB) continue; // Skip self-collision and double processing.
+
+                        ++collisionChecks;
+                        auto& a = pool.get(idxA);
+                        auto& b = pool.get(idxB);
+                        resolveBallCollision(a, b);
                     }
                 }
+
             }
         }
     }

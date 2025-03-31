@@ -108,7 +108,7 @@ public:
         sf::Vector2f hoseVelocity(300.f, -50.f); // in pixels per second
 
         ballPourerSpawnTimer += deltaTime;
-        if (ballPourerSpawnTimer >= 0.08f) { // tweak this for smoother flow
+        if (ballPourerSpawnTimer >= 0.04f) { // tweak this for smoother flow
             ballPourerSpawnTimer = 0.f;
 
             for (int i = 0; i < ballPourCount; ++i) {

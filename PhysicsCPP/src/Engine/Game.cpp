@@ -60,7 +60,11 @@ void Game::run() {
             if (ballCount == 0 || ballCount == 10 || ballCount == 50 || ballCount == 100 ||
                 ballCount == 250 || ballCount == 500 || ballCount == 600 || ballCount == 800 || ballCount == 1000
                 || ballCount == 1100 || ballCount == 1200 || ballCount == 1300 || ballCount == 1400 || ballCount == 1500
-                || ballCount == 1600 || ballCount == 1700 || ballCount == 1800 || ballCount == 1900 || ballCount == 2000) {
+                || ballCount == 1600 || ballCount == 1700 || ballCount == 1800 || ballCount == 1900 || ballCount == 2000
+                || ballCount == 2500 || ballCount == 3000 || ballCount == 3500 || ballCount == 4000 || ballCount == 4500
+                || ballCount == 5000 || ballCount == 5500 || ballCount == 6000 || ballCount == 6500 || ballCount == 7000
+                || ballCount == 7500 || ballCount == 8000 || ballCount == 8500 || ballCount == 9000 || ballCount == 9500
+                || ballCount == 10000) {
 
                 if (!printedBallBenchmarks.contains(ballCount)) {
                     std::cout << "| " << ballCount
