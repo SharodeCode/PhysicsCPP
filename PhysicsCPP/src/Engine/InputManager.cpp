@@ -33,6 +33,9 @@ void InputManager::handleInput() {
             else if (currentButton == Button::buttonType::ballPourer) {
                 sceneManager->handleInput(InputAction::BallPourer, mousePosition);
             }
+            else if (currentButton == Button::buttonType::coloriseBalls) {
+                sceneManager->handleInput(InputAction::ColoriseBalls, {});
+            }
 		}
 		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
 			sceneManager->handleInput(InputAction::StopFastSpawn, sf::Vector2f(0.f, 0.f));

@@ -21,7 +21,8 @@ public:
         ballSpawner,
         clickToSpawn,
         fastSpawn,
-        ballPourer
+        ballPourer,
+        coloriseBalls
     };
 
     sf::RectangleShape button;

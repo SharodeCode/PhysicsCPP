@@ -20,4 +20,5 @@ public:
 private:
     sf::Vector2f center;
     float radius;
+    std::shared_ptr<RendererComponent> renderer;
 };

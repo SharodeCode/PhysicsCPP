@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <fstream>
 #include "Scene.h"
 #include "Entities/Ball.h"
 #include "Entities/Boundaries/CircleBoundary.h"
@@ -18,10 +19,13 @@ private:
     // Ball Pourer
 	bool ballPourerToggle = false;
     float ballPourerSpawnTimer = 0.f;
-    int ballPourCount = 5;
+    int ballPourCount = 10;
 
 
     sf::FloatRect openBoxBoundary;
+
+    std::vector<sf::Color> savedColors;
+    size_t colorIndex = 0;
 
 
 public:
@@ -31,12 +35,28 @@ public:
         CircleBoundaryInitialise();
 
         spawnBalls(0);
+
+		// Try and load colours from file
+        std::ifstream in("Media/colors.txt");
+        if (!in) {
+            std::cerr << "Failed to open color file for reading!\n";
+            return;
+        }
+
+        savedColors.clear();
+        colorIndex = 0;
+
+        int r, g, b;
+        while (in >> r >> g >> b) {
+            savedColors.emplace_back(sf::Color(r, g, b));
+        }
+
     }
 
 
     void CircleBoundaryInitialise() {
-        sf::Vector2f center(400.f, 400.f);
-        float radius = 250.f;
+        sf::Vector2f center(900.f, 450.f);
+        float radius = 400.f;
 
         auto circle = std::make_shared<CircleBoundary>(center, radius);
         physicsEngine->addBoundary(circle);
@@ -65,11 +85,12 @@ public:
         const float buttonHeight = 50.f;
         const float buttonGap = 10.f;
 
-        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::mute, (800 - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", *uiPanel));
-        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballSpawner, (800 - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", *uiPanel));
-        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::clickToSpawn, (800 - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Click to Spawn", *uiPanel));
-		uiPanel->addElement(std::make_shared<Button>(Button::buttonType::fastSpawn, (800 - 200.f), ((3 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Fast Spawn", *uiPanel));
-        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballPourer, (800 - 200.f), ((4 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Ball Pourer", *uiPanel));
+        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::mute, (GameConfig::WINDOW_WIDTH - 200.f), 0.f, buttonWidth, buttonHeight, "Mute", *uiPanel));
+        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballSpawner, (GameConfig::WINDOW_WIDTH - 200.f), (buttonHeight + buttonGap), buttonWidth, buttonHeight, "Ball Spawner", *uiPanel));
+        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::clickToSpawn, (GameConfig::WINDOW_WIDTH - 200.f), ((2 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Click to Spawn", *uiPanel));
+		uiPanel->addElement(std::make_shared<Button>(Button::buttonType::fastSpawn, (GameConfig::WINDOW_WIDTH - 200.f), ((3 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Fast Spawn", *uiPanel));
+        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::ballPourer, (GameConfig::WINDOW_WIDTH - 200.f), ((4 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Ball Pourer", *uiPanel));
+        uiPanel->addElement(std::make_shared<Button>(Button::buttonType::coloriseBalls, (GameConfig::WINDOW_WIDTH - 200.f), ((5 * (buttonHeight + buttonGap))), buttonWidth, buttonHeight, "Colorise Balls", *uiPanel));
         
 		ui->m_UIPanel = uiPanel;
 
@@ -104,11 +125,15 @@ public:
     }
 
     void ballPourer(float deltaTime) {
-        sf::Vector2f hoseOrigin(250.f, 250.f); // starting point
+
+        if (physicsEngine->getRigidbodyCount() > 11600)
+            return;
+
+        sf::Vector2f hoseOrigin(800.f, 100.f); // starting point
         sf::Vector2f hoseVelocity(300.f, -50.f); // in pixels per second
 
         ballPourerSpawnTimer += deltaTime;
-        if (ballPourerSpawnTimer >= 0.04f) { // tweak this for smoother flow
+        if (ballPourerSpawnTimer >= 0.03f) { // tweak this for smoother flow
             ballPourerSpawnTimer = 0.f;
 
             for (int i = 0; i < ballPourCount; ++i) {
@@ -122,6 +147,12 @@ public:
                 );
 
                 auto ball = std::make_shared<Ball>(offset, &physicsEngine->dataPool, index);
+
+                // Use saved colours to colour balls to image
+                if (!savedColors.empty()) {
+                    ball->setColor(savedColors[colorIndex % savedColors.size()]);
+                    ++colorIndex;
+                }
 
                 sf::Vector2f verletOffset = hoseVelocity * deltaTime;
                 auto& data = ball->physicsData->get(ball->physicsIndex);
@@ -150,6 +181,66 @@ public:
 		}
         else if (action == InputAction::BallPourer) {
             ballPourerToggle = !ballPourerToggle;
+        }
+		else if (action == InputAction::ColoriseBalls) {
+			colouriseBallsAction();
+		}
+    }
+
+	// Colourise balls based on an image
+    void colouriseBallsAction() {
+
+        // Load the image
+        sf::Image image;
+        if (!image.loadFromFile("./Media/Fonts/image_2.png")) {
+            std::cerr << "Failed to load image\n";
+        }
+
+        // Colourise current balls
+        sf::Vector2u imageSize = image.getSize();
+        float scaleX = static_cast<float>(imageSize.x) / 800.f;
+        float scaleY = static_cast<float>(imageSize.y) / 800.f;
+
+        for (const auto& obj : gameObjects) {
+            if (auto* ball = dynamic_cast<Ball*>(obj.get())) {
+                sf::Vector2f pos = ball->getRenderPosition();
+
+                float boxLeft = 900.f - 400.f;
+                float boxTop = 450.f - 400.f;
+
+                float relativeX = pos.x - boxLeft;
+                float relativeY = pos.y - boxTop;
+
+                int px = static_cast<int>(relativeX * scaleX);
+                int py = static_cast<int>(relativeY * scaleY);
+
+                if (px >= 0 && px < static_cast<int>(imageSize.x) &&
+                    py >= 0 && py < static_cast<int>(imageSize.y)) {
+                    ball->setColor(image.getPixel(px, py));
+                }
+            }
+        }
+
+        // Save ball colours to data structure
+        savedColors.clear();
+        for (const auto& obj : gameObjects) {
+            if (auto* ball = dynamic_cast<Ball*>(obj.get())) {
+                savedColors.push_back(ball->getColor());
+            }
+        }
+        colorIndex = 0;
+
+        // Save ball colours to output stream
+        std::ofstream out("Media/colors.txt");
+        if (!out) {
+            std::cerr << "Failed to open color file for writing!\n";
+            return;
+        }
+
+        for (const auto& color : savedColors) {
+            out << static_cast<int>(color.r) << " "
+                << static_cast<int>(color.g) << " "
+                << static_cast<int>(color.b) << "\n";
         }
     }
 

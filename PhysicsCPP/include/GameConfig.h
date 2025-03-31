@@ -23,7 +23,7 @@ public:
 
     // 🏀 Collision settings
     static constexpr float COLLISION_PUSH_FACTOR = 0.65f;
-    static constexpr float BALL_RADIUS = 2.0f;
+    static constexpr float BALL_RADIUS = 3.5f;
     static constexpr float BALL_MASS = 1.0f;
     static constexpr float BOUNDARY_RADIUS = 300.0f;
 };

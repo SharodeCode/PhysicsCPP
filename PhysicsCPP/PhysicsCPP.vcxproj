@@ -145,6 +145,7 @@
     <ClCompile Include="src\Engine\Game.cpp" />
     <ClCompile Include="src\Engine\InputManager.cpp" />
     <ClCompile Include="src\Engine\Renderer.cpp" />
+    <ClCompile Include="src\Entities\BallBatchRenderer.cpp" />
     <ClCompile Include="src\Entities\BaseEntity.cpp" />
     <ClCompile Include="src\Entities\Boundaries\CircleBoundary.cpp" />
     <ClCompile Include="src\Entities\Boundaries\OpenBoxBoundary.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="include\Engine\InputManager.h" />
     <ClInclude Include="include\Engine\PhysicsDataPool.h" />
     <ClInclude Include="include\Engine\Renderer.h" />
+    <ClInclude Include="include\Entities\BallBatchRenderer.h" />
     <ClInclude Include="include\Entities\BaseEntity.h" />
     <ClInclude Include="include\Entities\Boundaries\BaseBoundary.h" />
     <ClInclude Include="include\Entities\Boundaries\OpenBoxBoundary.h" />

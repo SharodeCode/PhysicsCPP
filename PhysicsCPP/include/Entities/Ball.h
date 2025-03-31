@@ -11,6 +11,7 @@ private:
     float radius;
     std::shared_ptr<RigidbodyComponent> rigidbody;
     std::shared_ptr<RendererComponent> renderer;
+	sf::Color color;
 
 public:
     Ball(sf::Vector2f position, PhysicsDataPool* pool, int index);
@@ -48,4 +49,12 @@ public:
     sf::Vector2f getVelocity() const;
     void setVelocity(const sf::Vector2f& vel);
     float getGravity() const;
+
+	sf::Color getColor() const {
+		return color;
+	}
+
+	void setColor(const sf::Color& c) {
+		color = c;
+	}
 };

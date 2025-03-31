@@ -12,7 +12,8 @@ enum class InputAction {
 	SpawnPortal,
 	FastSpawn,
 	StopFastSpawn,
-    BallPourer
+    BallPourer,
+    ColoriseBalls
 };
 
 class InputManager {

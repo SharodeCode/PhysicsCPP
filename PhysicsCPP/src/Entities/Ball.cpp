@@ -6,6 +6,7 @@ Ball::Ball(sf::Vector2f position, PhysicsDataPool* pool, int index)
     physicsData(pool), physicsIndex(index)
 {
     sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
+    color = randomColor;
 
     rigidbody = addComponent<RigidbodyComponent>(this, RigidbodyComponent::Type::Dynamic, radius);
     rigidbody->setPhysicsData(pool, index);
