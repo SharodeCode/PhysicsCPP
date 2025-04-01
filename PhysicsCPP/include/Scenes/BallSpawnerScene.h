@@ -126,7 +126,7 @@ public:
 
     void ballPourer(float deltaTime) {
 
-        if (physicsEngine->getRigidbodyCount() > 11600)
+        if (physicsEngine->getRigidbodyCount() > 20000)
             return;
 
         sf::Vector2f hoseOrigin(800.f, 100.f); // starting point

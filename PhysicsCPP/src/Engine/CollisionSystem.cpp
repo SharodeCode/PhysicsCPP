@@ -1,4 +1,4 @@
-﻿#include "Engine/CollisionSystem.h"
+#include "Engine/CollisionSystem.h"
 #include <iostream>
 #include <array>
 
@@ -7,18 +7,14 @@ int CollisionSystem::collisionsResolved = 0;
 int CollisionSystem::gridWidth = 0;
 int CollisionSystem::gridHeight = 0;
 
-std::vector<std::vector<int>> CollisionSystem::spatialGridFlat;
+std::vector<size_t> CollisionSystem::cellOffsets;
+std::vector<int> CollisionSystem::flatGridEntries;
 
 static constexpr std::array<int[2], 6> neighborOffsets = {{
     {0, 0}, {1, 0}, {0, 1}, {1, 1}, {-1, 1}, {-1, 0}
 } };
 
-void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b) {
-
-    // Calculate the vector between a and b and their squared distance
-    float dx = a.x - b.x;
-    float dy = a.y - b.y;
-    float distSq = dx * dx + dy * dy;
+void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b, float dx, float dy, float distSq) {
 
     // Minimum distance before 2 balls are considered colliding
     float minDist = a.radius + b.radius;
@@ -29,13 +25,13 @@ void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b) {
 
     collisionsResolved++;
 
-    // Calculate the normal vector and overlap
+    // Compute actual distance and collision normal
     float dist = std::sqrt(distSq);
     float overlap = minDist - dist + 0.01f; // Add bias to ensure separation
     float nx = dx / dist;
     float ny = dy / dist;
 
-    // Push both objects apart equally along the collision normal
+    // Push both objects apart equally
     float percent = 0.5f; // Equal push
     float pushX = nx * overlap * percent;
     float pushY = ny * overlap * percent;
@@ -60,34 +56,76 @@ void CollisionSystem::resolveBallCollision(FlatBallData& a, FlatBallData& b) {
 
 void CollisionSystem::checkBallCollisions(PhysicsDataPool& pool) {
 
-    // Setup spatial grid
+	// Calculate grid dimensions based on cell size
     const float CELL_SIZE = GameConfig::BALL_RADIUS * 4.0f;
     gridWidth = static_cast<int>(std::ceil(GameConfig::WINDOW_WIDTH / CELL_SIZE));
     gridHeight = static_cast<int>(std::ceil(GameConfig::WINDOW_HEIGHT / CELL_SIZE));
 
     // First-time setup or window resize only if needed
-    if (spatialGridFlat.size() != gridWidth * gridHeight) {
-        spatialGridFlat = std::vector<std::vector<int>>(gridWidth * gridHeight);
+    if (cellOffsets.size() != gridWidth * gridHeight + 1) {
+        cellOffsets.resize(gridWidth * gridHeight + 1);
+        flatGridEntries.reserve(pool.ballData.size());  // One-time preallocation
     }
-    else {
-        // If reusing grid, clear contents.
-        for (auto& cell : spatialGridFlat) cell.clear();
+    flatGridEntries.clear();  // Reuse allocation
+
+    // Temporary flat-grid count per cell
+    std::vector<size_t> cellCounts(gridWidth * gridHeight, 0);
+
+    // Count entries per cell
+    for (int i = 0; i < pool.ballData.size(); ++i) {
+        const auto& ball = pool.get(i);
+		// Determine cell index
+        int x = std::clamp(static_cast<int>(ball.x / CELL_SIZE), 0, gridWidth - 1);
+        int y = std::clamp(static_cast<int>(ball.y / CELL_SIZE), 0, gridHeight - 1);
+        ++cellCounts[FLAT_INDEX(x, y)];
     }
+
+    // Compute cellOffsets from counts
+    size_t offset = 0;
+    for (size_t i = 0; i < cellCounts.size(); ++i) {
+        cellOffsets[i] = offset;
+        offset += cellCounts[i];
+    }
+    cellOffsets[gridWidth * gridHeight] = offset;
+    flatGridEntries.resize(offset);
+
+    // fill flatGridEntries
+    std::fill(cellCounts.begin(), cellCounts.end(), 0);
 
     // Assign balls to grid cells
     for (int i = 0; i < pool.ballData.size(); ++i) {
         const auto& ball = pool.get(i);
 
-        // Clamped to stop calculations of balls that are offscreen.
         int x = std::clamp(static_cast<int>(ball.x / CELL_SIZE), 0, gridWidth - 1);
         int y = std::clamp(static_cast<int>(ball.y / CELL_SIZE), 0, gridHeight - 1);
-        spatialGridFlat[FLAT_INDEX(x, y)].push_back(i);
+        int cellIndex = FLAT_INDEX(x, y);
+
+        size_t insertPos = cellOffsets[cellIndex] + cellCounts[cellIndex]++;
+        flatGridEntries[insertPos] = i;
     }
 
     // Loop over every cell in the spatial grid
-    for (int x = 0; x < gridWidth; ++x) {
+    unsigned int stripeCount = 1; // For now, single-threaded
+    for (int stripe = 0; stripe < static_cast<int>(stripeCount); ++stripe) {
+        runCollisionStripe(pool, stripe, stripeCount);
+    }
+}
+
+void CollisionSystem::runCollisionStripe(PhysicsDataPool& pool, int stripe, int stripeCount) {
+
+    // Loop over every X column in this stripe
+    for (int x = stripe; x < gridWidth; x += stripeCount) {
         for (int y = 0; y < gridHeight; ++y) {
 
+            // Get flattened index for cell (x, y)
+            int indexA = FLAT_INDEX(x, y);
+            size_t startA = cellOffsets[indexA];
+            size_t endA = cellOffsets[indexA + 1];
+
+            // Skip empty cells
+            if (startA == endA) continue;
+
+            // Check against this cell and its relevant neighbors
             for (const auto& offset : neighborOffsets) {
                 int dx = offset[0];
                 int dy = offset[1];
@@ -97,30 +135,48 @@ void CollisionSystem::checkBallCollisions(PhysicsDataPool& pool) {
                 // Skip out-of-bounds neighbors
                 if (nx < 0 || ny < 0 || nx >= gridWidth || ny >= gridHeight) continue;
 
-                const auto& cellA = spatialGridFlat[FLAT_INDEX(x, y)];
-                if (cellA.empty()) continue;
-                const auto& cellB = spatialGridFlat[FLAT_INDEX(nx, ny)];
-                if (cellB.empty()) continue;
+                int indexB = FLAT_INDEX(nx, ny);
+                size_t startB = cellOffsets[indexB];
+                size_t endB = cellOffsets[indexB + 1];
+
+                // Skip if neighbor cell is also empty
+                if (startB == endB) continue;
+
+                // Avoid redundant comparisons in the same cell
+                bool sameCell = (indexA == indexB);
 
                 // Loop over all balls in the current cell
-                for (int idxA : cellA) {
+                for (size_t i = startA; i < endA; ++i) {
+                    int idxA = flatGridEntries[i];
+
                     // Loop over all balls in the neighbor cell
-                    for (int idxB : cellB) {
-                        if (idxA == idxB) continue; // Skip self-collision and double processing.
+                    for (size_t j = startB; j < endB; ++j) {
+
+                        int idxB = flatGridEntries[j];
+
+                        // Skip self-collision and double processing.
+                        if (sameCell && idxA >= idxB) continue;
 
                         ++collisionChecks;
+
                         auto& a = pool.get(idxA);
                         auto& b = pool.get(idxB);
-                        resolveBallCollision(a, b);
+
+                        // Calculate the vector between a and b and their squared distance
+						// Perform AABB check to avoid expensive sqrt
+                        float maxDist = a.radius + b.radius;
+                        float dx = std::abs(a.x - b.x);
+                        float dy = std::abs(a.y - b.y);
+                        float distSq = dx * dx + dy * dy;
+                        if (distSq >= maxDist * maxDist) continue;
+
+                        resolveBallCollision(a, b, dx, dy, distSq);
                     }
                 }
-
             }
         }
     }
-
 }
-
 
 void CollisionSystem::resolveHollowCircleCollision(PhysicsDataPool& pool, int physicsIndex, float boundaryRadius, const sf::Vector2f& boundaryCenter) {
     FlatBallData& data = pool.get(physicsIndex);
@@ -145,8 +201,6 @@ void CollisionSystem::resolveHollowCircleCollision(PhysicsDataPool& pool, int ph
         data.lastX = data.x - dx * damping;
         data.lastY = data.y - dy * damping;
     }
-
-
 }
 
 void CollisionSystem::resolveBoxWallCollisions(RigidbodyComponent& rb, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls) {

@@ -30,7 +30,7 @@ private:
     float frameTimeAccumulator = 0.f;
     int frameCount = 0;
     bool benchmarkTriggered = false;
-    const int sampleWindow = 10;
+    const int sampleWindow = 400;
     float totalSubstepTime = 0.f;
     sf::Clock physicsTimer;
     float physicsTime;

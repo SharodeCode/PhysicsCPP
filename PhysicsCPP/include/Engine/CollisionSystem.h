@@ -19,11 +19,13 @@ public:
     static int collisionChecks;
     static int collisionsResolved;
 
-    static std::vector<std::vector<int>> spatialGridFlat;
+    static std::vector<int> flatGridEntries;
+    static std::vector<size_t> cellOffsets;
 
     static void checkBallCollisions(PhysicsDataPool& pool);
+    static void runCollisionStripe(PhysicsDataPool& pool, int stripe, int stripeCount);
     static void resolveHollowCircleCollision(PhysicsDataPool& pool, int physicsIndex, float boundaryRadius, const sf::Vector2f& boundaryCenter);
     static void resolveBoxWallCollisions(RigidbodyComponent& rb, const std::vector<std::shared_ptr<BoundaryWall>>& staticWalls);
     static void checkBallCollisionsBruteForce(std::vector<Ball>& balls);
-    static void resolveBallCollision(FlatBallData& a, FlatBallData& b);
+    static void resolveBallCollision(FlatBallData& a, FlatBallData& b, float dx, float dy, float distSq);
 };
